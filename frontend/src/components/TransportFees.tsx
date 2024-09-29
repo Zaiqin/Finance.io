@@ -16,14 +16,14 @@ const TransportFees: React.FC = () => {
 
   useEffect(() => {
     const fetchStations = async () => {
-      const response = await fetch('http://localhost:8000/api/travel/mrt');
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/travel/mrt`);
       const data = await response.json();
       setStations(data);
       console.log(data);
     };
 
     const fetchBuses = async () => {
-      const response = await fetch('http://localhost:8000/api/travel/bus');
+      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/travel/bus`);
       const data = await response.json();
       setBuses(data);
       console.log(data);
