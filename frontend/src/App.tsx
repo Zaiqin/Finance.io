@@ -12,6 +12,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const fetchFinances = async () => {
       try {
+        console.log(`${process.env.REACT_APP_SERVER_URL}`)
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/finances`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
