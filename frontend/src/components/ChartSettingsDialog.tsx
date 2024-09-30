@@ -9,7 +9,8 @@ interface ChartSettingsDialogProps {
   lineThickness: number;
   startDate: string | undefined;
   endDate: string | undefined;
-  onDateChange: (value: string | undefined) => void;
+  onDateStartChange: (value: string | undefined) => void;
+  onDateEndChange: (value: string | undefined) => void;
   numPeriods: number;
   dateType: "months" | "weeks";
   onNumPeriodsChange: (value: number) => void;
@@ -17,6 +18,8 @@ interface ChartSettingsDialogProps {
   onResetToDefault: () => void; // Add a new prop for resetting to default
   includeFuture: boolean;
   onIncludeFutureChange: (include: boolean) => void;
+  filterType: "period" | "range"; // Add filterType prop
+  onFilterTypeChange: (type: "period" | "range") => void; // Add handler for filterType
 }
 
 const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
@@ -27,7 +30,8 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
   lineThickness,
   startDate,
   endDate,
-  onDateChange,
+  onDateStartChange,
+  onDateEndChange,
   numPeriods,
   dateType,
   onNumPeriodsChange,
@@ -35,6 +39,8 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
   onResetToDefault, // Destructure the new prop
   includeFuture,
   onIncludeFutureChange,
+  filterType,
+  onFilterTypeChange,
 }) => {
   if (!open) return null;
 
@@ -48,11 +54,11 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
   };
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onDateChange(e.target.value || undefined);
+    onDateStartChange(e.target.value || undefined);
   };
 
   const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onDateChange(e.target.value || undefined);
+    onDateEndChange(e.target.value || undefined);
   };
 
   const handleNumPeriodsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,6 +67,10 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
 
   const handleDateTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     onDateTypeChange(e.target.value as "months" | "weeks");
+  };
+
+  const handleFilterTypeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    onFilterTypeChange(e.target.value as "period" | "range");
   };
 
   return (
@@ -97,61 +107,104 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
             />
           </div>
 
-          {/* Date Range */}
-          <div className="mb-4 flex space-x-4">
-            <div className="w-1/2">
-              <label className="block text-m font-semibold text-gray-700 mb-2">
-                Start Date:
-              </label>
-              <input
-                type="date"
+          <div className="mb-4">
+            <label
+              htmlFor="filterType"
+              className="block text-m font-semibold text-gray-700 mb-2"
+            >
+              Filter By:
+            </label>
+            <div className="relative">
+              <select
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                value={startDate || ""}
-                onChange={handleStartDateChange}
-              />
-            </div>
-            <div className="w-1/2">
-              <label className="block text-m font-semibold text-gray-700 mb-2">
-                End Date:
-              </label>
-              <input
-                type="date"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                value={endDate || ""}
-                onChange={handleEndDateChange}
-              />
+                id="filterType"
+                value={filterType}
+                onChange={handleFilterTypeChange}
+              >
+                <option value="period">Period</option>
+                <option value="range">Date Range</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg
+                  className="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                </svg>
+              </div>
             </div>
           </div>
 
-          {/* Period Selector */}
-          <div className="mb-4 flex space-x-4">
-            <div className="w-1/2">
-              <label className="block text-m font-semibold text-gray-700 mb-2">
-                Period:
-              </label>
-              <input
-                type="number"
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                value={numPeriods}
-                onChange={handleNumPeriodsChange}
-                min={1}
-                max={24}
-              />
+          {filterType === "period" ? (
+            <>
+              {/* Period Selector */}
+              <div className="mb-4 flex space-x-4">
+                <div className="w-1/2">
+                  <label className="block text-m font-semibold text-gray-700 mb-2">
+                    Period:
+                  </label>
+                  <input
+                    type="number"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    value={numPeriods}
+                    onChange={handleNumPeriodsChange}
+                    min={1}
+                    max={24}
+                  />
+                </div>
+                <div className="w-1/2">
+                  <label className="block text-m font-semibold text-gray-700 mb-2">
+                    Period Type:
+                  </label>
+                  <div className="relative">
+                    <select
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white"
+                      value={dateType}
+                      onChange={handleDateTypeChange}
+                    >
+                      <option value="months">Months</option>
+                      <option value="weeks">Weeks</option>
+                    </select>
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                      <svg
+                        className="fill-current h-4 w-4"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <div className="mb-4 flex space-x-4">
+              <div className="w-1/2">
+                <label className="block text-m font-semibold text-gray-700 mb-2">
+                  Start Date:
+                </label>
+                <input
+                  type="date"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  value={startDate || ""}
+                  onChange={handleStartDateChange}
+                />
+              </div>
+              <div className="w-1/2">
+                <label className="block text-m font-semibold text-gray-700 mb-2">
+                  End Date:
+                </label>
+                <input
+                  type="date"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  value={endDate || ""}
+                  onChange={handleEndDateChange}
+                />
+              </div>
             </div>
-            <div className="w-1/2">
-              <label className="block text-m font-semibold text-gray-700 mb-2">
-                Period Type:
-              </label>
-              <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                value={dateType}
-                onChange={handleDateTypeChange}
-              >
-                <option value="months">Months</option>
-                <option value="weeks">Weeks</option>
-              </select>
-            </div>
-          </div>
+          )}
 
           {/* Include Future */}
           <div className="mb-4 flex items-center">
@@ -178,7 +231,7 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
             onClick={onResetToDefault}
           >
-            Reset to Default
+            Reset to Defaults
           </button>
         </div>
       </div>

@@ -19,14 +19,14 @@ const TransportFees: React.FC = () => {
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/travel/mrt`);
       const data = await response.json();
       setStations(data);
-      console.log(data);
+      //console.log(data);
     };
 
     const fetchBuses = async () => {
       const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/travel/bus`);
       const data = await response.json();
       setBuses(data);
-      console.log(data);
+      //console.log(data);
     };
 
     fetchStations();
