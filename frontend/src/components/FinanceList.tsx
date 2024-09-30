@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ChartComponent from "./Chart"; // Import the ChartComponent
 import { format } from "date-fns";
 import ConfirmationDialog from "./ConfirmationDialog"; // Import the ConfirmationDialog
@@ -24,7 +24,23 @@ const FinanceList: React.FC<{
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [showChart, setShowChart] = useState(true); // State to toggle between chart and table
   const [currentPage, setCurrentPage] = useState(1); // State for current page
-  const itemsPerPage = 5; // Number of items per page
+  const [itemsPerPage, setItemsPerPage] = useState(5); // Default number of items per page
+
+  // Update itemsPerPage based on available screen height
+  useEffect(() => {
+    const calculateItemsPerPage = () => {
+      const headerHeight = 150; // Estimated space for headers/buttons
+      const rowHeight = 120; // Estimated row height for each date entry
+      const availableHeight = window.innerHeight*0.6 - headerHeight;
+      const newItemsPerPage = Math.max(Math.floor(availableHeight / rowHeight), 1);
+      setItemsPerPage(newItemsPerPage);
+    };
+
+    calculateItemsPerPage();
+    window.addEventListener("resize", calculateItemsPerPage);
+
+    return () => window.removeEventListener("resize", calculateItemsPerPage);
+  }, []);
 
   const openModal = (id: string) => {
     const selectedFinance = finances.find((finance) => finance._id === id);
@@ -52,9 +68,9 @@ const FinanceList: React.FC<{
     setIsConfirmOpen(false); // Close the confirmation dialog
   };
 
-  // Sort the finances by date in ascending order
+  // Sort the finances by date in descending order
   const sortedFinances = [...finances].sort(
-    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
   );
 
   const groupedFinances = sortedFinances.reduce((acc, finance) => {
@@ -109,69 +125,74 @@ const FinanceList: React.FC<{
         </div>
       ) : (
         <>
-          {currentDates.map((date) => (
-            <div key={date} className="mb-6">
-              <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                {format(new Date(date), "d MMM yyyy")}
-              </h3>
-              <div className="overflow-x-auto shadow-md rounded-md">
-                <table className="min-w-full bg-white rounded-lg">
-                  <thead className="text-left">
-                    <tr>
-                      <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tl-lg">
-                        Category
-                      </th>
-                      <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
-                        Amount
-                      </th>
-                      <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
-                        Description
-                      </th>
-                      <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tr-lg text-center">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {groupedFinances[date].map((finance, index) => (
-                      <tr key={index} className="border-b">
-                        <td className="py-2 px-4 text-gray-700">{finance.category}</td>
-                        <td className="py-2 px-4 text-gray-700">${finance.amount.toFixed(2)}</td>
-                        <td className="py-2 px-4 text-gray-700">{finance.description}</td>
-                        <td className="py-2 px-4 text-gray-700 text-center">
-                          <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
-                            onClick={() => openModal(finance._id)}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
-                            onClick={() => {
-                              setCurrentFinance(finance);
-                              setIsConfirmOpen(true); // Open the confirmation dialog
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </td>
+            <div className="overflow-y-auto max-h-[60vh] pr-6"> {/* Limit the height and enable scrolling */}
+            {currentDates.map((date) => (
+              <div key={date} className="mb-6">
+                <h3 className="text-xl font-semibold text-gray-800 mb-2">
+                  {format(new Date(date), "d MMM yyyy")}
+                </h3>
+                <div className="overflow-x-auto shadow-md rounded-md">
+                  <table className="min-w-full bg-white rounded-lg">
+                    <thead className="text-left">
+                      <tr>
+                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tl-lg">
+                          Category
+                        </th>
+                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
+                          Amount
+                        </th>
+                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
+                          Description
+                        </th>
+                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tr-lg text-center">
+                          Actions
+                        </th>
                       </tr>
-                    ))}
-                    <tr className="border-t bg-gray-100">
-                      <td className="py-2 px-4 text-gray-700 font-bold">Total</td>
-                      <td className="py-2 px-4 text-gray-700 font-bold">
-                        ${groupedFinances[date].reduce((sum, finance) => sum + finance.amount, 0).toFixed(2)}
-                      </td>
-                      <td colSpan={2}></td>
-                    </tr>
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {groupedFinances[date].map((finance, index) => (
+                        <tr key={index} className="border-b">
+                          <td className="py-2 px-4 text-gray-700">{finance.category}</td>
+                          <td className="py-2 px-4 text-gray-700">${finance.amount.toFixed(2)}</td>
+                          <td className="py-2 px-4 text-gray-700">{finance.description}</td>
+                          <td className="py-2 px-4 text-gray-700 text-center">
+                            <button
+                              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
+                              onClick={() => openModal(finance._id)}
+                            >
+                              Edit
+                            </button>
+                            <button
+                              className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
+                              onClick={() => {
+                                setCurrentFinance(finance);
+                                setIsConfirmOpen(true); // Open the confirmation dialog
+                              }}
+                            >
+                              Delete
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                      <tr className="border-t bg-gray-100">
+                        <td className="py-2 px-4 text-gray-700 font-bold">Total</td>
+                        <td className="py-2 px-4 text-gray-700 font-bold">
+                          ${groupedFinances[date].reduce((sum, finance) => sum + finance.amount, 0).toFixed(2)}
+                        </td>
+                        <td colSpan={2}></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
-            </div>
-          ))}
-            <div className="flex justify-between items-center">
+            ))}
+          </div>
+
+          <div className="flex justify-between items-center mt-6">
             <button
-              className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${currentPage === 1 ? 'bg-gray-300 text-gray-500' : 'bg-gray-500 hover:bg-gray-700 text-white'}`}
+              className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                currentPage === 1 ? "bg-gray-300 text-white" : "bg-gray-500 hover:bg-gray-700 text-white"
+              }`}
               onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
               disabled={currentPage === 1}
             >
@@ -181,13 +202,15 @@ const FinanceList: React.FC<{
               Page {currentPage} of {totalPages}
             </span>
             <button
-              className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${currentPage === totalPages ? 'bg-gray-300 text-gray-500' : 'bg-gray-500 hover:bg-gray-700 text-white'}`}
+              className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+                currentPage === totalPages ? "bg-gray-300 text-white" : "bg-gray-500 hover:bg-gray-700 text-white"
+              }`}
               onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
               disabled={currentPage === totalPages}
             >
               Next
             </button>
-            </div>
+          </div>
         </>
       )}
 

@@ -14,6 +14,19 @@ interface FinanceFormProps {
   onOpenSettings: () => void;
 }
 
+// Add the resetTime function
+const resetTime = (date: Date) => {
+  return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+};
+
+// Function to format date as yyyy-MM-dd
+const formatDate = (date: Date) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+};
+
 const FinanceForm: React.FC<FinanceFormProps> = ({
   addFinance,
   categories,
@@ -21,9 +34,10 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
 }) => {
   const [rawAmount, setRawAmount] = useState<string>(""); // Store raw input value
   const [description, setDescription] = useState<string>("");
+  // Initialize with the current date using resetTime
   const [date, setDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  ); // Set today's date by default
+    formatDate(resetTime(new Date()))
+  );
   const [category, setCategory] = useState<string>(categories[0]); // Set the first category by default
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,20 +45,21 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     setRawAmount(value);
   };
 
+  // In handleSubmit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const formattedAmount = parseFloat(rawAmount).toFixed(2);
     const finance = {
       amount: parseFloat(formattedAmount),
       description,
-      date,
+      date, // Use the current state for date
       category,
     };
     addFinance(finance);
     // Reset form after submission
     setRawAmount("");
     setDescription("");
-    setDate(new Date().toISOString().split("T")[0]);
+    setDate(resetTime(new Date()).toISOString().split("T")[0]); // Reset to current date
     setCategory(categories[0]);
   };
 
@@ -157,7 +172,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
           onClick={() => {
             setRawAmount("");
             setDescription("");
-            setDate(new Date().toISOString().split("T")[0]);
+            setDate(resetTime(new Date()).toISOString().split("T")[0]); // Reset to current date
             setCategory(categories[0]);
           }}
         >

@@ -12,6 +12,7 @@ import {
   GridLineOptions,
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom"; // Import zoom plugin
+import annotationPlugin from 'chartjs-plugin-annotation';
 
 interface Finance {
   category: string;
@@ -26,7 +27,8 @@ ChartJS.register(
   PointElement,
   LineElement,
   Tooltip,
-  zoomPlugin // Register zoom plugin
+  zoomPlugin, // Register zoom plugin
+  annotationPlugin
 );
 
 interface ChartProps {
@@ -306,21 +308,21 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       },
     },
     plugins: {
+      zoom: {
+        pan: {
+          enabled: true,
+          mode: "x" as const// Enable panning along the x-axis
+        },
         zoom: {
-            pan: {
-              enabled: true,
-              mode: "x" as const// Enable panning along the x-axis
-            },
-            zoom: {
-              wheel: {
-                enabled: true, // Enable zooming via mouse wheel
-              },
-              drag: {
-                enabled: true, // Enable drag-to-zoom
-              },
-              mode: "x" as const // Zoom along the x-axis
-            },
+          wheel: {
+            enabled: true, // Enable zooming via mouse wheel
           },
+          drag: {
+            enabled: true, // Enable drag-to-zoom
+          },
+          mode: "x" as const // Zoom along the x-axis
+        },
+      },
       tooltip: {
         callbacks: {
           title: (tooltipItems: any[]) => {
@@ -345,6 +347,18 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
               );
             });
             return labels; // Return the array of labels
+          },
+        },
+      },
+      annotation: {
+        annotations: {
+          line1: {
+            type: 'line' as const, // Explicitly specify the type as 'line'
+            yMin: 0,
+            yMax: 0,
+            borderColor: 'red',
+            borderWidth: 1,
+            borderDash: [5, 5],
           },
         },
       },
@@ -405,7 +419,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
           </button>
         )}
       </div>
-      <Line data={updatedData} options={options} />
+      <Line data={updatedData} options={options} style={{ maxHeight: '40vh', overflowY: 'auto' }}/>
 
       {/* Chart Settings Dialog */}
       <ChartSettingsDialog
