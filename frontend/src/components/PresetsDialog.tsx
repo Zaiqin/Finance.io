@@ -41,7 +41,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20 p-6">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Manage Presets
