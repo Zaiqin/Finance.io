@@ -12,7 +12,7 @@ import {
   GridLineOptions,
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom"; // Import zoom plugin
-import annotationPlugin from 'chartjs-plugin-annotation';
+import annotationPlugin from "chartjs-plugin-annotation";
 
 interface Finance {
   category: string;
@@ -92,11 +92,11 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
   const resetTime = (date: Date) => {
     return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
-  
+
   const filterDataByPeriods = () => {
     let end = resetTime(currentDate); // Normalize currentDate to remove time component
     let start: Date;
-  
+
     if (dateType === "months") {
       // Calculate start and end dates for the selected months
       start = new Date(end.getFullYear(), end.getMonth() - (numPeriods - 1), 1); // Start of the first month in the range
@@ -105,11 +105,19 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       // Calculate start and end dates for the selected weeks
       const dayOfWeek = end.getDay(); // Sunday = 0, Monday = 1, ..., Saturday = 6
       const daysSinceStartOfWeek = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Adjust for Monday as the start of the week
-  
-      start = new Date(end.getFullYear(), end.getMonth(), end.getDate() - (daysSinceStartOfWeek + (numPeriods - 1) * 7)); // Start of the first week in the range
-      end = new Date(end.getFullYear(), end.getMonth(), end.getDate() + (6 - daysSinceStartOfWeek)); // End of the current week
+
+      start = new Date(
+        end.getFullYear(),
+        end.getMonth(),
+        end.getDate() - (daysSinceStartOfWeek + (numPeriods - 1) * 7)
+      ); // Start of the first week in the range
+      end = new Date(
+        end.getFullYear(),
+        end.getMonth(),
+        end.getDate() + (6 - daysSinceStartOfWeek)
+      ); // End of the current week
     }
-  
+
     // If includeFuture is false, adjust the start date to prevent selecting future dates
     if (!includeFuture) {
       const today = resetTime(new Date());
@@ -121,17 +129,17 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
         end = today;
       }
     }
-  
+
     const filteredLabels = data.labels.filter((label) => {
       const date = resetTime(new Date(label)); // Normalize label date to remove time component
       return date >= start && date <= end;
     });
-  
+
     console.log(start.toLocaleDateString(), end.toLocaleDateString());
     setDateEnd(end);
     setStartDatePeriod(start);
     setEndDatePeriod(end);
-  
+
     const filteredDatasets = data.datasets.map((dataset) => {
       const filteredData = dataset.data.filter((_, index) => {
         const date = resetTime(new Date(data.labels[index])); // Normalize label date to remove time component
@@ -139,44 +147,62 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       });
       return { ...dataset, data: filteredData };
     });
-  
+
     console.log(filteredDatasets);
-  
+
     return { labels: filteredLabels, datasets: filteredDatasets };
-  };  
-  
+  };
+
   // Function to handle previous periods
   const handlePrevious = () => {
     setCurrentDate((prevDate) => {
       let newDate;
-  
+
       if (dateType === "months") {
-        newDate = new Date(prevDate.getFullYear(), prevDate.getMonth() - numPeriods, 1); // Move back by numPeriods (months)
+        newDate = new Date(
+          prevDate.getFullYear(),
+          prevDate.getMonth() - numPeriods,
+          1
+        ); // Move back by numPeriods (months)
       } else {
-        newDate = new Date(prevDate.getFullYear(), prevDate.getMonth(), prevDate.getDate() - numPeriods * 7); // Move back by numPeriods (weeks)
+        newDate = new Date(
+          prevDate.getFullYear(),
+          prevDate.getMonth(),
+          prevDate.getDate() - numPeriods * 7
+        ); // Move back by numPeriods (weeks)
       }
-  
+
       if (includeFuture) {
-        const maxDate = new Date(Math.max(...data.labels.map(label => new Date(label).getTime())));
+        const maxDate = new Date(
+          Math.max(...data.labels.map((label) => new Date(label).getTime()))
+        );
         // Ensure newDate doesn't go beyond the maximum date in the future
         if (newDate > maxDate) {
           return maxDate;
         }
       }
-  
+
       return newDate;
     });
-  };  
-  
+  };
+
   // Function to handle next periods
   const handleNext = () => {
     setCurrentDate((prevDate) => {
       let newDate;
 
       if (dateType === "months") {
-        newDate = new Date(prevDate.getFullYear(), prevDate.getMonth() + numPeriods, 1); // Move forward by numPeriods (months)
+        newDate = new Date(
+          prevDate.getFullYear(),
+          prevDate.getMonth() + numPeriods,
+          1
+        ); // Move forward by numPeriods (months)
       } else {
-        newDate = new Date(prevDate.getFullYear(), prevDate.getMonth(), prevDate.getDate() + numPeriods * 7); // Move forward by numPeriods (weeks)
+        newDate = new Date(
+          prevDate.getFullYear(),
+          prevDate.getMonth(),
+          prevDate.getDate() + numPeriods * 7
+        ); // Move forward by numPeriods (weeks)
       }
 
       if (!includeFuture) {
@@ -211,25 +237,24 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
     setCurrentDate(startOfPeriod);
     setNumPeriods(1); // Reset the number of periods to 1
   };
-  
+
   // Ensure currentDate is set correctly when the component mounts
   React.useEffect(() => {
     const today = new Date();
     setCurrentDate(today);
   }, []);
-   
 
   const filterDataByDateRange = () => {
     if (!startDate || !endDate) return data;
-  
+
     const start = resetTime(new Date(startDate)); // Normalize startDate
     const end = resetTime(new Date(endDate)); // Normalize endDate
-  
+
     const filteredLabels = data.labels.filter((label) => {
       const date = resetTime(new Date(label)); // Normalize label date
       return date >= start && date <= end;
     });
-  
+
     const filteredDatasets = data.datasets.map((dataset) => {
       const filteredData = dataset.data.filter((_, index) => {
         const date = resetTime(new Date(data.labels[index])); // Normalize label date for datasets
@@ -237,13 +262,25 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       });
       return { ...dataset, data: filteredData };
     });
-  
+
     return { labels: filteredLabels, datasets: filteredDatasets };
   };
 
   const filteredData = useMemo(() => {
-    return filterType === "period" ? filterDataByPeriods() : filterDataByDateRange();
-  }, [data, groupedFinances, filterType, startDate, endDate, numPeriods, includeFuture, currentDate, dateType]);
+    return filterType === "period"
+      ? filterDataByPeriods()
+      : filterDataByDateRange();
+  }, [
+    data,
+    groupedFinances,
+    filterType,
+    startDate,
+    endDate,
+    numPeriods,
+    includeFuture,
+    currentDate,
+    dateType,
+  ]);
 
   const handlePointClick = (event: any, elements: any[]) => {
     if (elements.length > 0) {
@@ -273,7 +310,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
     setFilterType("period");
 
     handleTodayClick();
-  }
+  };
 
   const options = {
     scales: {
@@ -311,7 +348,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       zoom: {
         pan: {
           enabled: true,
-          mode: "x" as const// Enable panning along the x-axis
+          mode: "x" as const, // Enable panning along the x-axis
         },
         zoom: {
           wheel: {
@@ -320,7 +357,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
           drag: {
             enabled: true, // Enable drag-to-zoom
           },
-          mode: "x" as const // Zoom along the x-axis
+          mode: "x" as const, // Zoom along the x-axis
         },
       },
       tooltip: {
@@ -333,7 +370,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
             const date = tooltipItem.label; // Get the date from the tooltip item
             const total = tooltipItem.raw; // Get the total amount
             const finances = groupedFinances[date] || []; // Get finances for the date
-  
+
             // Create an array of labels to display in the tooltip
             const labels = [` Total: $${total.toFixed(2)}`];
             finances.forEach((finance) => {
@@ -353,10 +390,10 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       annotation: {
         annotations: {
           line1: {
-            type: 'line' as const, // Explicitly specify the type as 'line'
+            type: "line" as const, // Explicitly specify the type as 'line'
             yMin: 0,
             yMax: 0,
-            borderColor: 'red',
+            borderColor: "red",
             borderWidth: 1,
             borderDash: [5, 5],
           },
@@ -383,43 +420,91 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       </h2>
       <div className="mb-2 flex items-center justify-between">
         {filterType === "period" && (
-            <button
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
-                type="button"
-                onClick={handlePrevious} // Call previous handler
-            >
-                <FaChevronLeft />
-            </button>
+          <button
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+            type="button"
+            onClick={handlePrevious} // Call previous handler
+          >
+            <FaChevronLeft />
+          </button>
         )}
         {filterType === "period" ? (
           <>
             {startDatePeriod && endDatePeriod && (
               <>
-          <h2>{new Date(startDatePeriod).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: '2-digit' })} - {new Date(endDatePeriod).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: '2-digit' })} - {dateType === "months"
-              ? ` (${startDatePeriod.toLocaleString('default', { month: 'short' })} - ${endDatePeriod.toLocaleString('default', { month: 'short' })})`
-              : ` (${startDatePeriod.toLocaleString('default', { month: 'short' })} W${getWeekOfMonth(startDatePeriod)} - ${endDatePeriod.toLocaleString('default', { month: 'short' })} W${getWeekOfMonth(endDatePeriod)})`}</h2>
+                <h2 className="items-center text-center">
+                  {new Date(startDatePeriod).toLocaleDateString(undefined, {
+                    day: "numeric",
+                    month: "short",
+                    year: "2-digit",
+                  })}{" "}
+                  -{" "}
+                  {new Date(endDatePeriod).toLocaleDateString(undefined, {
+                    day: "numeric",
+                    month: "short",
+                    year: "2-digit",
+                  })}
+                  <br />
+                  {dateType === "months"
+                    ? `(${startDatePeriod.toLocaleString("default", {
+                        month: "short",
+                      })} - ${endDatePeriod.toLocaleString("default", {
+                        month: "short",
+                      })})`
+                    : `(${startDatePeriod.toLocaleString("default", {
+                        month: "short",
+                      })} W${getWeekOfMonth(
+                        startDatePeriod
+                      )} - ${endDatePeriod.toLocaleString("default", {
+                        month: "short",
+                      })} W${getWeekOfMonth(endDatePeriod)})`}
+                </h2>
               </>
             )}
           </>
         ) : (
-          <h2>Date Range: {startDate ? `${new Date(startDate).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: '2-digit' })} - ` : ''}{endDate ? `${new Date(endDate).toLocaleDateString(undefined, { day: '2-digit', month: 'short', year: '2-digit' })}` : ''}</h2>
+          <h2>
+            Date Range:{" "}
+            {startDate
+              ? `${new Date(startDate).toLocaleDateString(undefined, {
+                  day: "2-digit",
+                  month: "short",
+                  year: "2-digit",
+                })} - `
+              : ""}
+            {endDate
+              ? `${new Date(endDate).toLocaleDateString(undefined, {
+                  day: "2-digit",
+                  month: "short",
+                  year: "2-digit",
+                })}`
+              : ""}
+          </h2>
         )}
         {filterType === "period" && (
           <button
             className={`${
-              !includeFuture && dateEnd?.toDateString() === new Date().toDateString()
+              !includeFuture &&
+              dateEnd?.toDateString() === new Date().toDateString()
                 ? "bg-gray-300 opacity-50"
                 : "bg-gray-500 hover:bg-gray-700"
             } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center`}
             type="button"
             onClick={handleNext} // Call next handler
-            disabled={!includeFuture && dateEnd?.toDateString() === new Date().toDateString()}
+            disabled={
+              !includeFuture &&
+              dateEnd?.toDateString() === new Date().toDateString()
+            }
           >
-            <FaChevronRight/>
+            <FaChevronRight />
           </button>
         )}
       </div>
-      <Line data={updatedData} options={options} style={{ maxHeight: '40vh', overflowY: 'auto' }}/>
+      <Line
+        data={updatedData}
+        options={options}
+        style={{ maxHeight: "40vh", overflowY: "auto" }}
+      />
 
       {/* Chart Settings Dialog */}
       <ChartSettingsDialog
@@ -451,7 +536,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
             type="button"
             onClick={() => setIsDialogOpen(true)}
           >
-            <FaCog className="mr-2" /> <span>Chart Settings</span>
+            <FaCog className="mr-2" /> <span>Settings</span>
           </button>
         </div>
 

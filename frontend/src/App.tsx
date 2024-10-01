@@ -89,19 +89,29 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6">Finance.io</h1>
+    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
+      <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4 sm:mb-6">Finance.io</h1>
+      
+      {/* Wrapper */}
       <div className="max-w-7xl mx-auto">
-        <div className="flex space-x-8">
-          <div className="w-1/3">
-            <FinanceForm addFinance={addFinance} categories={categories} onOpenSettings={handleOpenSettings} />
-          </div>
-          <div className="w-2/3">
+        {/* Flex for large screens, stack for small */}
+        <div className="flex flex-col space-y-6 sm:flex-row sm:space-x-8 sm:space-y-0">
+          {/* Finance list section */}
+          <div className="sm:w-2/3">
             <FinanceList finances={finances} updateFinance={updateFinance} deleteFinance={deleteFinance} categories={categories} />
           </div>
+          {/* Form section */}
+          <div className="sm:w-1/3">
+            <FinanceForm addFinance={addFinance} categories={categories} onOpenSettings={handleOpenSettings} />
+          </div>
+          
         </div>
+        
+        {/* Transport fees */}
         <TransportFees />
       </div>
+
+      {/* Settings dialog */}
       {isSettingsOpen && (
         <SettingsDialog
           categories={categories}

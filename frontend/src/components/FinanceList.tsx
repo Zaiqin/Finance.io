@@ -3,6 +3,8 @@ import ChartComponent from "./Chart"; // Import the ChartComponent
 import { format } from "date-fns";
 import ConfirmationDialog from "./ConfirmationDialog"; // Import the ConfirmationDialog
 import EditFinanceModal from './EditFinanceModal'; // Import the new modal component
+import { FaTrash } from "react-icons/fa";
+import { FiEdit2 } from "react-icons/fi";
 
 interface Finance {
   _id: string;
@@ -120,7 +122,7 @@ const FinanceList: React.FC<{
 
       {/* Chart or Table View */}
       {showChart ? (
-        <div className="mb-6">
+        <div className="mb-3">
           <ChartComponent data={chartData} groupedFinances={groupedFinances} />
         </div>
       ) : (
@@ -156,21 +158,21 @@ const FinanceList: React.FC<{
                           <td className="py-2 px-4 text-gray-700">${finance.amount.toFixed(2)}</td>
                           <td className="py-2 px-4 text-gray-700">{finance.description}</td>
                           <td className="py-2 px-4 text-gray-700 text-center">
-                            <button
-                              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
-                              onClick={() => openModal(finance._id)}
-                            >
-                              Edit
-                            </button>
-                            <button
-                              className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
-                              onClick={() => {
-                                setCurrentFinance(finance);
-                                setIsConfirmOpen(true); // Open the confirmation dialog
-                              }}
-                            >
-                              Delete
-                            </button>
+                          <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
+                            onClick={() => openModal(finance._id)}
+                          >
+                            <FiEdit2 />
+                          </button>
+                          <button
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 m-1 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
+                            onClick={() => {
+                            setCurrentFinance(finance);
+                            setIsConfirmOpen(true); // Open the confirmation dialog
+                            }}
+                          >
+                            <FaTrash />
+                          </button>
                           </td>
                         </tr>
                       ))}
