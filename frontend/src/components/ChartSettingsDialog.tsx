@@ -75,7 +75,7 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-      <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full">
+      <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full m-6">
         <h2 className="text-2xl font-bold mb-4">Chart Settings</h2>
 
         {/* Scrollable Content Wrapper */}

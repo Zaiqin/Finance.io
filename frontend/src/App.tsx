@@ -6,14 +6,24 @@ import SettingsDialog from "./components/SettingsDialog";
 
 const App: React.FC = () => {
   const [finances, setFinances] = useState<any[]>([]);
-  const [categories, setCategories] = useState<string[]>(["Breakfast", "Lunch", "Dinner", "Snacks", "Travel", "Activity"]);
+  const [categories, setCategories] = useState<string[]>([
+    "Breakfast",
+    "Lunch",
+    "Dinner",
+    "Snacks",
+    "Travel",
+    "Activity",
+  ]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isFinanceFormOpen, setIsFinanceFormOpen] = useState(false);
 
   useEffect(() => {
     const fetchFinances = async () => {
       try {
-        console.log(`${process.env.REACT_APP_SERVER_URL}`)
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/finances`);
+        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/api/finances`
+        );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -25,17 +35,20 @@ const App: React.FC = () => {
       }
     };
     fetchFinances();
-  }, []);  
+  }, []);
 
   const addFinance = async (finance: any) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/finances`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(finance),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/finances`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(finance),
+        }
+      );
       const newFinance = await response.json();
       setFinances([...finances, newFinance]);
     } catch (error) {
@@ -45,13 +58,16 @@ const App: React.FC = () => {
 
   const updateFinance = async (id: string, updatedFinance: any) => {
     try {
-      const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/finances/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(updatedFinance),
-      });
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/finances/${id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatedFinance),
+        }
+      );
       const data = await response.json();
       setFinances((prev) =>
         prev.map((finance) => (finance._id === id ? data : finance))
@@ -59,7 +75,7 @@ const App: React.FC = () => {
     } catch (error) {
       console.error("Error updating finance:", error);
     }
-  };  
+  };
 
   const deleteFinance = async (id: string) => {
     try {
@@ -88,28 +104,52 @@ const App: React.FC = () => {
     setCategories(categories.filter((cat) => cat !== category));
   };
 
+  const handleOpenFinanceForm = () => {
+    setIsFinanceFormOpen(true);
+  };
+
+  const handleCloseFinanceForm = () => {
+    setIsFinanceFormOpen(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
-      <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4 sm:mb-6">Finance.io</h1>
-      
-      {/* Wrapper */}
+      <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4 sm:mb-6">
+        Finance.io
+      </h1>
+
       <div className="max-w-7xl mx-auto">
-        {/* Flex for large screens, stack for small */}
-        <div className="flex flex-col space-y-6 sm:flex-row sm:space-x-8 sm:space-y-0">
+        <div className="w-full">
           {/* Finance list section */}
-          <div className="sm:w-2/3">
-            <FinanceList finances={finances} updateFinance={updateFinance} deleteFinance={deleteFinance} categories={categories} />
+          <div>
+            <FinanceList
+              finances={finances}
+              updateFinance={updateFinance}
+              deleteFinance={deleteFinance}
+              categories={categories}
+              handleOpenFinanceForm={handleOpenFinanceForm}
+            />
           </div>
-          {/* Form section */}
-          <div className="sm:w-1/3">
-            <FinanceForm addFinance={addFinance} categories={categories} onOpenSettings={handleOpenSettings} />
-          </div>
-          
         </div>
-        
+
         {/* Transport fees */}
         <TransportFees />
       </div>
+
+      {/* Finance form dialog */}
+      {isFinanceFormOpen && (
+        <div className="fixed inset-0 flex items-center justify-center z-50 m-6">
+          <div className="fixed inset-0 bg-black opacity-50"></div>
+          <div className="bg-white p-6 rounded shadow-lg w-full sm:w-1/3 z-10">
+            <FinanceForm
+              addFinance={addFinance}
+              categories={categories}
+              onOpenSettings={handleOpenSettings}
+              onClose={handleCloseFinanceForm}
+            />
+          </div>
+        </div>
+      )}
 
       {/* Settings dialog */}
       {isSettingsOpen && (

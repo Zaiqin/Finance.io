@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import ConfirmationDialog from "./ConfirmationDialog"; // Import the ConfirmationDialog
 import EditFinanceModal from './EditFinanceModal'; // Import the new modal component
 import { FaTrash } from "react-icons/fa";
-import { FiEdit2 } from "react-icons/fi";
+import { MdEdit } from "react-icons/md";
 
 interface Finance {
   _id: string;
@@ -19,7 +19,8 @@ const FinanceList: React.FC<{
   updateFinance: (id: string, finance: any) => void;
   deleteFinance: (id: string) => void;
   categories: string[];
-}> = ({ finances, updateFinance, deleteFinance, categories }) => {
+  handleOpenFinanceForm: () => void; // Add a new prop for opening the finance form
+}> = ({ finances, updateFinance, deleteFinance, categories, handleOpenFinanceForm }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // State for confirmation dialog
   const [currentFinance, setCurrentFinance] = useState<Finance | null>(null);
@@ -111,12 +112,18 @@ const FinanceList: React.FC<{
     <div>
       {/* Chart and table toggle */}
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800">Finance Overview</h2>
         <button
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           onClick={() => setShowChart(!showChart)}
         >
           {showChart ? "Show Table" : "Show Chart"}
+        </button>
+        <h2 className="text-2xl font-semibold text-gray-800">Dashboard</h2>
+        <button
+          onClick={handleOpenFinanceForm}
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        >
+          Add Finance
         </button>
       </div>
 
@@ -158,21 +165,23 @@ const FinanceList: React.FC<{
                           <td className="py-2 px-4 text-gray-700">${finance.amount.toFixed(2)}</td>
                           <td className="py-2 px-4 text-gray-700">{finance.description}</td>
                           <td className="py-2 px-4 text-gray-700 text-center">
-                          <button
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
+                          <div className="flex justify-center">
+                            <button
+                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
                             onClick={() => openModal(finance._id)}
-                          >
-                            <FiEdit2 />
-                          </button>
-                          <button
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 m-1 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
+                            >
+                            <MdEdit />
+                            </button>
+                            <button
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
                             onClick={() => {
-                            setCurrentFinance(finance);
-                            setIsConfirmOpen(true); // Open the confirmation dialog
+                              setCurrentFinance(finance);
+                              setIsConfirmOpen(true); // Open the confirmation dialog
                             }}
-                          >
+                            >
                             <FaTrash />
-                          </button>
+                            </button>
+                          </div>
                           </td>
                         </tr>
                       ))}

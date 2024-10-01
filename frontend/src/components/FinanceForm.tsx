@@ -12,6 +12,7 @@ interface FinanceFormProps {
   addFinance: (finance: Finance) => void;
   categories: string[];
   onOpenSettings: () => void;
+  onClose: () => void;
 }
 
 // Add the resetTime function
@@ -22,8 +23,8 @@ const resetTime = (date: Date) => {
 // Function to format date as yyyy-MM-dd
 const formatDate = (date: Date) => {
   const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0'); // Months are zero-based
-  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based
+  const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 };
 
@@ -31,13 +32,12 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   addFinance,
   categories,
   onOpenSettings,
+  onClose,
 }) => {
   const [rawAmount, setRawAmount] = useState<string>(""); // Store raw input value
   const [description, setDescription] = useState<string>("");
   // Initialize with the current date using resetTime
-  const [date, setDate] = useState<string>(
-    formatDate(resetTime(new Date()))
-  );
+  const [date, setDate] = useState<string>(formatDate(resetTime(new Date())));
   const [category, setCategory] = useState<string>(categories[0]); // Set the first category by default
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -66,7 +66,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="w-full max-w-lg p-6 bg-white rounded-lg shadow-md"
+      className="w-full max-w-2xl bg-white rounded-lg"
     >
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add Finance</h2>
       <div className="mb-4">
@@ -178,12 +178,20 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
         >
           Clear
         </button>
-        <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          type="submit"
-        >
-          Add
-        </button>
+        <div className="flex space-x-2">
+          <button
+            onClick={onClose}
+            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+          >
+            Close
+          </button>
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            type="submit"
+          >
+            Add
+          </button>
+        </div>
       </div>
     </form>
   );
