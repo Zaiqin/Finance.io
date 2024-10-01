@@ -21,6 +21,7 @@ const EditFinanceModal: React.FC<{
   const [localCategory, setLocalCategory] = useState<string>(finance.category);
 
   const handleSubmit = (event: React.FormEvent) => {
+    console.log("submit");
     event.preventDefault();
     const updatedFinance = {
       ...finance,
@@ -110,7 +111,6 @@ const EditFinanceModal: React.FC<{
           </div>
           <div className="flex justify-between">
             <button
-              type="button"
               onClick={onClose}
               className="bg-gray-300 text-gray-700 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             >

@@ -1,7 +1,12 @@
 import React, { useState } from "react";
 
+interface Category {
+  _id: string | undefined;
+  description: string;
+}
+
 interface SettingsDialogProps {
-  categories: string[];
+  categories: Category[];
   onClose: () => void;
   onAddCategory: (category: string) => void;
   onDeleteCategory: (category: string) => void;
@@ -16,21 +21,27 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
   const [newCategory, setNewCategory] = useState("");
 
   const handleAddCategory = () => {
-    if (newCategory && !categories.includes(newCategory)) {
+    if (newCategory && !categories.some(category => category.description === newCategory)) {
       onAddCategory(newCategory);
       setNewCategory("");
     }
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20">
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           Manage Categories
         </h2>
-        <div className="mb-4">
+        <form
+          className="mb-4"
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleAddCategory();
+          }}
+        >
           <label
-            className="block text-gray-700 text-sm font-bold mb-2"
+            className="block text-gray-700 text-m font-bold mb-2"
             htmlFor="newCategory"
           >
             Add New Category
@@ -40,15 +51,17 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
             id="newCategory"
             type="text"
             value={newCategory}
+            placeholder="Name"
+            required
             onChange={(e) => setNewCategory(e.target.value)}
           />
           <button
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-2"
-            onClick={handleAddCategory}
+            type="submit"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-3"
           >
             Add
           </button>
-        </div>
+        </form>
         <div className="mb-4">
           <h3 className="text-xl font-semibold text-gray-800 mb-2">
             Existing Categories
@@ -59,10 +72,11 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                 key={index}
                 className="flex justify-between items-center mb-2"
               >
-                <span>{category}</span>
+                <span>{category.description}</span>
                 <button
+                  type="button"
                   className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                  onClick={() => onDeleteCategory(category)}
+                  onClick={() => onDeleteCategory(category._id!)}
                 >
                   Delete
                 </button>
@@ -72,6 +86,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
         </div>
         <div className="flex items-center justify-between">
           <button
+            type="button"
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             onClick={onClose}
           >

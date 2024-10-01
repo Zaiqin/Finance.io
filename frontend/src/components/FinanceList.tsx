@@ -24,7 +24,6 @@ const FinanceList: React.FC<{
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // State for confirmation dialog
   const [currentFinance, setCurrentFinance] = useState<Finance | null>(null);
-  const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [showChart, setShowChart] = useState(true); // State to toggle between chart and table
   const [currentPage, setCurrentPage] = useState(1); // State for current page
   const [itemsPerPage, setItemsPerPage] = useState(5); // Default number of items per page
@@ -56,11 +55,12 @@ const FinanceList: React.FC<{
   const closeModal = () => {
     setIsModalOpen(false);
     setCurrentFinance(null);
-    setCurrentIndex(null);
   };
 
   const handleUpdate = (updatedFinance: Finance) => {
-    if (currentIndex !== null && currentFinance) {
+    console.log("asdf")
+    console.log(updatedFinance)
+    if (currentFinance) {
       updateFinance(currentFinance._id, updatedFinance);
       closeModal();
     }
@@ -73,7 +73,8 @@ const FinanceList: React.FC<{
 
   // Sort the finances by date in descending order
   const sortedFinances = [...finances].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+    (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
+    // (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() causes graph to be reversed
   );
 
   const groupedFinances = sortedFinances.reduce((acc, finance) => {
@@ -113,6 +114,7 @@ const FinanceList: React.FC<{
       {/* Chart and table toggle */}
       <div className="mb-6 flex justify-between items-center">
         <button
+          type="button"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
           onClick={() => setShowChart(!showChart)}
         >
@@ -120,6 +122,7 @@ const FinanceList: React.FC<{
         </button>
         <h2 className="text-2xl font-semibold text-gray-800">Dashboard</h2>
         <button
+          type="button"
           onClick={handleOpenFinanceForm}
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
         >
@@ -167,12 +170,14 @@ const FinanceList: React.FC<{
                           <td className="py-2 px-4 text-gray-700 text-center">
                           <div className="flex justify-center">
                             <button
+                            type="button"
                             className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
                             onClick={() => openModal(finance._id)}
                             >
                             <MdEdit />
                             </button>
                             <button
+                            type="button"
                             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
                             onClick={() => {
                               setCurrentFinance(finance);
@@ -201,6 +206,7 @@ const FinanceList: React.FC<{
 
           <div className="flex justify-between items-center mt-6">
             <button
+              type="button"
               className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
                 currentPage === 1 ? "bg-gray-300 text-white" : "bg-gray-500 hover:bg-gray-700 text-white"
               }`}
@@ -213,6 +219,7 @@ const FinanceList: React.FC<{
               Page {currentPage} of {totalPages}
             </span>
             <button
+              type="button"
               className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
                 currentPage === totalPages ? "bg-gray-300 text-white" : "bg-gray-500 hover:bg-gray-700 text-white"
               }`}

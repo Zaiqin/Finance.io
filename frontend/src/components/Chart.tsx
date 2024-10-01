@@ -543,12 +543,14 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
         {/* Right-aligned group (Today and Reset) */}
         <div className="flex space-x-2">
           <button
+            type="button"
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
             onClick={resetToDefault}
           >
             Reset View
           </button>
           <button
+            type="button"
             className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             onClick={handleTodayClick}
           >

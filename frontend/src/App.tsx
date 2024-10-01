@@ -3,18 +3,33 @@ import FinanceForm from "./components/FinanceForm";
 import FinanceList from "./components/FinanceList";
 import TransportFees from "./components/TransportFees";
 import SettingsDialog from "./components/SettingsDialog";
+import PresetsDialog from "./components/PresetsDialog";
+
+interface Finance {
+  amount: number;
+  description: string;
+  date: string;
+  category: string | undefined;
+}
+
+interface Preset {
+  _id: string | undefined;
+  amount: number;
+  description: string;
+  category: string | undefined;
+}
+
+interface Category {
+  _id: string | undefined;
+  description: string;
+}
 
 const App: React.FC = () => {
   const [finances, setFinances] = useState<any[]>([]);
-  const [categories, setCategories] = useState<string[]>([
-    "Breakfast",
-    "Lunch",
-    "Dinner",
-    "Snacks",
-    "Travel",
-    "Activity",
-  ]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [presets, setPresets] = useState<Preset[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isPresetsOpen, setIsPresetsOpen] = useState(false);
   const [isFinanceFormOpen, setIsFinanceFormOpen] = useState(false);
 
   useEffect(() => {
@@ -35,6 +50,50 @@ const App: React.FC = () => {
       }
     };
     fetchFinances();
+  }, []);
+
+  useEffect(() => {
+    const fetchPresets = async () => {
+      try {
+        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/api/presets`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const formattedData = data.map((preset: any) => ({
+          ...preset,
+          amount: parseFloat(preset.amount).toFixed(2),
+        }));
+        console.log(formattedData)
+        setPresets(formattedData);
+      } catch (error) {
+        console.error("Error fetching finances:", error);
+      }
+    };
+    fetchPresets();
+  }, []);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/api/categories`
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+        setCategories(data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+    fetchCategories();
   }, []);
 
   const addFinance = async (finance: any) => {
@@ -96,12 +155,75 @@ const App: React.FC = () => {
     setIsSettingsOpen(false);
   };
 
-  const handleAddCategory = (category: string) => {
-    setCategories([...categories, category]);
+  const handleOpenPresets = () => {
+    setIsPresetsOpen(true);
   };
 
-  const handleDeleteCategory = (category: string) => {
-    setCategories(categories.filter((cat) => cat !== category));
+  const handleClosePresets = () => {
+    setIsPresetsOpen(false);
+  };
+
+  const handleAddCategory = async (description: string) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/categories`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ description }),
+        }
+      );
+      const newCategory = await response.json();
+      setCategories([...categories, newCategory]);
+      console.log("Category added successfully");
+    } catch (error) {
+      console.error("Error adding category:", error);
+    }
+  };
+
+  const handleDeleteCategory = async (categoryId: string) => {
+    try {
+      await fetch(`${process.env.REACT_APP_SERVER_URL}/api/categories/${categoryId}`, {
+        method: "DELETE",
+      });
+      setCategories(categories.filter((cat) => cat._id !== categoryId));
+      console.log("Category deleted successfully");
+    } catch (error) {
+      console.error("Error deleting category:", error);
+    }
+  };
+
+  const handleAddPreset = async (preset: Preset) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/presets`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(preset),
+        }
+      );
+      const newPreset = await response.json();
+      setPresets([...presets, newPreset]);
+      console.log("Preset added successfully");
+    } catch (error) {
+      console.error("Error adding preset:", error);
+    }
+  };
+
+  const handleDeletePreset = async (presetId: string) => {
+    try {
+      await fetch(`${process.env.REACT_APP_SERVER_URL}/api/presets/${presetId}`, {
+        method: "DELETE",
+      });
+      setPresets((prev) => prev.filter((preset) => preset._id !== presetId));
+    } catch (error) {
+      console.error("Error deleting preset:", error);
+    }
   };
 
   const handleOpenFinanceForm = () => {
@@ -126,7 +248,7 @@ const App: React.FC = () => {
               finances={finances}
               updateFinance={updateFinance}
               deleteFinance={deleteFinance}
-              categories={categories}
+              categories={categories.map(category => category.description)}
               handleOpenFinanceForm={handleOpenFinanceForm}
             />
           </div>
@@ -138,14 +260,16 @@ const App: React.FC = () => {
 
       {/* Finance form dialog */}
       {isFinanceFormOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 m-6">
+        <div className="fixed inset-0 flex items-center justify-center z-10 m-6">
           <div className="fixed inset-0 bg-black opacity-50"></div>
           <div className="bg-white p-6 rounded shadow-lg w-full sm:w-1/3 z-10">
             <FinanceForm
               addFinance={addFinance}
-              categories={categories}
+              categories={categories.map(category => category.description)}
               onOpenSettings={handleOpenSettings}
+              onOpenPresets={handleOpenPresets}
               onClose={handleCloseFinanceForm}
+              presets={presets}
             />
           </div>
         </div>
@@ -158,6 +282,17 @@ const App: React.FC = () => {
           onClose={handleCloseSettings}
           onAddCategory={handleAddCategory}
           onDeleteCategory={handleDeleteCategory}
+        />
+      )}
+
+      {/* Presets dialog */}
+      {isPresetsOpen && (
+        <PresetsDialog
+          presets={presets}
+          categories={categories.map(category => category.description)}
+          onClose={handleClosePresets}
+          onAddPreset={handleAddPreset}
+          onDeletePreset={handleDeletePreset}
         />
       )}
     </div>

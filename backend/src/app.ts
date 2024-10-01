@@ -17,6 +17,8 @@ app.use(cors());
 // Define Routes
 app.use('/api/finances', require('./routes/finances'));
 app.use('/api/travel', require('./routes/travel'));
+app.use('/api/presets', require('./routes/presets'));
+app.use('/api/categories', require('./routes/category'));
 
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
