@@ -5,7 +5,6 @@ import SettingsDialog from "./components/SettingsDialog";
 import PresetsDialog from "./components/PresetsDialog";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import axiosInstance, { setAuthHeader } from './axiosConfig';
 
 interface Preset {
   _id: string | undefined;
@@ -28,16 +27,27 @@ const App: React.FC = () => {
   const [isFinanceFormOpen, setIsFinanceFormOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn) return;
 
     const fetchFinances = async () => {
       try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_SERVER_URL}/api/finances`
+        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/api/finances`, {
+            headers: {
+              'user': user!, // Replace with the actual tenant email
+            },
+          }
         );
-        setFinances(response.data);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+        setFinances(data);
       } catch (error) {
         console.error("Error fetching finances:", error);
       }
@@ -50,13 +60,23 @@ const App: React.FC = () => {
 
     const fetchPresets = async () => {
       try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_SERVER_URL}/api/presets`
+        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/api/presets`, {
+            headers: {
+              'user': user!,
+            },
+          }
         );
-        const formattedData = response.data.map((preset: any) => ({
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        const formattedData = data.map((preset: any) => ({
           ...preset,
           amount: parseFloat(preset.amount).toFixed(2),
         }));
+        console.log(formattedData);
         setPresets(formattedData);
       } catch (error) {
         console.error("Error fetching presets:", error);
@@ -70,10 +90,20 @@ const App: React.FC = () => {
 
     const fetchCategories = async () => {
       try {
-        const response = await axiosInstance.get(
-          `${process.env.REACT_APP_SERVER_URL}/api/categories`
+        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        const response = await fetch(
+          `${process.env.REACT_APP_SERVER_URL}/api/categories`, {
+            headers: {
+              'user': user!,
+            },
+          }
         );
-        setCategories(response.data);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(data);
+        setCategories(data);
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -85,11 +115,19 @@ const App: React.FC = () => {
     if (!isLoggedIn) return;
 
     try {
-      const response = await axiosInstance.post(
+      const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/finances`,
-        finance
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'user': user!,
+          },
+          body: JSON.stringify(finance),
+        }
       );
-      setFinances([...finances, response.data]);
+      const newFinance = await response.json();
+      setFinances([...finances, newFinance]);
     } catch (error) {
       console.error("Error adding finance:", error);
     }
@@ -99,12 +137,20 @@ const App: React.FC = () => {
     if (!isLoggedIn) return;
 
     try {
-      const response = await axiosInstance.put(
+      const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/finances/${id}`,
-        updatedFinance
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            'user': user!,
+          },
+          body: JSON.stringify(updatedFinance),
+        }
       );
+      const data = await response.json();
       setFinances((prev) =>
-        prev.map((finance) => (finance._id === id ? response.data : finance))
+        prev.map((finance) => (finance._id === id ? data : finance))
       );
     } catch (error) {
       console.error("Error updating finance:", error);
@@ -115,9 +161,12 @@ const App: React.FC = () => {
     if (!isLoggedIn) return;
 
     try {
-      await axiosInstance.delete(
-        `${process.env.REACT_APP_SERVER_URL}/api/finances/${id}`
-      );
+      await fetch(`${process.env.REACT_APP_SERVER_URL}/api/finances/${id}`, {
+        method: "DELETE",
+        headers: {
+          'user': user!,
+        },
+      });
       setFinances((prev) => prev.filter((finance) => finance._id !== id));
     } catch (error) {
       console.error("Error deleting finance:", error);
@@ -146,11 +195,19 @@ const App: React.FC = () => {
     if (!isLoggedIn) return;
 
     try {
-      const response = await axiosInstance.post(
+      const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/categories`,
-        { description }
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'user': user!,
+          },
+          body: JSON.stringify({ description }),
+        }
       );
-      setCategories([...categories, response.data]);
+      const newCategory = await response.json();
+      setCategories([...categories, newCategory]);
       console.log("Category added successfully");
     } catch (error) {
       console.error("Error adding category:", error);
@@ -161,8 +218,12 @@ const App: React.FC = () => {
     if (!isLoggedIn) return;
 
     try {
-      await axiosInstance.delete(
-        `${process.env.REACT_APP_SERVER_URL}/api/categories/${categoryId}`
+      await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/categories/${categoryId}`,
+        {
+          method: "DELETE",
+          headers: { 'user': user! },
+        }
       );
       setCategories(categories.filter((cat) => cat._id !== categoryId));
       console.log("Category deleted successfully");
@@ -175,11 +236,19 @@ const App: React.FC = () => {
     if (!isLoggedIn) return;
 
     try {
-      const response = await axiosInstance.post(
+      const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/presets`,
-        preset
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            'user': user!,
+          },
+          body: JSON.stringify(preset),
+        }
       );
-      setPresets([...presets, response.data]);
+      const newPreset = await response.json();
+      setPresets([...presets, newPreset]);
       console.log("Preset added successfully");
     } catch (error) {
       console.error("Error adding preset:", error);
@@ -190,8 +259,12 @@ const App: React.FC = () => {
     if (!isLoggedIn) return;
 
     try {
-      await axiosInstance.delete(
-        `${process.env.REACT_APP_SERVER_URL}/api/presets/${presetId}`
+      await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/presets/${presetId}`,
+        {
+          method: "DELETE",
+          headers: { 'user': user! },
+        }
       );
       setPresets((prev) => prev.filter((preset) => preset._id !== presetId));
     } catch (error) {
@@ -222,7 +295,7 @@ const App: React.FC = () => {
 
         setIsLoggedIn(true);
         setIsLoading(false);
-        setAuthHeader(decoded.email);
+        setUser(decoded.email);
       } else {
         console.error("No credential found in the response");
       }
