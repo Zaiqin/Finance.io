@@ -305,24 +305,6 @@ const App: React.FC = () => {
 
         setIsLoading(true);
   
-        // Send the email to the backend API to connect the user to the DB
-        const emailWithoutPostfix = decoded.email.replace('@gmail.com', '');
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/connect-db`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ email: emailWithoutPostfix }),
-        });
-  
-        // Check if the request was successful
-        if (!response.ok) {
-          throw new Error(`Failed to connect to the database: ${response.statusText}`);
-        }
-  
-        const data = await response.json();
-        console.log("API Response Message:", data.message);
-  
         // Set login state to true
         setIsLoggedIn(true);
         setIsLoading(false);

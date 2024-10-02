@@ -29,22 +29,5 @@ app.use('/api/travel', require('./routes/travel'));
 app.use('/api/presets', require('./routes/presets'));
 app.use('/api/categories', require('./routes/category'));
 
-
-// Connect-DB Endpoint
-app.post('/api/connect-db', async (req: Request, res: Response) => {
-  try {
-    await mongoose.connection.db.admin().ping();
-    res.json({ message: 'Connected to MongoDB' });
-  } catch (err: unknown) {
-    if (err instanceof Error) {
-      console.error(err.message);
-      res.status(500).json({ message: 'Failed to connect to MongoDB' });
-    } else {
-      console.error('Unknown error');
-      res.status(500).json({ message: 'Failed to connect to MongoDB' });
-    }
-  }
-});
-
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
