@@ -329,6 +329,7 @@ const App: React.FC = () => {
             onError={() => {
               console.log("Login Failed");
             }}
+            useOneTap
           />
         )}
       </div>
