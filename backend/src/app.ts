@@ -38,7 +38,7 @@ const connectDB = async (email: string) => {
     }
     setTimeout(async () => {
       await connectDB(email);
-    }, 0); // Retry immediately
+    }, 0);
   }
 };
 
