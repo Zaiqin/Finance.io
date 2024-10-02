@@ -1,5 +1,5 @@
 const router = require('express').Router();
-import { getMRT, getBus } from "../controllers/travelController";
+import { getMRT, getBus, calculateMRTFare, calculateBusFare } from "../controllers/travelController";
 
 // @route   GET /api/travel/mrt
 // @desc    Get MRT information
@@ -10,5 +10,15 @@ router.get('/mrt', getMRT);
 // @desc    Get Bus information
 // @access  Public
 router.get('/bus', getBus);
+
+// @route   POST /api/travel/mrt/fare
+// @desc    Calculate MRT fare
+// @access  Public
+router.post('/mrt/fare', calculateMRTFare);
+
+// @route   POST /api/travel/bus/fare
+// @desc    Calculate Bus fare
+// @access  Public
+router.post('/bus/fare', calculateBusFare);
 
 module.exports = router;

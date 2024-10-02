@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import FinanceForm from "./components/FinanceForm";
 import FinanceList from "./components/FinanceList";
-import TransportFees from "./components/TransportFees";
 import SettingsDialog from "./components/SettingsDialog";
 import PresetsDialog from "./components/PresetsDialog";
 
@@ -253,16 +252,13 @@ const App: React.FC = () => {
             />
           </div>
         </div>
-
-        {/* Transport fees */}
-        <TransportFees />
       </div>
 
       {/* Finance form dialog */}
       {isFinanceFormOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-10 m-6">
           <div className="fixed inset-0 bg-black opacity-50"></div>
-          <div className="bg-white p-6 rounded shadow-lg w-full sm:w-1/3 z-10">
+          <div className="bg-white p-6 rounded shadow-lg w-full sm:w-1/3 min-w-[350px] z-10">
             <FinanceForm
               addFinance={addFinance}
               categories={categories.map(category => category.description)}
