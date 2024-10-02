@@ -1,6 +1,9 @@
 import express, { Request, Response } from 'express';
-const connectDB = require('./db'); // Import the connectDB function
-const cors = require('cors');
+import cors from 'cors';
+import mongoose from 'mongoose';
+import dotenv from 'dotenv';
+
+dotenv.config(); // Load environment variables
 
 const app = express();
 
@@ -18,6 +21,27 @@ app.use('/api/presets', require('./routes/presets'));
 app.use('/api/categories', require('./routes/category'));
 
 // Connect to MongoDB
+const connectDB = async (email: string) => {
+  try {
+    console.log("connectDB", email);
+    await mongoose.disconnect();
+    const DB_URI = `${process.env.ATLAS_URI}${email}?retryWrites=true&w=majority&appName=Cluster0`;
+    await mongoose.connect(DB_URI);
+    console.log('MongoDB connected...');
+  } catch (err: any) {
+    console.error(err.message);
+    console.log('Disconnecting and retrying connection immediately...');
+    try {
+      await mongoose.disconnect();
+    } catch (disconnectErr: any) {
+      console.error('Error during disconnection:', disconnectErr.message);
+    }
+    setTimeout(async () => {
+      await connectDB(email);
+    }, 0); // Retry immediately
+  }
+};
+
 app.post('/api/connect-db', async (req: Request, res: Response) => {
   const { email } = req.body;
   if (!email) {

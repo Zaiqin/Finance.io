@@ -33,6 +33,7 @@ const App: React.FC = () => {
   const [isPresetsOpen, setIsPresetsOpen] = useState(false);
   const [isFinanceFormOpen, setIsFinanceFormOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -280,19 +281,21 @@ const App: React.FC = () => {
           return;
         }
 
-        if (decoded.email != 'phuazaiqin@gmail.com') {
-          alert("Unauthorized email");
-          return
-        }
+        setIsLoading(true);
+
+        // if (decoded.email != 'phuazaiqin@gmail.com') {
+        //   alert("Unauthorized email");
+        //   return
+        // }
   
         // Send the email to the backend API to connect the user to the DB
+        const emailWithoutPostfix = decoded.email.replace('@gmail.com', '');
         const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/connect-db`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ email: 'test' }),
-          //body: JSON.stringify({ email: decoded.email }),
+          body: JSON.stringify({ email: emailWithoutPostfix }),
         });
   
         // Check if the request was successful
@@ -305,6 +308,7 @@ const App: React.FC = () => {
   
         // Set login state to true
         setIsLoggedIn(true);
+        setIsLoading(false);
       } else {
         console.error("No credential found in the response");
       }
@@ -346,11 +350,16 @@ const App: React.FC = () => {
       {!isLoggedIn ? (
       <div className="flex flex-col items-center justify-center pt-[30vh]">
         <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-4">
-        Welcome to Finance.io
+          Welcome to Finance.io
         </h2>
         <p className="text-gray-600 mb-6 text-center">
-        Please log in to manage your finances.
+          Please log in to manage your finances.
         </p>
+        {isLoading && (
+          <div className="flex items-center justify-center">
+        <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 border-t-blue-500 h-10 w-10 mb-4 animate-spin"></div>
+          </div>
+        )}
       </div>
       ) : (
       <div className="max-w-7xl mx-auto">
