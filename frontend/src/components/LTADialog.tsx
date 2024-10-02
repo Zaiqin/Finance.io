@@ -36,7 +36,7 @@ interface Bus {
 }
 
 const LTADialog: React.FC<LTADialogProps> = ({ open, onClose }) => {
-    const [formData, setFormData] = useState({
+    const initialFormData = {
         transportType: '',
         busNumber: '',
         busRoute: '',
@@ -44,12 +44,15 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose }) => {
         endBusStop: '',
         startStation: '',
         endStation: '',
-    });
+    };
+
+    const [formData, setFormData] = useState(initialFormData);
 
     const [preset, setPreset] = useState<Preset>();
     const [categories] = useState<string[]>(['Category1', 'Category2']); // Example categories
     const [stations, setStations] = useState<Station[] | null>(null);
     const [buses, setBuses] = useState<Bus[] | null>(null);
+    const [fare, setFare] = useState<number | null>(null);
 
     useEffect(() => {
         const fetchStations = async () => {
@@ -71,6 +74,20 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose }) => {
         fetchStations();
         fetchBuses();
     }, []);
+
+    useEffect(() => {
+        const calculateFare = async () => {
+            let fare = 0;
+            if (formData.transportType === 'MRT' && formData.startStation && formData.endStation) {
+                fare = await calculateMRTFare(formData.startStation, formData.endStation);
+            } else if (formData.transportType === 'Bus' && formData.startBusStop && formData.endBusStop && formData.busNumber) {
+                fare = await calculateBusFare(formData.startBusStop, formData.endBusStop, formData.busNumber);
+            }
+            setFare(fare);
+        };
+
+        calculateFare();
+    }, [formData.startStation, formData.endStation, formData.startBusStop, formData.endBusStop, formData.busNumber, formData.transportType]);
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -97,33 +114,41 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose }) => {
             body: payload.toString(),
         });
         const data = await response.json();
-        return data.fare;
+        return parseInt(data.fare, 10) / 100;
     };
 
-    const calculateBusFare = async (startBusStop: string, endBusStop: string) => {
-        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/fare/bus`, {
+    const calculateBusFare = async (startBusStop: string, endBusStop: string, bus: string) => {
+        const payload = new URLSearchParams({
+            fare: '30',
+            from: startBusStop,
+            to: endBusStop,
+            tripInfo: 'usiAccumulatedDistance1=0-usiAccumulatedDistance2=0-usiAccumulatedDistance3=0-usiAccumulatedDistance4=0-usiAccumulatedDistance5=0-usiAccumulatedDistance6=0-usiAccumulatedFare1=0-usiAccumulatedFare2=0-usiAccumulatedFare3=0-usiAccumulatedFare4=0-usiAccumulatedFare5=0-usiAccumulatedFare6=0',
+            addTripInfo: '0',
+            bus: bus
+        });
+
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/travel/bus/fare`, {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json',
+                'Content-Type': 'application/x-www-form-urlencoded',
             },
-            body: JSON.stringify({ startBusStop, endBusStop }),
+            body: payload.toString(),
         });
         const data = await response.json();
-        return data.fare;
+        return parseInt(data.fare, 10) / 100;
     };
 
     const handleSubmit = async () => {
-        let fare = 0;
-        if (formData.transportType === 'MRT') {
-            fare = await calculateMRTFare(formData.startStation, formData.endStation);
-        } else if (formData.transportType === 'Bus') {
-            fare = await calculateBusFare(formData.startBusStop, formData.endBusStop);
-        }
-
         // Handle form submission logic here
         console.log(fare)
         console.log({ ...formData, fare });
         onClose();
+        resetForm();
+    };
+
+    const resetForm = () => {
+        setFormData(initialFormData);
+        setFare(null);
     };
 
     const selectedBus = buses?.find(bus => bus.id === formData.busNumber);
@@ -245,7 +270,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose }) => {
                                 >
                                     <option value="">Select Starting Bus Stop</option>
                                     {selectedRoute?.busStops.map(busStop => (
-                                        <option key={busStop.id} value={busStop.code}>{busStop.name}</option>
+                                        <option key={busStop.id} value={busStop.id}>{busStop.name}</option>
                                     ))}
                                 </select>
 
@@ -262,10 +287,14 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose }) => {
                                 >
                                     <option value="">Select Ending Bus Stop</option>
                                     {selectedRoute?.busStops.map(busStop => (
-                                        <option key={busStop.id} value={busStop.code}>{busStop.name}</option>
+                                        <option key={busStop.id} value={busStop.id}>{busStop.name}</option>
                                     ))}
                                 </select>
                             </>
+                        )}
+
+                        {fare !== null && (
+                            <h2 className="text-xl font-bold text-gray-800 mb-4">Fare: ${fare}</h2>
                         )}
 
                         <div className="flex items-center justify-between mt-4">

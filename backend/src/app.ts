@@ -9,6 +9,7 @@ connectDB();
 
 // Middleware
 app.use(express.json({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // Define Routes
 // Use CORS middleware
