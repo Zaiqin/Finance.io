@@ -3,6 +3,8 @@ import FinanceForm from "./components/FinanceForm";
 import FinanceList from "./components/FinanceList";
 import SettingsDialog from "./components/SettingsDialog";
 import PresetsDialog from "./components/PresetsDialog";
+import { GoogleLogin, googleLogout } from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 interface Finance {
   amount: number;
@@ -30,8 +32,11 @@ const App: React.FC = () => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPresetsOpen, setIsPresetsOpen] = useState(false);
   const [isFinanceFormOpen, setIsFinanceFormOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   useEffect(() => {
+    if (!isLoggedIn) return;
+
     const fetchFinances = async () => {
       try {
         console.log(`${process.env.REACT_APP_SERVER_URL}`);
@@ -49,9 +54,11 @@ const App: React.FC = () => {
       }
     };
     fetchFinances();
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
+    if (!isLoggedIn) return;
+
     const fetchPresets = async () => {
       try {
         console.log(`${process.env.REACT_APP_SERVER_URL}`);
@@ -66,16 +73,18 @@ const App: React.FC = () => {
           ...preset,
           amount: parseFloat(preset.amount).toFixed(2),
         }));
-        console.log(formattedData)
+        console.log(formattedData);
         setPresets(formattedData);
       } catch (error) {
         console.error("Error fetching finances:", error);
       }
     };
     fetchPresets();
-  }, []);
+  }, [isLoggedIn]);
 
   useEffect(() => {
+    if (!isLoggedIn) return;
+
     const fetchCategories = async () => {
       try {
         console.log(`${process.env.REACT_APP_SERVER_URL}`);
@@ -93,9 +102,11 @@ const App: React.FC = () => {
       }
     };
     fetchCategories();
-  }, []);
+  }, [isLoggedIn]);
 
   const addFinance = async (finance: any) => {
+    if (!isLoggedIn) return;
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/finances`,
@@ -115,6 +126,8 @@ const App: React.FC = () => {
   };
 
   const updateFinance = async (id: string, updatedFinance: any) => {
+    if (!isLoggedIn) return;
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/finances/${id}`,
@@ -136,6 +149,8 @@ const App: React.FC = () => {
   };
 
   const deleteFinance = async (id: string) => {
+    if (!isLoggedIn) return;
+
     try {
       await fetch(`${process.env.REACT_APP_SERVER_URL}/api/finances/${id}`, {
         method: "DELETE",
@@ -147,6 +162,7 @@ const App: React.FC = () => {
   };
 
   const handleOpenSettings = () => {
+    if (!isLoggedIn) return;
     setIsSettingsOpen(true);
   };
 
@@ -155,6 +171,7 @@ const App: React.FC = () => {
   };
 
   const handleOpenPresets = () => {
+    if (!isLoggedIn) return;
     setIsPresetsOpen(true);
   };
 
@@ -163,6 +180,8 @@ const App: React.FC = () => {
   };
 
   const handleAddCategory = async (description: string) => {
+    if (!isLoggedIn) return;
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/categories`,
@@ -183,10 +202,15 @@ const App: React.FC = () => {
   };
 
   const handleDeleteCategory = async (categoryId: string) => {
+    if (!isLoggedIn) return;
+
     try {
-      await fetch(`${process.env.REACT_APP_SERVER_URL}/api/categories/${categoryId}`, {
-        method: "DELETE",
-      });
+      await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/categories/${categoryId}`,
+        {
+          method: "DELETE",
+        }
+      );
       setCategories(categories.filter((cat) => cat._id !== categoryId));
       console.log("Category deleted successfully");
     } catch (error) {
@@ -195,6 +219,8 @@ const App: React.FC = () => {
   };
 
   const handleAddPreset = async (preset: Preset) => {
+    if (!isLoggedIn) return;
+
     try {
       const response = await fetch(
         `${process.env.REACT_APP_SERVER_URL}/api/presets`,
@@ -215,10 +241,15 @@ const App: React.FC = () => {
   };
 
   const handleDeletePreset = async (presetId: string) => {
+    if (!isLoggedIn) return;
+
     try {
-      await fetch(`${process.env.REACT_APP_SERVER_URL}/api/presets/${presetId}`, {
-        method: "DELETE",
-      });
+      await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/presets/${presetId}`,
+        {
+          method: "DELETE",
+        }
+      );
       setPresets((prev) => prev.filter((preset) => preset._id !== presetId));
     } catch (error) {
       console.error("Error deleting preset:", error);
@@ -226,6 +257,7 @@ const App: React.FC = () => {
   };
 
   const handleOpenFinanceForm = () => {
+    if (!isLoggedIn) return;
     setIsFinanceFormOpen(true);
   };
 
@@ -233,63 +265,150 @@ const App: React.FC = () => {
     setIsFinanceFormOpen(false);
   };
 
+  const handleLoginSuccess = async (credentialResponse: any) => {
+    try {
+      // Check if the credential is present
+      if (credentialResponse?.credential) {
+        // Decode the JWT token and cast to 'any' to access fields freely
+        const decoded: any = jwtDecode(credentialResponse.credential);
+        console.log("Decoded JWT:", decoded);
+        console.log("Credential Response:", credentialResponse);
+  
+        // Ensure the decoded object has an email
+        if (!decoded.email) {
+          console.error("Email not found in the JWT");
+          return;
+        }
+
+        if (decoded.email != 'phuazaiqin@gmail.com') {
+          alert("Unauthorized email");
+          return
+        }
+  
+        // Send the email to the backend API to connect the user to the DB
+        const response = await fetch(`${process.env.REACT_APP_SERVER_URL}/api/connect-db`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email: 'test' }),
+          //body: JSON.stringify({ email: decoded.email }),
+        });
+  
+        // Check if the request was successful
+        if (!response.ok) {
+          throw new Error(`Failed to connect to the database: ${response.statusText}`);
+        }
+  
+        const data = await response.json();
+        console.log("API Response Message:", data.message);
+  
+        // Set login state to true
+        setIsLoggedIn(true);
+      } else {
+        console.error("No credential found in the response");
+      }
+    } catch (error) {
+      // Handle any errors (network or otherwise)
+      console.error("Error in login flow:", error);
+    }
+  };
+
+  const handleLogout = () => {
+    googleLogout();
+    setIsLoggedIn(false);
+  };
+
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
-      <h1 className="text-2xl sm:text-3xl font-bold text-center text-gray-800 mb-4 sm:mb-6">
+      <div className="flex justify-between items-center bg-white shadow-md p-4 mb-6">
+      <h1 className="text-2xl sm:text-2xl font-bold text-gray-800">
         Finance.io
       </h1>
-
-      <div className="max-w-7xl mx-auto">
-        <div className="w-full">
-          {/* Finance list section */}
-          <div>
-            <FinanceList
-              finances={finances}
-              updateFinance={updateFinance}
-              deleteFinance={deleteFinance}
-              categories={categories.map(category => category.description)}
-              handleOpenFinanceForm={handleOpenFinanceForm}
-            />
-          </div>
-        </div>
+      {isLoggedIn ? (
+        <button
+        type="submit"
+        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+        onClick={handleLogout}
+        >
+        Logout
+        </button>
+      ) : (
+        <GoogleLogin
+        onSuccess={handleLoginSuccess}
+        onError={() => {
+          console.log("Login Failed");
+        }}
+        />
+      )}
       </div>
 
-      {/* Finance form dialog */}
-      {isFinanceFormOpen && (
+      {!isLoggedIn ? (
+      <div className="flex flex-col items-center justify-center pt-[30vh]">
+        <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-4">
+        Welcome to Finance.io
+        </h2>
+        <p className="text-gray-600 mb-6 text-center">
+        Please log in to manage your finances.
+        </p>
+      </div>
+      ) : (
+      <div className="max-w-7xl mx-auto">
+        <div className="w-full">
+        {/* Finance list section */}
+        <div>
+          <FinanceList
+          finances={finances}
+          updateFinance={updateFinance}
+          deleteFinance={deleteFinance}
+          categories={categories.map((category) => category.description)}
+          handleOpenFinanceForm={handleOpenFinanceForm}
+          />
+        </div>
+        </div>
+      </div>
+      )}
+
+      {isLoggedIn && (
+      <>
+        {/* Finance form dialog */}
+        {isFinanceFormOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-10 m-6">
           <div className="fixed inset-0 bg-black opacity-50"></div>
           <div className="bg-white p-6 rounded shadow-lg w-full sm:w-1/3 min-w-[350px] z-10">
-            <FinanceForm
-              addFinance={addFinance}
-              categories={categories.map(category => category.description)}
-              onOpenSettings={handleOpenSettings}
-              onOpenPresets={handleOpenPresets}
-              onClose={handleCloseFinanceForm}
-              presets={presets}
-            />
+          <FinanceForm
+            addFinance={addFinance}
+            categories={categories.map((category) => category.description)}
+            onOpenSettings={handleOpenSettings}
+            onOpenPresets={handleOpenPresets}
+            onClose={handleCloseFinanceForm}
+            presets={presets}
+          />
           </div>
         </div>
-      )}
+        )}
 
-      {/* Settings dialog */}
-      {isSettingsOpen && (
+        {/* Settings dialog */}
+        {isSettingsOpen && (
         <SettingsDialog
           categories={categories}
           onClose={handleCloseSettings}
           onAddCategory={handleAddCategory}
           onDeleteCategory={handleDeleteCategory}
         />
-      )}
+        )}
 
-      {/* Presets dialog */}
-      {isPresetsOpen && (
+        {/* Presets dialog */}
+        {isPresetsOpen && (
         <PresetsDialog
           presets={presets}
-          categories={categories.map(category => category.description)}
+          categories={categories.map((category) => category.description)}
           onClose={handleClosePresets}
           onAddPreset={handleAddPreset}
           onDeletePreset={handleDeletePreset}
         />
+        )}
+      </>
       )}
     </div>
   );
