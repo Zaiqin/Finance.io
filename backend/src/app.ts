@@ -33,7 +33,6 @@ app.use('/api/categories', require('./routes/category'));
 // Connect-DB Endpoint
 app.post('/api/connect-db', async (req: Request, res: Response) => {
   try {
-    // Verify the connection
     await mongoose.connection.db.admin().ping();
     res.json({ message: 'Connected to MongoDB' });
   } catch (err: unknown) {
