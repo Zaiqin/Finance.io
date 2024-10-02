@@ -1,15 +1,24 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
-
-dotenv.config(); // Load environment variables
+import { Request, Response } from 'express';
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+require('dotenv').config(); // Load environment variables
 
 const app = express();
 
+// Connect to MongoDB
+mongoose.connect(process.env.ATLAS_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+  .then(() => console.log('MongoDB connected...'))
+  .catch((err: any) => {
+    console.error(err.message);
+    process.exit(1);
+  });
+
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ extended: false }));
 
 // Use CORS middleware
 app.use(cors());
@@ -20,35 +29,22 @@ app.use('/api/travel', require('./routes/travel'));
 app.use('/api/presets', require('./routes/presets'));
 app.use('/api/categories', require('./routes/category'));
 
-// Connect to MongoDB
-const connectDB = async (email: string) => {
-  try {
-    console.log("connectDB", email);
-    await mongoose.disconnect();
-    const DB_URI = `${process.env.ATLAS_URI}${email}?retryWrites=true&w=majority&appName=Cluster0`;
-    await mongoose.connect(DB_URI);
-    console.log('MongoDB connected...');
-  } catch (err: any) {
-    console.error(err.message);
-    console.log('Disconnecting and retrying connection immediately...');
-    try {
-      await mongoose.disconnect();
-    } catch (disconnectErr: any) {
-      console.error('Error during disconnection:', disconnectErr.message);
-    }
-    setTimeout(async () => {
-      await connectDB(email);
-    }, 0);
-  }
-};
 
+// Connect-DB Endpoint
 app.post('/api/connect-db', async (req: Request, res: Response) => {
-  const { email } = req.body;
-  if (!email) {
-    return res.status(400).json({ message: 'Email is required' });
+  try {
+    // Verify the connection
+    await mongoose.connection.db.admin().ping();
+    res.json({ message: 'Connected to MongoDB' });
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      console.error(err.message);
+      res.status(500).json({ message: 'Failed to connect to MongoDB' });
+    } else {
+      console.error('Unknown error');
+      res.status(500).json({ message: 'Failed to connect to MongoDB' });
+    }
   }
-  await connectDB(email);
-  res.json({ message: 'Connected to MongoDB' });
 });
 
 const PORT = process.env.PORT || 8000;

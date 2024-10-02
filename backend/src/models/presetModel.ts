@@ -4,6 +4,7 @@ interface IPreset extends Document {
   amount: number;
   description: string;
   category: string;
+  user: string;
 }
 
 const PresetSchema = new Schema<IPreset>({
@@ -16,6 +17,10 @@ const PresetSchema = new Schema<IPreset>({
     required: false,
   },
   category: {
+    type: String,
+    required: true,
+  },
+  user: {
     type: String,
     required: true,
   },

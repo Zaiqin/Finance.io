@@ -34,6 +34,7 @@ const App: React.FC = () => {
   const [isFinanceFormOpen, setIsFinanceFormOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [user, setUser] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -42,7 +43,11 @@ const App: React.FC = () => {
       try {
         console.log(`${process.env.REACT_APP_SERVER_URL}`);
         const response = await fetch(
-          `${process.env.REACT_APP_SERVER_URL}/api/finances`
+          `${process.env.REACT_APP_SERVER_URL}/api/finances`, {
+            headers: {
+              'user': user!, // Replace with the actual tenant email
+            },
+          }
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -64,7 +69,11 @@ const App: React.FC = () => {
       try {
         console.log(`${process.env.REACT_APP_SERVER_URL}`);
         const response = await fetch(
-          `${process.env.REACT_APP_SERVER_URL}/api/presets`
+          `${process.env.REACT_APP_SERVER_URL}/api/presets`, {
+            headers: {
+              'user': user!,
+            },
+          }
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -90,7 +99,11 @@ const App: React.FC = () => {
       try {
         console.log(`${process.env.REACT_APP_SERVER_URL}`);
         const response = await fetch(
-          `${process.env.REACT_APP_SERVER_URL}/api/categories`
+          `${process.env.REACT_APP_SERVER_URL}/api/categories`, {
+            headers: {
+              'user': user!,
+            },
+          }
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -115,6 +128,7 @@ const App: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'user': user!,
           },
           body: JSON.stringify(finance),
         }
@@ -136,6 +150,7 @@ const App: React.FC = () => {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
+            'user': user!,
           },
           body: JSON.stringify(updatedFinance),
         }
@@ -155,6 +170,9 @@ const App: React.FC = () => {
     try {
       await fetch(`${process.env.REACT_APP_SERVER_URL}/api/finances/${id}`, {
         method: "DELETE",
+        headers: {
+          'user': user!,
+        },
       });
       setFinances((prev) => prev.filter((finance) => finance._id !== id));
     } catch (error) {
@@ -190,6 +208,7 @@ const App: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'user': user!,
           },
           body: JSON.stringify({ description }),
         }
@@ -210,6 +229,7 @@ const App: React.FC = () => {
         `${process.env.REACT_APP_SERVER_URL}/api/categories/${categoryId}`,
         {
           method: "DELETE",
+          headers: { 'user': user! },
         }
       );
       setCategories(categories.filter((cat) => cat._id !== categoryId));
@@ -229,6 +249,7 @@ const App: React.FC = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
+            'user': user!,
           },
           body: JSON.stringify(preset),
         }
@@ -249,6 +270,7 @@ const App: React.FC = () => {
         `${process.env.REACT_APP_SERVER_URL}/api/presets/${presetId}`,
         {
           method: "DELETE",
+          headers: { 'user': user! },
         }
       );
       setPresets((prev) => prev.filter((preset) => preset._id !== presetId));
@@ -282,11 +304,6 @@ const App: React.FC = () => {
         }
 
         setIsLoading(true);
-
-        // if (decoded.email != 'phuazaiqin@gmail.com') {
-        //   alert("Unauthorized email");
-        //   return
-        // }
   
         // Send the email to the backend API to connect the user to the DB
         const emailWithoutPostfix = decoded.email.replace('@gmail.com', '');
@@ -309,6 +326,7 @@ const App: React.FC = () => {
         // Set login state to true
         setIsLoggedIn(true);
         setIsLoading(false);
+        setUser(decoded.email);
       } else {
         console.error("No credential found in the response");
       }

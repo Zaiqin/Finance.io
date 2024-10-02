@@ -5,6 +5,7 @@ interface IFinance extends Document {
   description: string;
   date: Date;
   category: string;
+  user: string;
 }
 
 const FinanceSchema = new Schema<IFinance>({
@@ -21,6 +22,10 @@ const FinanceSchema = new Schema<IFinance>({
     required: true,
   },
   category: {
+    type: String,
+    required: true,
+  },
+  user: {
     type: String,
     required: true,
   },
