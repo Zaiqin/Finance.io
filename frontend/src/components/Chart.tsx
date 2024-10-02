@@ -339,7 +339,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
           autoSkip: true,
           maxRotation: 0,
           callback: (value: string | number) => {
-            return `$${(+value).toFixed(2)}`; // Format value as 2dp currency
+            return `$${(+value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`; // Format value as 2dp currency
           },
         },
       },
@@ -372,15 +372,13 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
             const finances = groupedFinances[date] || []; // Get finances for the date
 
             // Create an array of labels to display in the tooltip
-            const labels = [` Total: $${total.toFixed(2)}`];
+            const labels = [` Total: $${total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`];
             finances.forEach((finance) => {
               const description = finance.description
                 ? ` (${finance.description})`
                 : "";
               labels.push(
-                `• ${finance.category}: $${finance.amount.toFixed(
-                  2
-                )}${description}`
+                `• ${finance.category}: $${finance.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${description}`
               );
             });
             return labels; // Return the array of labels

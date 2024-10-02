@@ -2,9 +2,10 @@ import React, { useState, useEffect } from "react";
 import ChartComponent from "./Chart"; // Import the ChartComponent
 import { format } from "date-fns";
 import ConfirmationDialog from "./ConfirmationDialog"; // Import the ConfirmationDialog
-import EditFinanceModal from './EditFinanceModal'; // Import the new modal component
-import { FaTrash } from "react-icons/fa";
-import { MdEdit } from "react-icons/md";
+import EditFinanceModal from "./EditFinanceModal"; // Import the new modal component
+import { FaTrash, FaChartLine } from "react-icons/fa";
+import { MdEdit, MdPostAdd } from "react-icons/md";
+import { BsTable } from "react-icons/bs";
 
 interface Finance {
   _id: string;
@@ -20,7 +21,13 @@ const FinanceList: React.FC<{
   deleteFinance: (id: string) => void;
   categories: string[];
   handleOpenFinanceForm: () => void; // Add a new prop for opening the finance form
-}> = ({ finances, updateFinance, deleteFinance, categories, handleOpenFinanceForm }) => {
+}> = ({
+  finances,
+  updateFinance,
+  deleteFinance,
+  categories,
+  handleOpenFinanceForm,
+}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // State for confirmation dialog
   const [currentFinance, setCurrentFinance] = useState<Finance | null>(null);
@@ -33,8 +40,11 @@ const FinanceList: React.FC<{
     const calculateItemsPerPage = () => {
       const headerHeight = 150; // Estimated space for headers/buttons
       const rowHeight = 120; // Estimated row height for each date entry
-      const availableHeight = window.innerHeight*0.6 - headerHeight;
-      const newItemsPerPage = Math.max(Math.floor(availableHeight / rowHeight), 1);
+      const availableHeight = window.innerHeight * 0.6 - headerHeight;
+      const newItemsPerPage = Math.max(
+        Math.floor(availableHeight / rowHeight),
+        1
+      );
       setItemsPerPage(newItemsPerPage);
     };
 
@@ -58,8 +68,8 @@ const FinanceList: React.FC<{
   };
 
   const handleUpdate = (updatedFinance: Finance) => {
-    console.log("asdf")
-    console.log(updatedFinance)
+    console.log("asdf");
+    console.log(updatedFinance);
     if (currentFinance) {
       updateFinance(currentFinance._id, updatedFinance);
       closeModal();
@@ -92,7 +102,10 @@ const FinanceList: React.FC<{
       {
         label: "Total Expenses",
         data: Object.keys(groupedFinances).map((date) =>
-          groupedFinances[date].reduce((sum, finance) => sum + finance.amount, 0)
+          groupedFinances[date].reduce(
+            (sum, finance) => sum + finance.amount,
+            0
+          )
         ),
         backgroundColor: "rgba(75, 192, 192, 0.2)",
         borderColor: "rgba(75, 192, 192, 1)",
@@ -113,21 +126,37 @@ const FinanceList: React.FC<{
     <div>
       {/* Chart and table toggle */}
       <div className="mb-6 flex justify-between items-center">
-        <button
-          type="button"
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-          onClick={() => setShowChart(!showChart)}
-        >
-          {showChart ? "Show Table" : "Show Chart"}
-        </button>
-        <h2 className="text-2xl font-semibold text-gray-800">Dashboard</h2>
-        <button
-          type="button"
-          onClick={handleOpenFinanceForm}
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-        >
-          Add Finance
-        </button>
+        <h2 className="text-2xl font-semibold text-gray-800 flex-grow">
+          Dashboard
+        </h2>
+        <div className="flex space-x-2">
+          <button
+            type="button"
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+            onClick={() => setShowChart(!showChart)}
+          >
+            {showChart ? (
+              <>
+                <BsTable className="mr-2" /> Table
+              </>
+            ) : (
+              <>
+                <FaChartLine className="mr-2" /> Chart
+              </>
+            )}
+          </button>
+          <div className="flex">
+            <button
+              type="button"
+              onClick={handleOpenFinanceForm}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+            >
+              <MdPostAdd className="mr-2 text-2xl" />{" "}
+              {/* Increase the icon size here */}
+              <span>New</span>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Chart or Table View */}
@@ -137,7 +166,9 @@ const FinanceList: React.FC<{
         </div>
       ) : (
         <>
-            <div className="overflow-y-auto max-h-[60vh] pr-6"> {/* Limit the height and enable scrolling */}
+          <div className="overflow-y-auto max-h-[60vh] pr-6">
+            {" "}
+            {/* Limit the height and enable scrolling */}
             {currentDates.map((date) => (
               <div key={date} className="mb-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
@@ -164,36 +195,48 @@ const FinanceList: React.FC<{
                     <tbody>
                       {groupedFinances[date].map((finance, index) => (
                         <tr key={index} className="border-b">
-                          <td className="py-2 px-4 text-gray-700">{finance.category}</td>
-                          <td className="py-2 px-4 text-gray-700">${finance.amount.toFixed(2)}</td>
-                          <td className="py-2 px-4 text-gray-700">{finance.description}</td>
+                          <td className="py-2 px-4 text-gray-700">
+                            {finance.category}
+                          </td>
+                          <td className="py-2 px-4 text-gray-700">
+                            ${finance.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          </td>
+                          <td className="py-2 px-4 text-gray-700">
+                            {finance.description}
+                          </td>
                           <td className="py-2 px-4 text-gray-700 text-center">
-                          <div className="flex justify-center">
-                            <button
-                            type="button"
-                            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
-                            onClick={() => openModal(finance._id)}
-                            >
-                            <MdEdit />
-                            </button>
-                            <button
-                            type="button"
-                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
-                            onClick={() => {
-                              setCurrentFinance(finance);
-                              setIsConfirmOpen(true); // Open the confirmation dialog
-                            }}
-                            >
-                            <FaTrash />
-                            </button>
-                          </div>
+                            <div className="flex justify-center">
+                              <button
+                                type="button"
+                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
+                                onClick={() => openModal(finance._id)}
+                              >
+                                <MdEdit />
+                              </button>
+                              <button
+                                type="button"
+                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
+                                onClick={() => {
+                                  setCurrentFinance(finance);
+                                  setIsConfirmOpen(true); // Open the confirmation dialog
+                                }}
+                              >
+                                <FaTrash />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}
                       <tr className="border-t bg-gray-100">
-                        <td className="py-2 px-4 text-gray-700 font-bold">Total</td>
                         <td className="py-2 px-4 text-gray-700 font-bold">
-                          ${groupedFinances[date].reduce((sum, finance) => sum + finance.amount, 0).toFixed(2)}
+                          Total
+                        </td>
+                        <td className="py-2 px-4 text-gray-700 font-bold">
+                          $
+                            {groupedFinances[date]
+                            .reduce((sum, finance) => sum + finance.amount, 0)
+                            .toFixed(2)
+                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         </td>
                         <td colSpan={2}></td>
                       </tr>
@@ -208,7 +251,9 @@ const FinanceList: React.FC<{
             <button
               type="button"
               className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-                currentPage === 1 ? "bg-gray-300 text-white" : "bg-gray-500 hover:bg-gray-700 text-white"
+                currentPage === 1
+                  ? "bg-gray-300 text-white"
+                  : "bg-gray-500 hover:bg-gray-700 text-white"
               }`}
               onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
               disabled={currentPage === 1}
@@ -221,9 +266,13 @@ const FinanceList: React.FC<{
             <button
               type="button"
               className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-                currentPage === totalPages ? "bg-gray-300 text-white" : "bg-gray-500 hover:bg-gray-700 text-white"
+                currentPage === totalPages
+                  ? "bg-gray-300 text-white"
+                  : "bg-gray-500 hover:bg-gray-700 text-white"
               }`}
-              onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+              onClick={() =>
+                setCurrentPage(Math.min(currentPage + 1, totalPages))
+              }
               disabled={currentPage === totalPages}
             >
               Next

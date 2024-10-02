@@ -109,7 +109,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
         onSubmit={handleSubmit}
         className="w-full max-w-2xl bg-white rounded-lg"
       >
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add Finance</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add Finance Item</h2>
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
