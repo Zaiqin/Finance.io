@@ -62,6 +62,11 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     setIsLTADialogOpen(false);
   };
 
+  const handleLTASubmitDialog = (fare: number) => {
+    setIsLTADialogOpen(false);
+    setRawAmount(fare.toFixed(2));
+  };
+
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value.replace(/[^0-9.-]/g, ""); // Allow numbers, decimal point, and minus sign
     setRawAmount(value);
@@ -288,7 +293,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
           </div>
         </div>
       </form>
-      <LTADialog open={isLTADialogOpen} onClose={handleLTACloseDialog} />
+      <LTADialog open={isLTADialogOpen} onClose={handleLTACloseDialog} onSubmit={handleLTASubmitDialog} />
     </>
   );
 };

@@ -3,6 +3,7 @@ import PresetsDialog from './PresetsDialog'; // Adjust the import path as necess
 
 interface LTADialogProps {
     open: boolean;
+    onSubmit: (fare: number) => void;
     onClose: () => void;
 }
 
@@ -35,7 +36,7 @@ interface Bus {
     routes: BusRoute[];
 }
 
-const LTADialog: React.FC<LTADialogProps> = ({ open, onClose }) => {
+const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit }) => {
     const initialFormData = {
         transportType: '',
         busNumber: '',
@@ -143,6 +144,9 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose }) => {
         console.log(fare)
         console.log({ ...formData, fare });
         onClose();
+        if (fare !== null) {
+            onSubmit(fare);
+        }
         resetForm();
     };
 
