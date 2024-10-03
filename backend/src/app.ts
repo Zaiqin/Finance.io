@@ -19,6 +19,7 @@ mongoose.connect(process.env.ATLAS_URI, {
 
 // Middleware
 app.use(express.json({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 
 // Use CORS middleware
 app.use(cors());

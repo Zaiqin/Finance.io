@@ -28,6 +28,11 @@ const App: React.FC = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<string | null>(null);
+  const [loadedParts, setLoadedParts] = useState<{ finances: boolean; categories: boolean; presets: boolean }>({
+    finances: false,
+    categories: false,
+    presets: false,
+  });
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -48,6 +53,7 @@ const App: React.FC = () => {
         const data = await response.json();
         console.log(data);
         setFinances(data);
+        setLoadedParts((prev) => ({ ...prev, finances: true }));
       } catch (error) {
         console.error("Error fetching finances:", error);
       }
@@ -78,6 +84,7 @@ const App: React.FC = () => {
         }));
         console.log(formattedData);
         setPresets(formattedData);
+        setLoadedParts((prev) => ({ ...prev, presets: true }));
       } catch (error) {
         console.error("Error fetching presets:", error);
       }
@@ -104,6 +111,7 @@ const App: React.FC = () => {
         const data = await response.json();
         console.log(data);
         setCategories(data);
+        setLoadedParts((prev) => ({ ...prev, categories: true }));
       } catch (error) {
         console.error("Error fetching categories:", error);
       }
@@ -190,6 +198,13 @@ const App: React.FC = () => {
   const handleClosePresets = () => {
     setIsPresetsOpen(false);
   };
+
+  useEffect(() => {
+    if (loadedParts.finances && loadedParts.categories && loadedParts.presets) {
+      setIsLoading(false);
+    }
+  }, [loadedParts])
+  
 
   const handleAddCategory = async (description: string) => {
     if (!isLoggedIn) return;
@@ -294,7 +309,6 @@ const App: React.FC = () => {
         }
 
         setIsLoggedIn(true);
-        setIsLoading(false);
         setUser(decoded.email);
       } else {
         console.error("No credential found in the response");
