@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { format } from "date-fns";
+import { FaPlus } from "react-icons/fa";
+import LTADialog from "./LTADialog";
 
 interface Finance {
   _id: string;
@@ -33,7 +35,24 @@ const EditFinanceModal: React.FC<{
     onUpdate(updatedFinance);
   };
 
+  const [isLTADialogOpen, setIsLTADialogOpen] = useState(false);
+
+  const handleLTAOpenDialog = () => {
+    setIsLTADialogOpen(true);
+  };
+
+  const handleLTACloseDialog = () => {
+    setIsLTADialogOpen(false);
+  };
+
+  const handleLTASubmitDialog = (fare: number, description: string) => {
+    setIsLTADialogOpen(false);
+    setLocalAmount(fare.toFixed(2));
+    setLocalDescription(description);
+  };
+
   return (
+    <>
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white rounded-lg p-6 shadow-lg w-96">
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit Item</h2>
@@ -109,6 +128,13 @@ const EditFinanceModal: React.FC<{
               className="border border-gray-300 p-2 rounded w-full"
             />
           </div>
+          <button
+                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 mr-3 mb-3 rounded focus:outline-none focus:shadow-outline flex items-center"
+                type="button"
+                onClick={handleLTAOpenDialog}
+              >
+                <FaPlus className="mr-2" /> <span>Public Transport</span>
+              </button>
           <div className="flex justify-between">
             <button
               onClick={onClose}
@@ -126,6 +152,8 @@ const EditFinanceModal: React.FC<{
         </form>
       </div>
     </div>
+    <LTADialog open={isLTADialogOpen} onClose={handleLTACloseDialog} onSubmit={handleLTASubmitDialog} />
+    </>
   );
 };
 

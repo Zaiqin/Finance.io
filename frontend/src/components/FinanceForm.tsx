@@ -62,9 +62,10 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     setIsLTADialogOpen(false);
   };
 
-  const handleLTASubmitDialog = (fare: number) => {
+  const handleLTASubmitDialog = (fare: number, description: string) => {
     setIsLTADialogOpen(false);
     setRawAmount(fare.toFixed(2));
+    setDescription(description);
   };
 
   const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -237,7 +238,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
             </div>
           </div>
         </div>
-        <div className="mb-4 flex space-x-4 flex items-center justify-between">
+        <div className="mb-3 flex space-x-2 flex items-left justify-left">
           <button
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
             type="button"
@@ -253,7 +254,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
             <FaCog className="mr-2" /> <span>Presets</span>
           </button>
         </div>
-        <div className="mb-4 flex space-x-4 flex items-center justify-between">
+        <div className="mb-3 flex space-x-4 items-center justify-between">
           <button
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
             type="button"

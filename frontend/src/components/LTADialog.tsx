@@ -3,7 +3,7 @@ import PresetsDialog from './PresetsDialog'; // Adjust the import path as necess
 
 interface LTADialogProps {
     open: boolean;
-    onSubmit: (fare: number) => void;
+    onSubmit: (fare: number, description: string ) => void;
     onClose: () => void;
 }
 
@@ -139,13 +139,26 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit }) => {
         return parseInt(data.fare, 10) / 100;
     };
 
+    const createDescription = () => {
+        if (formData.transportType === 'MRT') {
+            const startStationName = stations?.find(station => station.code === formData.startStation)?.name;
+            const endStationName = stations?.find(station => station.code === formData.endStation)?.name;
+            return `MRT: ${startStationName} - ${endStationName}`;
+        } else if (formData.transportType === 'Bus') {
+            const startBusStopName = selectedRoute?.busStops.find(busStop => busStop.id === formData.startBusStop)?.name;
+            const endBusStopName = selectedRoute?.busStops.find(busStop => busStop.id === formData.endBusStop)?.name;
+            return `Bus ${formData.busNumber}: ${startBusStopName} - ${endBusStopName}`;
+        }
+        return '';
+    };
+
     const handleSubmit = async () => {
         // Handle form submission logic here
         console.log(fare)
         console.log({ ...formData, fare });
         onClose();
         if (fare !== null) {
-            onSubmit(fare);
+            onSubmit(fare, createDescription());
         }
         resetForm();
     };
