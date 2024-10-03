@@ -365,20 +365,33 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
             const date = tooltipItem.label; // Get the date from the tooltip item
             const total = tooltipItem.raw; // Get the total amount
             const finances = groupedFinances[date] || []; // Get finances for the date
-
+        
             // Create an array of labels to display in the tooltip
-            const labels = [` Total: $${total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`];
+            const labels = [`Total: $${total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`];
+            const allTags: string[] = [];
+        
             finances.forEach((finance) => {
-              const description = finance.description
-                ? ` (${finance.description})`
+              const description = finance.description ? ` (${finance.description})` : "";
+              const tags = finance.tags && finance.tags.length > 0
+                ? ` [${finance.tags.map(tag => tag.name).join(", ")}]`
                 : "";
+              
+              // Push the formatted finance details
               labels.push(
-                `• ${finance.category}: $${finance.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${description}`
+                `• ${finance.category}: $${finance.amount
+                  .toFixed(2)
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${description}${tags}`
               );
+        
+              if (finance.tags) {
+                allTags.push(...finance.tags.map(tag => tag.name));
+              }
             });
+        
             return labels; // Return the array of labels
           },
         },
+        
       },
       annotation: {
         annotations: {

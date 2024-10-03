@@ -1,10 +1,12 @@
 import { Schema, model, Document } from 'mongoose';
+import { TagSchema, ITag } from './tagModel';
 
 interface IPreset extends Document {
   amount: number;
   description: string;
   category: string;
   user: string;
+  tags?: ITag[];
 }
 
 const PresetSchema = new Schema<IPreset>({
@@ -23,6 +25,10 @@ const PresetSchema = new Schema<IPreset>({
   user: {
     type: String,
     required: true,
+  },
+  tags: {
+    type: [TagSchema],
+    required: false,
   },
 });
 

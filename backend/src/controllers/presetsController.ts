@@ -45,13 +45,14 @@ export const addPreset = async (req: Request, res: Response) => {
   }
 
   try {
-    const { amount, description, category } = req.body;
+    const { amount, description, category, tags } = req.body;
 
     const newPreset = new Preset({
       amount,
       description,
       category,
       user,
+      tags
     });
 
     const preset = await newPreset.save();

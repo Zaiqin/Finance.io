@@ -1,30 +1,17 @@
 import { Schema, model, Document } from 'mongoose';
+import { TagSchema, ITag } from './tagModel';
 
-interface Tag {
-  name: string;
-  color: string;
-}
-
+// Define the IFinance interface extending Document
 interface IFinance extends Document {
   amount: number;
   description: string;
   date: Date;
   category: string;
   user: string;
-  tags?: Tag[];
+  tags?: ITag[];
 }
 
-const TagSchema = new Schema<Tag>({
-  name: {
-    type: String,
-    required: true,
-  },
-  color: {
-    type: String,
-    required: true,
-  },
-});
-
+// Define the Finance schema using IFinance
 const FinanceSchema = new Schema<IFinance>({
   amount: {
     type: Number,
@@ -47,11 +34,12 @@ const FinanceSchema = new Schema<IFinance>({
     required: true,
   },
   tags: {
-    type: [TagSchema],
+    type: [TagSchema], // Use the TagSchema for embedding tags
     required: false,
   },
 });
 
+// Create the Finance model
 const Finance = model<IFinance>('Finance', FinanceSchema);
 
 export default Finance;

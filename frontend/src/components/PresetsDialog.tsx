@@ -1,19 +1,30 @@
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import LTADialog from "./LTADialog";
-import { Preset } from "../interfaces/interface";
+import { Preset, Tag } from "../interfaces/interface";
 
 interface PresetsDialogProps {
   presets: Preset[];
   categories: string[];
+  tags: Tag[];
   onClose: () => void;
   onAddPreset: (preset: Preset) => void;
   onDeletePreset: (presetId: string) => void;
 }
 
+const getContrastYIQ = (hexcolor: string) => {
+  hexcolor = hexcolor.replace("#", "");
+  const r = parseInt(hexcolor.substring(0, 2), 16);
+  const g = parseInt(hexcolor.substring(2, 4), 16);
+  const b = parseInt(hexcolor.substring(4, 6), 16);
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? "black" : "white";
+};
+
 const PresetsDialog: React.FC<PresetsDialogProps> = ({
   presets,
   categories,
+  tags,
   onClose,
   onAddPreset,
   onDeletePreset,
@@ -21,6 +32,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
   const [newAmount, setNewAmount] = useState<string>("");
   const [newDescription, setNewDescription] = useState<string>("");
   const [newCategory, setNewCategory] = useState<string>("");
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   const handleAddPreset = () => {
     if (!presets.some((preset) => preset.description === newDescription)) {
@@ -29,10 +41,12 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
         amount: parseFloat(newAmount),
         description: newDescription,
         category: newCategory,
+        tags: selectedTags,
       });
       setNewAmount("");
       setNewDescription("");
       setNewCategory("");
+      setSelectedTags([]);
     }
   };
 
@@ -99,7 +113,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
               required
               onChange={(e) => setNewDescription(e.target.value)}
             />
-            <div className="relative mb-1">
+            <div className="relative mb-3">
               <select
                 className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 id="category"
@@ -126,6 +140,80 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                 >
                   <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
                 </svg>
+              </div>
+            </div>
+            <div className="mb-4">
+              <div className="relative">
+                <select
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="tags"
+                  value=""
+                  onChange={(e) => {
+                    const selectedTag = tags.find(
+                      (tag) => tag._id === e.target.value
+                    );
+                    if (
+                      selectedTag &&
+                      !selectedTags.some((tag) => tag._id === selectedTag._id)
+                    ) {
+                      setSelectedTags([...selectedTags, selectedTag]);
+                    }
+                  }}
+                >
+                  <option value="" disabled>
+                    -- Select tag(s) --
+                  </option>
+                  {tags.map((tag) => (
+                    <option
+                      key={tag._id}
+                      value={tag._id}
+                      style={{
+                        backgroundColor: tag.color,
+                        color: getContrastYIQ(tag.color),
+                      }}
+                    >
+                      {tag.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <svg
+                    className="fill-current h-4 w-4"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+                  </svg>
+                </div>
+              </div>
+              <div className={`flex flex-wrap gap-2 ${selectedTags.length > 0 ? "mb-3 mt-3" : "" }`}>
+                <div className="flex justify-left">
+                  {selectedTags.map((tag, index) => {
+                    const textColor = getContrastYIQ(tag.color);
+                    return (
+                      <span
+                        key={index}
+                        className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
+                        style={{
+                          backgroundColor: tag.color,
+                          color: textColor,
+                          borderRadius: "0.5rem",
+                        }}
+                      >
+                        {tag.name}
+                        <button
+                          type="button"
+                          className="ml-2 pb-1 text-white"
+                          onClick={() =>
+                            setSelectedTags(selectedTags.filter((t) => t._id !== tag._id))
+                          }
+                        >
+                          &times;
+                        </button>
+                      </span>
+                    );
+                  })}
+                </div>
               </div>
             </div>
             <div className="flex justify-left items-left mt-3">

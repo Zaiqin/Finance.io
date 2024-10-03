@@ -6,7 +6,7 @@ import EditFinanceModal from "./EditFinanceModal"; // Import the new modal compo
 import { FaTrash, FaChartLine } from "react-icons/fa";
 import { MdEdit, MdPostAdd } from "react-icons/md";
 import { BsTable } from "react-icons/bs";
-import { Finance } from "../interfaces/interface";
+import { Finance, Tag } from "../interfaces/interface";
 
 const FinanceList: React.FC<{
   finances: Finance[];
@@ -14,12 +14,14 @@ const FinanceList: React.FC<{
   deleteFinance: (id: string) => void;
   categories: string[];
   handleOpenFinanceForm: () => void; // Add a new prop for opening the finance form
+  tags: Tag[];
 }> = ({
   finances,
   updateFinance,
   deleteFinance,
   categories,
   handleOpenFinanceForm,
+  tags,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // State for confirmation dialog
@@ -316,6 +318,7 @@ const FinanceList: React.FC<{
           onUpdate={handleUpdate}
           onClose={closeModal}
           categories={categories}
+          tags={tags}
         />
       )}
 

@@ -21,6 +21,7 @@ export interface Bus {
 }
 
 export interface Tag {
+  _id: string | undefined;
   name: string;
   color: string;
 }
@@ -51,4 +52,5 @@ export interface Preset {
   amount: number;
   description: string;
   category: string | undefined;
+  tags?: Tag[] | undefined;
 }

@@ -1,8 +1,19 @@
 import React, { useState } from "react";
 import { FaCog, FaPlus } from "react-icons/fa"; // Import the FontAwesome icon
 import LTADialog from "./LTADialog";
-import { Preset } from "../interfaces/interface"; // Import the Preset interface
+import { Preset, Tag } from "../interfaces/interface"; // Import the Preset interface
 import { Finance } from "../interfaces/interface"; // Import the Finance interface
+import TagDialog from "./TagDialog";
+
+// Function to calculate contrast color
+const getContrastYIQ = (hexcolor: string) => {
+  hexcolor = hexcolor.replace("#", "");
+  const r = parseInt(hexcolor.substr(0, 2), 16);
+  const g = parseInt(hexcolor.substr(2, 2), 16);
+  const b = parseInt(hexcolor.substr(4, 2), 16);
+  const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+  return yiq >= 128 ? "black" : "white";
+};
 
 interface FinanceFormProps {
   addFinance: (finance: Finance) => void;
@@ -11,6 +22,10 @@ interface FinanceFormProps {
   onOpenPresets: () => void;
   onClose: () => void;
   presets: Preset[];
+  addTag: (tag: Tag) => void;
+  deleteTag: (id: string) => void;
+  updateTag: (id: string, updatedTag: Tag) => void;
+  tags: Tag[];
 }
 
 // Add the resetTime function
@@ -33,6 +48,10 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   onOpenPresets,
   onClose,
   presets,
+  addTag,
+  deleteTag,
+  updateTag,
+  tags,
 }) => {
   const [rawAmount, setRawAmount] = useState<string>(""); // Store raw input value
   const [description, setDescription] = useState<string>("");
@@ -41,6 +60,8 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   const [category, setCategory] = useState<string | undefined>(undefined); // Set the first category by default
   const [preset, setPreset] = useState<Preset | undefined>(undefined); // Set the first category by default
   const [isLTADialogOpen, setIsLTADialogOpen] = useState(false);
+  const [isTagDialogOpen, setIsTagDialogOpen] = useState(false);
+  const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
 
   const handleLTAOpenDialog = () => {
     setIsLTADialogOpen(true);
@@ -61,6 +82,24 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     setRawAmount(value);
   };
 
+  const handleTagDialogOpen = () => {
+    setIsTagDialogOpen(true);
+  };
+
+  const handleTagDialogClose = () => {
+    setIsTagDialogOpen(false);
+  };
+
+  const handleTagSubmit = async (tag: Tag) => {
+    if (tag._id) {
+      updateTag(tag._id, tag);
+    }
+  };
+
+  const handleTagDelete = async (id: string) => {
+    deleteTag(id);
+  };
+
   // In handleSubmit
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,10 +110,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
       description,
       date, // Use the current state for date
       category: category || "",
-      tags: [
-        { name: 'Tag1', color: '#B7E0FF' },
-        { name: 'Tag2', color: '#E78F81' },
-      ]
+      tags: selectedTags,
     };
     addFinance(finance);
     // Reset form after submission
@@ -82,18 +118,20 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     setDescription("");
     setDate(formatDate(resetTime(new Date()))); // Reset to current date
     setCategory(undefined);
+    setSelectedTags([]);
   };
 
   const handlePresetChange = (p: string) => {
     const selectedPreset = presets.find((f) => f.description === p);
     if (selectedPreset) {
-      console.log(selectedPreset)
+      console.log(selectedPreset);
       setPreset(selectedPreset);
       setRawAmount(selectedPreset.amount.toString());
       setDescription(selectedPreset.description);
       setCategory(selectedPreset.category);
+      setSelectedTags(selectedPreset.tags || []);
     } else {
-      console.log('Preset not found!');
+      console.log("Preset not found!");
     }
   };
 
@@ -103,7 +141,11 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
         onSubmit={handleSubmit}
         className="w-full max-w-2xl bg-white rounded-lg"
       >
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">Add Finance Item</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+          Add Finance Item
+        </h2>
+
+        <div className="overflow-y-auto max-h-[40vh] pr-6">
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
@@ -198,6 +240,86 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
         <div className="mb-4">
           <label
             className="block text-gray-700 text-sm font-bold mb-2"
+            htmlFor="tags"
+          >
+            Tags
+          </label>
+            <div className={`flex flex-wrap gap-2 ${selectedTags.length > 0 ? "mb-3" : ""}`}>
+            <div className="flex justify-left">
+              {selectedTags.map((tag, index) => {
+                const textColor = getContrastYIQ(tag.color);
+                return (
+                  <span
+                    key={index}
+                    className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
+                    style={{
+                      backgroundColor: tag.color,
+                      color: textColor,
+                      borderRadius: "0.5rem", // Less rounded corners
+                    }}
+                  >
+                    {tag.name}
+                    <button
+                      type="button"
+                      className="ml-2 pb-1 text-white"
+                      onClick={() =>
+                        setSelectedTags(selectedTags.filter((t) => t._id !== tag._id))
+                      }
+                    >
+                      &times;
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+          <div className="relative">
+            <select
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              id="tags"
+              value=""
+              onChange={(e) => {
+                const selectedTag = tags.find(
+                  (tag) => tag._id === e.target.value
+                );
+                if (
+                  selectedTag &&
+                  !selectedTags.some((tag) => tag._id === selectedTag._id)
+                ) {
+                  setSelectedTags([...selectedTags, selectedTag]);
+                }
+              }}
+            >
+              <option value="" disabled>
+                -- Select tag(s) --
+              </option>
+              {tags.map((tag) => (
+                <option
+                  key={tag._id}
+                  value={tag._id}
+                  style={{
+                    backgroundColor: tag.color,
+                    color: getContrastYIQ(tag.color),
+                  }}
+                >
+                  {tag.name}
+                </option>
+              ))}
+            </select>
+            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <svg
+                className="fill-current h-4 w-4"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 20 20"
+              >
+                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+              </svg>
+            </div>
+          </div>
+        </div>
+        <div className="mb-4">
+          <label
+            className="block text-gray-700 text-sm font-bold mb-2"
             htmlFor="category"
           >
             Presets
@@ -231,7 +353,8 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
             </div>
           </div>
         </div>
-        <div className="mb-3 flex space-x-2 flex items-left justify-left">
+        </div>
+        <div className="mb-3 flex space-x-2 mt-3 flex items-left justify-left">
           <button
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
             type="button"
@@ -247,13 +370,20 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
             <FaCog className="mr-2" /> <span>Presets</span>
           </button>
         </div>
-        <div className="mb-3 flex space-x-4 items-center justify-between">
+        <div className="mb-3 flex space-x-2 items-center justify-left">
           <button
             className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
             type="button"
             onClick={handleLTAOpenDialog}
           >
             <FaPlus className="mr-2" /> <span>Public Transport</span>
+          </button>
+          <button
+            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+            type="button"
+            onClick={handleTagDialogOpen}
+          >
+            <FaCog className="mr-2" /> <span>Tags</span>
           </button>
         </div>
         <div className="flex items-center justify-between">
@@ -266,6 +396,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
               setDate(formatDate(resetTime(new Date()))); // Reset to current date
               setCategory(undefined);
               setPreset(undefined);
+              setSelectedTags([]);
             }}
           >
             Clear
@@ -287,7 +418,21 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
           </div>
         </div>
       </form>
-      <LTADialog open={isLTADialogOpen} onClose={handleLTACloseDialog} onSubmit={handleLTASubmitDialog} />
+      <LTADialog
+        open={isLTADialogOpen}
+        onClose={handleLTACloseDialog}
+        onSubmit={handleLTASubmitDialog}
+      />
+      <TagDialog
+        open={isTagDialogOpen}
+        onClose={handleTagDialogClose}
+        onSubmit={handleTagSubmit}
+        onDelete={handleTagDelete}
+        existingTags={tags}
+        addTag={addTag}
+        deleteTag={deleteTag}
+        updateTag={updateTag}
+      />
     </>
   );
 };

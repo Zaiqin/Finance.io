@@ -5,29 +5,30 @@ import SettingsDialog from "./components/SettingsDialog";
 import PresetsDialog from "./components/PresetsDialog";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
-import { Category } from "./interfaces/interface";
-
-interface Preset {
-  _id: string | undefined;
-  amount: number;
-  description: string;
-  category: string | undefined;
-}
+import { Category, Preset, Tag } from "./interfaces/interface";
 
 const App: React.FC = () => {
   const [finances, setFinances] = useState<any[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [presets, setPresets] = useState<Preset[]>([]);
+  const [tags, setTags] = useState<Tag[]>([]);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isPresetsOpen, setIsPresetsOpen] = useState(false);
   const [isFinanceFormOpen, setIsFinanceFormOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [user, setUser] = useState<string | null>(null);
-  const [loadedParts, setLoadedParts] = useState<{ finances: boolean; categories: boolean; presets: boolean }>({
+  const [loadedParts, setLoadedParts] = useState<
+  { 
+    finances: boolean; 
+    categories: boolean; 
+    presets: boolean;
+    tags: boolean;
+  }>({
     finances: false,
     categories: false,
     presets: false,
+    tags: false,
   });
 
   useEffect(() => {
@@ -196,7 +197,7 @@ const App: React.FC = () => {
   };
 
   useEffect(() => {
-    if (loadedParts.finances && loadedParts.categories && loadedParts.presets) {
+    if (loadedParts.finances && loadedParts.categories && loadedParts.presets && loadedParts.tags) {
       setIsLoading(false);
     }
   }, [loadedParts])
@@ -317,6 +318,83 @@ const App: React.FC = () => {
   const handleLogout = () => {
     googleLogout();
     setIsLoggedIn(false);
+    setIsLoading(false);
+    setLoadedParts({finances: false, categories: false, presets: false, tags: false});
+  };
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+    fetchTags();
+  }, [isLoggedIn]);
+
+  const fetchTags = async () => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/tags`, {
+          headers: {
+            'user': user!, // Replace with the actual tenant email
+          },
+        }
+      );
+      const data = await response.json();
+      setTags(data);
+    } catch (error) {
+      console.error('Error fetching tags:', error);
+    }
+  };
+
+  const addTag = async (tag: Tag) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/tags`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'user': user!, // Replace with the actual tenant email
+          },
+          body: JSON.stringify(tag),
+        }
+      );
+      const newTag = await response.json();
+      setTags([...tags, newTag]);
+    } catch (error) {
+      console.error('Error adding tag:', error);
+    }
+  };
+
+  const deleteTag = async (id: string) => {
+    try {
+      await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/tags/${id}`, {
+          method: 'DELETE',
+          headers: {
+            'user': user!, // Replace with the actual tenant email
+          },
+        }
+      );
+      setTags(tags.filter(tag => tag._id !== id));
+    } catch (error) {
+      console.error('Error deleting tag:', error);
+    }
+  };
+
+  const updateTag = async (id: string, updatedTag: Tag) => {
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/tags/${id}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            'user': user!, // Replace with the actual tenant email
+          },
+          body: JSON.stringify(updatedTag),
+        }
+      );
+      const newTag = await response.json();
+      setTags(tags.map(tag => (tag._id === id ? newTag : tag)));
+    } catch (error) {
+      console.error('Error updating tag:', error);
+    }
   };
 
   return (
@@ -369,6 +447,7 @@ const App: React.FC = () => {
                 deleteFinance={deleteFinance}
                 categories={categories.map((category) => category.description)}
                 handleOpenFinanceForm={handleOpenFinanceForm}
+                tags={tags}
               />
             </div>
           </div>
@@ -388,6 +467,10 @@ const App: React.FC = () => {
                   onOpenPresets={handleOpenPresets}
                   onClose={handleCloseFinanceForm}
                   presets={presets}
+                  addTag={addTag}
+                  deleteTag={deleteTag}
+                  updateTag={updateTag}
+                  tags={tags}
                 />
               </div>
             </div>
@@ -409,6 +492,7 @@ const App: React.FC = () => {
               onClose={handleClosePresets}
               onAddPreset={handleAddPreset}
               onDeletePreset={handleDeletePreset}
+              tags={tags}
             />
           )}
         </>
