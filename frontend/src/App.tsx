@@ -425,14 +425,14 @@ const App: React.FC = () => {
       </div>
 
       {!isLoggedIn && !(loadedParts.finances && loadedParts.categories && loadedParts.presets && loadedParts.tags) ? (
-        <div className="flex flex-col items-center justify-center pt-[15vh]">
+        <div className="flex flex-col items-center justify-center pt-[5vh]">
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-4">
             Welcome to Finance.io
           </h2>
             <p className="text-lg text-gray-600 mb-6 text-center max-w-md w-2/3">
             Finance.io is your personal finance manager. Easily track your income and expenses, categorize transactions, and gain insights into your financial health. Start managing your finances efficiently with Finance.io.
             </p>
-          <div className="text-gray-600 mb-6 text-center max-w-md">
+          <div className="text-gray-600 mb-6 text-center max-w-md max-w-md w-2/3">
             <h3 className="text-md font-semibold text-gray-700 mb-2">Built with Modern Technologies</h3>
             <ul className="list-disc list-inside text-left mx-auto text-sm">
               <li>React, Typescript for building dynamic user interfaces</li>

@@ -110,7 +110,7 @@ const checkExistingTag = (name: string) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-md w-[50vw]">
+      <div className="bg-white p-6 rounded shadow-md w-[80vw]">
         <h2 className="text-xl font-bold mb-4">
           {selectedTag ? "Edit Tag" : "Add Tag"}
         </h2>
