@@ -1,12 +1,29 @@
 import { Schema, model, Document } from 'mongoose';
 
+interface Tag {
+  name: string;
+  color: string;
+}
+
 interface IFinance extends Document {
   amount: number;
   description: string;
   date: Date;
   category: string;
   user: string;
+  tags?: Tag[];
 }
+
+const TagSchema = new Schema<Tag>({
+  name: {
+    type: String,
+    required: true,
+  },
+  color: {
+    type: String,
+    required: true,
+  },
+});
 
 const FinanceSchema = new Schema<IFinance>({
   amount: {
@@ -28,6 +45,10 @@ const FinanceSchema = new Schema<IFinance>({
   user: {
     type: String,
     required: true,
+  },
+  tags: {
+    type: [TagSchema],
+    required: false,
   },
 });
 

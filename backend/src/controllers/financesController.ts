@@ -80,7 +80,7 @@ export const addFinance = async (req: Request, res: Response) => {
   }
 
   try {
-    const { amount, description, date, category } = req.body;
+    const { amount, description, date, category, tags } = req.body;
 
     const newFinance = new Finance({
       amount,
@@ -88,6 +88,7 @@ export const addFinance = async (req: Request, res: Response) => {
       date,
       category,
       user,
+      tags,
     });
 
     const finance = await newFinance.save();

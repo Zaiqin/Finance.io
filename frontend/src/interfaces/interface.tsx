@@ -20,10 +20,16 @@ export interface Bus {
   routes: BusRoute[];
 }
 
+export interface Tag {
+  name: string;
+  color: string;
+}
+
 export interface ChartFinance {
   category: string;
   amount: number;
   description: string;
+  tags?: Tag[];
 }
 
 export interface Finance {
@@ -32,6 +38,7 @@ export interface Finance {
   description: string;
   date: string;
   category: string;
+  tags?: Tag[];
 }
 
 export interface Category {

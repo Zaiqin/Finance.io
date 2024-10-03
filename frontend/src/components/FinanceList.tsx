@@ -117,6 +117,16 @@ const FinanceList: React.FC<{
     currentPage * itemsPerPage
   );
 
+  // Function to calculate contrast color
+  const getContrastYIQ = (hexcolor: string) => {
+    hexcolor = hexcolor.replace("#", "");
+    const r = parseInt(hexcolor.substr(0, 2), 16);
+    const g = parseInt(hexcolor.substr(2, 2), 16);
+    const b = parseInt(hexcolor.substr(4, 2), 16);
+    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+    return yiq >= 128 ? "black" : "white";
+  };
+
   return (
     <div>
       {/* Chart and table toggle */}
@@ -182,6 +192,9 @@ const FinanceList: React.FC<{
                         <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
                           Description
                         </th>
+                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
+                          Tags
+                        </th>
                         <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tr-lg text-center">
                           Actions
                         </th>
@@ -198,6 +211,26 @@ const FinanceList: React.FC<{
                           </td>
                           <td className="py-2 px-4 text-gray-700">
                             {finance.description}
+                          </td>
+                          <td className="py-2 px-4 border-b">
+                            <div className="flex justify-left">
+                              {finance.tags?.map((tag, index) => {
+                              const textColor = getContrastYIQ(tag.color);
+                              return (
+                                <span
+                                key={index}
+                                className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
+                                style={{
+                                  backgroundColor: tag.color,
+                                  color: textColor,
+                                  borderRadius: "0.5rem", // Less rounded corners
+                                }}
+                                >
+                                {tag.name}
+                                </span>
+                              );
+                              })}
+                            </div>
                           </td>
                           <td className="py-2 px-4 text-gray-700 text-center">
                             <div className="flex justify-center">
@@ -233,7 +266,7 @@ const FinanceList: React.FC<{
                             .toFixed(2)
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                         </td>
-                        <td colSpan={2}></td>
+                        <td colSpan={3}></td>
                       </tr>
                     </tbody>
                   </table>

@@ -71,6 +71,10 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
       description,
       date, // Use the current state for date
       category: category || "",
+      tags: [
+        { name: 'Tag1', color: '#B7E0FF' },
+        { name: 'Tag2', color: '#E78F81' },
+      ]
     };
     addFinance(finance);
     // Reset form after submission
