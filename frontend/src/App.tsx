@@ -326,7 +326,7 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
       <div className="flex justify-between items-center bg-white shadow-md p-4 mb-6">
-        <h1 className="text-2xl sm:text-2xl font-bold text-gray-800">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
           Finance.io
         </h1>
         {isLoggedIn ? (
@@ -344,6 +344,7 @@ const App: React.FC = () => {
               console.log("Login Failed");
             }}
             useOneTap
+            auto_select
           />
         )}
       </div>
@@ -354,7 +355,7 @@ const App: React.FC = () => {
             Welcome to Finance.io
           </h2>
           <p className="text-gray-600 mb-6 text-center">
-            Please log in to manage your finances.
+            Please log in to start managing your finances.
           </p>
           {isLoading && (
             <div className="flex items-center justify-center">
