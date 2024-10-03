@@ -134,6 +134,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     setDate(formatDate(resetTime(new Date()))); // Reset to current date
     setCategory(undefined);
     setSelectedTags([]);
+    setPreset(undefined);
   };
 
   const handlePresetChange = (p: string) => {

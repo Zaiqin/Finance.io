@@ -78,7 +78,7 @@ const FinanceList: React.FC<{
     setIsConfirmOpen(false); // Close the confirmation dialog
   };
 
-  // Sort the finances by date in descending order
+  // Sort the finances by date in ascending order
   const sortedFinances = [...finances].sort(
     (a, b) => new Date(a.date).getTime() - new Date(b.date).getTime()
     // (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime() causes graph to be reversed
@@ -92,6 +92,19 @@ const FinanceList: React.FC<{
     acc[date].push(finance);
     return acc;
   }, {} as { [key: string]: Finance[] });
+
+  const tableFinances = [...finances]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .reduce((acc, finance) => {
+      const date = finance.date;
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(finance);
+      return acc;
+    }, {} as { [key: string]: Finance[] });
+
+  console.log(tableFinances);
 
   const chartData = {
     labels: Object.keys(groupedFinances),
@@ -203,13 +216,16 @@ const FinanceList: React.FC<{
                       </tr>
                     </thead>
                     <tbody>
-                      {groupedFinances[date].map((finance, index) => (
+                      {tableFinances[date].map((finance, index) => (
                         <tr key={index} className="border-b">
                           <td className="py-2 px-4 text-gray-700">
                             {finance.category}
                           </td>
                           <td className="py-2 px-4 text-gray-700">
-                            ${finance.amount.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                            $
+                            {finance.amount
+                              .toFixed(2)
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                           </td>
                           <td className="py-2 px-4 text-gray-700">
                             {finance.description}
@@ -217,20 +233,20 @@ const FinanceList: React.FC<{
                           <td className="py-2 px-4 border-b">
                             <div className="flex justify-left">
                               {finance.tags?.map((tag, index) => {
-                              const textColor = getContrastYIQ(tag.color);
-                              return (
-                                <span
-                                key={index}
-                                className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
-                                style={{
-                                  backgroundColor: tag.color,
-                                  color: textColor,
-                                  borderRadius: "0.5rem", // Less rounded corners
-                                }}
-                                >
-                                {tag.name}
-                                </span>
-                              );
+                                const textColor = getContrastYIQ(tag.color);
+                                return (
+                                  <span
+                                    key={index}
+                                    className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
+                                    style={{
+                                      backgroundColor: tag.color,
+                                      color: textColor,
+                                      borderRadius: "0.5rem", // Less rounded corners
+                                    }}
+                                  >
+                                    {tag.name}
+                                  </span>
+                                );
                               })}
                             </div>
                           </td>
@@ -239,7 +255,9 @@ const FinanceList: React.FC<{
                               <button
                                 type="button"
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
-                                onClick={() => finance._id && openModal(finance._id)}
+                                onClick={() =>
+                                  finance._id && openModal(finance._id)
+                                }
                               >
                                 <MdEdit />
                               </button>
@@ -263,7 +281,7 @@ const FinanceList: React.FC<{
                         </td>
                         <td className="py-2 px-4 text-gray-700 font-bold">
                           $
-                            {groupedFinances[date]
+                          {groupedFinances[date]
                             .reduce((sum, finance) => sum + finance.amount, 0)
                             .toFixed(2)
                             .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
