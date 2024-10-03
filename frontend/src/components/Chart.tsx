@@ -13,12 +13,7 @@ import {
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom"; // Import zoom plugin
 import annotationPlugin from "chartjs-plugin-annotation";
-
-interface Finance {
-  category: string;
-  amount: number;
-  description: string;
-}
+import { ChartFinance } from "../interfaces/interface";
 
 // Register the necessary elements and scales
 ChartJS.register(
@@ -42,7 +37,7 @@ interface ChartProps {
       borderWidth?: number;
     }[];
   };
-  groupedFinances: { [key: string]: Finance[] }; // Pass grouped finances
+  groupedFinances: { [key: string]: ChartFinance[] }; // Pass grouped finances
 }
 
 const formatLabel = (dateString: string) => {

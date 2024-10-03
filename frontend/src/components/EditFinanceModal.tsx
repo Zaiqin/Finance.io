@@ -2,14 +2,7 @@ import React, { useState } from "react";
 import { format } from "date-fns";
 import { FaPlus } from "react-icons/fa";
 import LTADialog from "./LTADialog";
-
-interface Finance {
-  _id: string;
-  amount: number;
-  description: string;
-  date: string;
-  category: string;
-}
+import { Finance } from "../interfaces/interface";
 
 const EditFinanceModal: React.FC<{
   finance: Finance;

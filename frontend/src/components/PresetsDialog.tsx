@@ -1,13 +1,7 @@
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import LTADialog from "./LTADialog";
-
-interface Preset {
-  _id: string | undefined;
-  amount: number;
-  description: string;
-  category: string | undefined;
-}
+import { Preset } from "../interfaces/interface";
 
 interface PresetsDialogProps {
   presets: Preset[];

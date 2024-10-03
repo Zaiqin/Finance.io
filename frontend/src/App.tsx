@@ -5,17 +5,13 @@ import SettingsDialog from "./components/SettingsDialog";
 import PresetsDialog from "./components/PresetsDialog";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
+import { Category } from "./interfaces/interface";
 
 interface Preset {
   _id: string | undefined;
   amount: number;
   description: string;
   category: string | undefined;
-}
-
-interface Category {
-  _id: string | undefined;
-  description: string;
 }
 
 const App: React.FC = () => {

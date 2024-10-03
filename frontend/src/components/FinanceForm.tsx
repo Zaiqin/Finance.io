@@ -1,20 +1,8 @@
 import React, { useState } from "react";
 import { FaCog, FaPlus } from "react-icons/fa"; // Import the FontAwesome icon
 import LTADialog from "./LTADialog";
-
-interface Finance {
-  amount: number;
-  description: string;
-  date: string;
-  category: string | undefined;
-}
-
-interface Preset {
-  _id: string | undefined;
-  amount: number;
-  description: string;
-  category: string | undefined;
-}
+import { Preset } from "../interfaces/interface"; // Import the Preset interface
+import { Finance } from "../interfaces/interface"; // Import the Finance interface
 
 interface FinanceFormProps {
   addFinance: (finance: Finance) => void;
@@ -78,10 +66,11 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     e.preventDefault();
     const formattedAmount = parseFloat(rawAmount).toFixed(2);
     const finance = {
+      _id: undefined,
       amount: parseFloat(formattedAmount),
       description,
       date, // Use the current state for date
-      category,
+      category: category || "",
     };
     addFinance(finance);
     // Reset form after submission

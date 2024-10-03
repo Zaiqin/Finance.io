@@ -1,9 +1,5 @@
 import React, { useState } from "react";
-
-interface Category {
-  _id: string | undefined;
-  description: string;
-}
+import { Category } from "../interfaces/interface";
 
 interface SettingsDialogProps {
   categories: Category[];

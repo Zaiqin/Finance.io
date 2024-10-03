@@ -6,14 +6,7 @@ import EditFinanceModal from "./EditFinanceModal"; // Import the new modal compo
 import { FaTrash, FaChartLine } from "react-icons/fa";
 import { MdEdit, MdPostAdd } from "react-icons/md";
 import { BsTable } from "react-icons/bs";
-
-interface Finance {
-  _id: string;
-  amount: number;
-  description: string;
-  date: string;
-  category: string;
-}
+import { Finance } from "../interfaces/interface";
 
 const FinanceList: React.FC<{
   finances: Finance[];
@@ -71,7 +64,9 @@ const FinanceList: React.FC<{
     console.log("asdf");
     console.log(updatedFinance);
     if (currentFinance) {
-      updateFinance(currentFinance._id, updatedFinance);
+      if (currentFinance._id) {
+        updateFinance(currentFinance._id, updatedFinance);
+      }
       closeModal();
     }
   };
@@ -209,7 +204,7 @@ const FinanceList: React.FC<{
                               <button
                                 type="button"
                                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
-                                onClick={() => openModal(finance._id)}
+                                onClick={() => finance._id && openModal(finance._id)}
                               >
                                 <MdEdit />
                               </button>
@@ -297,7 +292,9 @@ const FinanceList: React.FC<{
         message={`Are you sure you want to delete this item?`}
         onConfirm={() => {
           if (currentFinance) {
-            handleDelete(currentFinance._id);
+            if (currentFinance && currentFinance._id) {
+              handleDelete(currentFinance._id);
+            }
           }
         }}
         onCancel={() => setIsConfirmOpen(false)}

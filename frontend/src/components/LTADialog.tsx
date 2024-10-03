@@ -1,39 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import PresetsDialog from './PresetsDialog'; // Adjust the import path as necessary
+import { Bus, Station } from '../interfaces/interface';
 
 interface LTADialogProps {
     open: boolean;
     onSubmit: (fare: number, description: string ) => void;
     onClose: () => void;
-}
-
-interface Preset {
-    _id: string | undefined;
-    amount: number;
-    description: string;
-    category: string | undefined;
-}
-
-interface Station {
-    code: string;
-    name: string;
-}
-
-interface BusStop {
-    id: string;
-    code: string;
-    order: string;
-    name: string;
-}
-
-interface BusRoute {
-    description: string;
-    busStops: BusStop[];
-}
-
-interface Bus {
-    id: string;
-    routes: BusRoute[];
 }
 
 const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit }) => {
@@ -48,9 +19,6 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit }) => {
     };
 
     const [formData, setFormData] = useState(initialFormData);
-
-    const [preset, setPreset] = useState<Preset>();
-    const [categories] = useState<string[]>(['Category1', 'Category2']); // Example categories
     const [stations, setStations] = useState<Station[] | null>(null);
     const [buses, setBuses] = useState<Bus[] | null>(null);
     const [fare, setFare] = useState<number | null>(null);
