@@ -130,7 +130,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       return date >= start && date <= end;
     });
 
-    console.log(start.toLocaleDateString(), end.toLocaleDateString());
+    //console.log(start.toLocaleDateString(), end.toLocaleDateString());
     setDateEnd(end);
     setStartDatePeriod(start);
     setEndDatePeriod(end);
@@ -143,7 +143,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       return { ...dataset, data: filteredData };
     });
 
-    console.log(filteredDatasets);
+    //console.log(filteredDatasets);
 
     return { labels: filteredLabels, datasets: filteredDatasets };
   };

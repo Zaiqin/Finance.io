@@ -4,6 +4,7 @@ import { Schema, model, Document } from "mongoose";
 export interface ITag extends Document {
   name: string;
   color: string;
+  user: string;
 }
 
 // Define the Tag schema using ITag
@@ -13,6 +14,10 @@ const TagSchema = new Schema<ITag>({
     required: true,
   },
   color: {
+    type: String,
+    required: true,
+  },
+  user: {
     type: String,
     required: true,
   },

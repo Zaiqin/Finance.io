@@ -88,16 +88,31 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
 
   const handleTagDialogClose = () => {
     setIsTagDialogOpen(false);
+    updateSelectedTags()
   };
 
   const handleTagSubmit = async (tag: Tag) => {
     if (tag._id) {
       updateTag(tag._id, tag);
     }
+    updateSelectedTags();
   };
 
   const handleTagDelete = async (id: string) => {
     deleteTag(id);
+    updateSelectedTags();
+  };
+
+  const updateSelectedTags = () => {
+    console.log(selectedTags);
+    console.log(tags);
+    const updatedTags = selectedTags
+      .map((selectedTag) => {
+        const updatedTag = tags.find((tag) => tag._id === selectedTag._id);
+        return updatedTag ? updatedTag : selectedTag;
+      })
+      .filter((tag) => tags.some((t) => t._id === tag._id)); // Remove tags that are no longer in the tags list
+    setSelectedTags(updatedTags);
   };
 
   // In handleSubmit
@@ -261,7 +276,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
                     {tag.name}
                     <button
                       type="button"
-                      className="ml-2 pb-1 text-white"
+                      className="ml-2 text-white"
                       onClick={() =>
                         setSelectedTags(selectedTags.filter((t) => t._id !== tag._id))
                       }
