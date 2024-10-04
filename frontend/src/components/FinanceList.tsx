@@ -195,7 +195,7 @@ const FinanceList: React.FC<{
                   {format(new Date(date), "d MMM yyyy")}
                 </h3>
                 <div className="overflow-x-auto shadow-md rounded-md">
-                  <table className="min-w-full w-full bg-white rounded-lg" style={{ width: "150%" }}>
+                  <table className="min-w-full w-full bg-white rounded-lg" style={{ width: "160%" }}>
                     <thead className="text-left">
                       <tr>
                         <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tl-lg">

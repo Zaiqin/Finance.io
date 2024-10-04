@@ -30,6 +30,7 @@ export interface ChartFinance {
   category: string;
   amount: number;
   description: string;
+  date: string;
   tags?: Tag[];
 }
 

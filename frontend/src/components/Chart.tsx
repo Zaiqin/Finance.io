@@ -14,6 +14,7 @@ import {
 import zoomPlugin from "chartjs-plugin-zoom"; // Import zoom plugin
 import annotationPlugin from "chartjs-plugin-annotation";
 import { ChartFinance } from "../interfaces/interface";
+import SummaryComponent from './SummaryComponent';
 
 // Register the necessary elements and scales
 ChartJS.register(
@@ -345,15 +346,6 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
           enabled: true,
           mode: "x" as const, // Enable panning along the x-axis
         },
-        zoom: {
-          wheel: {
-            enabled: true, // Enable zooming via mouse wheel
-          },
-          drag: {
-            enabled: true, // Enable drag-to-zoom
-          },
-          mode: "x" as const, // Zoom along the x-axis
-        },
       },
       tooltip: {
         callbacks: {
@@ -564,6 +556,15 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
           </button>
         </div>
       </div>
+      {/* Summary Section */}
+      <SummaryComponent
+        finances={groupedFinances}
+        filterType={filterType}
+        startDate={startDate}
+        endDate={endDate}
+        startDatePeriod={startDatePeriod}
+        endDatePeriod={endDatePeriod}
+      />
     </div>
   );
 };

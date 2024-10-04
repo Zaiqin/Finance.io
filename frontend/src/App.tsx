@@ -6,6 +6,7 @@ import PresetsDialog from "./components/PresetsDialog";
 import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { Category, Preset, Tag } from "./interfaces/interface";
+import logo from "./logo192.png";
 
 const App: React.FC = () => {
   const [finances, setFinances] = useState<any[]>([]);
@@ -401,9 +402,18 @@ const App: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
       <div className="flex justify-between items-center bg-white shadow-md p-4 mb-6">
-        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
-          Finance.io
-        </h1>
+        <div className="flex items-center">
+          {isLoggedIn && (
+            <img
+              src={logo}
+              alt="Finance.io Logo"
+              className="h-8 w-8 mr-2"
+            />
+          )}
+          <h1 className="text-xl sm:text-2xl pb-0.5 font-bold text-gray-800">
+            Finance.io
+          </h1>
+        </div>
         {isLoggedIn ? (
           <button
             type="submit"
