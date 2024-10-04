@@ -242,7 +242,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                   key={index}
                   className="flex justify-between items-center mb-2 mr-4"
                 >
-                  <span>{preset.description}</span>
+                  <span className="mr-2">{preset.description}</span>
                   <button
                     type="button"
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"

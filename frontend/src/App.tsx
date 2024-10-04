@@ -424,7 +424,7 @@ const App: React.FC = () => {
         )}
       </div>
 
-      {!isLoggedIn && !(loadedParts.finances && loadedParts.categories && loadedParts.presets && loadedParts.tags) ? (
+      {!isLoggedIn || !(loadedParts.finances && loadedParts.categories && loadedParts.presets && loadedParts.tags) ? (
         <div className="flex flex-col items-center justify-center pt-[5vh]">
           <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-4">
             Welcome to Finance.io
@@ -443,8 +443,9 @@ const App: React.FC = () => {
             </ul>
           </div>
           {isLoading && (
-            <div className="flex items-center justify-center">
-              <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 border-t-blue-500 h-10 w-10 mb-4 animate-spin"></div>
+            <div className="flex items-center justify-center flex-col">
+              <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 border-t-blue-500 h-10 w-10 mb-2 animate-spin"></div>
+              <p>Fetching data...</p>
             </div>
           )}
         </div>
