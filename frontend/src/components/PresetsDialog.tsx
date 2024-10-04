@@ -142,7 +142,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                 </svg>
               </div>
             </div>
-            <div className="overflow-y-auto max-h-[30vh] pr-6 mb-4">
+            <div className="mb-4">
               <div className="relative">
                 <select
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -232,7 +232,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
               </button>
             </div>
           </form>
-          <div className="mb-4">
+          <div className="overflow-y-auto max-h-[30vh] pr-6 mb-4">
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Existing Presets
             </h3>
@@ -240,7 +240,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
               {presets.map((preset, index) => (
                 <li
                   key={index}
-                  className="flex justify-between items-center mb-2"
+                  className="flex justify-between items-center mb-2 mr-2"
                 >
                   <span>{preset.description}</span>
                   <button
