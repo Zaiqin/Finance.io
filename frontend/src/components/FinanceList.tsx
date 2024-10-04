@@ -93,17 +93,11 @@ const FinanceList: React.FC<{
     return acc;
   }, {} as { [key: string]: Finance[] });
 
-  const tableFinances = [...finances]
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
-    .reduce((acc, finance) => {
-      const date = finance.date;
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push(finance);
-      return acc;
-    }, {} as { [key: string]: Finance[] });
-
+  // Sort each array in groupedFinances by category in alphabetical order
+  const tableFinances = Object.keys(groupedFinances).reduce((acc, date) => {
+    acc[date] = groupedFinances[date].sort((a, b) => a.category.localeCompare(b.category));
+    return acc;
+  }, {} as { [key: string]: Finance[] });
   console.log(tableFinances);
 
   const chartData = {
@@ -128,6 +122,12 @@ const FinanceList: React.FC<{
   const dates = Object.keys(groupedFinances);
   const totalPages = Math.ceil(dates.length / itemsPerPage);
   const currentDates = dates.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
+
+  // Reverse currentDates to show the latest date first
+  const tableDates = dates.reverse().slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -189,13 +189,13 @@ const FinanceList: React.FC<{
           <div className="overflow-y-auto max-h-[60vh] pr-6">
             {" "}
             {/* Limit the height and enable scrolling */}
-            {currentDates.map((date) => (
+            {tableDates.map((date) => (
               <div key={date} className="mb-6">
                 <h3 className="text-xl font-semibold text-gray-800 mb-2">
                   {format(new Date(date), "d MMM yyyy")}
                 </h3>
                 <div className="overflow-x-auto shadow-md rounded-md">
-                  <table className="min-w-full bg-white rounded-lg">
+                  <table className="min-w-full w-full bg-white rounded-lg" style={{ width: "150%" }}>
                     <thead className="text-left">
                       <tr>
                         <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tl-lg">
