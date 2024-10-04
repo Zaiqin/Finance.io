@@ -187,7 +187,7 @@ const checkExistingTag = (name: string) => {
             </div>
           </div>
         </form>
-        <div className="mt-4">
+        <div className="overflow-y-auto max-h-[30vh] pr-6 mt-4">
           <h3 className="text-lg font-bold mb-2">Existing Tags</h3>
           <ul className="flex flex-col gap-2">
             {existingTags.map((tag) => {

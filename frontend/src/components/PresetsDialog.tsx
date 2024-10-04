@@ -142,7 +142,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                 </svg>
               </div>
             </div>
-            <div className="mb-4">
+            <div className="overflow-y-auto max-h-[30vh] pr-6 mb-4">
               <div className="relative">
                 <select
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"

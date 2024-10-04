@@ -58,8 +58,8 @@ const EditFinanceModal: React.FC<{
 
   return (
     <>
-      <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-        <div className="bg-white rounded-lg p-6 shadow-lg w-96">
+      <div className={`fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-20 p-6`}>
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md relative">
           <h2 className="text-2xl font-semibold text-gray-800 mb-4">Edit Item</h2>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">
@@ -154,7 +154,7 @@ const EditFinanceModal: React.FC<{
                         {tag.name}
                         <button
                           type="button"
-                          className="ml-2 pb-1 text-white"
+                          className="ml-2 text-white"
                           onClick={() =>
                             setSelectedTags(selectedTags.filter((t) => t._id !== tag._id))
                           }
