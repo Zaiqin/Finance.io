@@ -58,11 +58,11 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
             Add
           </button>
         </form>
-        <div className="overflow-y-auto max-h-[30vh] pr-6 mb-4">
+        <div className="mb-4">
           <h3 className="text-xl font-semibold text-gray-800 mb-2 mr-2">
             Existing Categories
           </h3>
-          <ul>
+          <ul className="overflow-y-auto max-h-[30vh] pr-2">
             {categories.map((category, index) => (
               <li
                 key={index}

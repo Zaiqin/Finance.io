@@ -232,15 +232,15 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
               </button>
             </div>
           </form>
-          <div className="overflow-y-auto max-h-[30vh] pr-6 mb-4">
+          <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Existing Presets
             </h3>
-            <ul>
+            <ul className="overflow-y-auto max-h-[30vh]">
               {presets.map((preset, index) => (
                 <li
                   key={index}
-                  className="flex justify-between items-center mb-2 mr-2"
+                  className="flex justify-between items-center mb-2 mr-4"
                 >
                   <span>{preset.description}</span>
                   <button
