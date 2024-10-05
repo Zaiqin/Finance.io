@@ -87,11 +87,11 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   );
 
   // Calculate highest and lowest spending transactions
-  const highestSpending = Math.max(
-    ...filteredFinances.map((finance) => finance.amount)
+  const highestSpendingTransaction = filteredFinances.reduce((prev, current) =>
+    prev.amount > current.amount ? prev : current
   );
-  const lowestSpending = Math.min(
-    ...filteredFinances.map((finance) => finance.amount)
+  const lowestSpendingTransaction = filteredFinances.reduce((prev, current) =>
+    prev.amount < current.amount ? prev : current
   );
 
   const handleTagChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -259,80 +259,98 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
             ${averageSpending.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </p>
         </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-          <p className="text-lg text-gray-700 font-semibold">
-            Highest Spending Transaction:
-          </p>
-          <p className="text-xl text-gray-900 font-bold">
-            ${highestSpending.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          </p>
-        </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-          <p className="text-lg text-gray-700 font-semibold">
-            Lowest Spending Transaction:
-          </p>
-          <p className="text-xl text-gray-900 font-bold">
-            ${lowestSpending.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          </p>
-        </div>
-      </div>
-      <div className="mt-6">
-        <h4 className="text-xl font-bold text-gray-800 mb-4">
-          Spending Per Category:
-        </h4>
-
-        <div className="flex flex-col md:flex-row justify-center md:items-start">
-          {/* Table Section */}
-          <div className="md:w-1/2 overflow-x-auto shadow-md rounded-md">
-            <table className="min-w-full bg-white">
-              <thead>
-                <tr>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
-                    Category
-                  </th>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
-                    Amount
-                  </th>
-                  <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
-                    Percentage
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {Object.entries(spendingPerCategory).map(
-                  ([category, amount]) => {
-                    const percentage = (
-                      (amount / totalExpenditure) *
-                      100
-                    ).toFixed(2);
-                    return (
-                      <tr key={category}>
-                        <td className="py-2 px-4 border-b border-gray-200">
-                          {category}
-                        </td>
-                        <td className="py-2 px-4 border-b border-gray-200">
-                          $
-                          {amount
-                            .toFixed(2)
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                        </td>
-                        <td className="py-2 px-4 border-b border-gray-200">
-                          {percentage}%
-                        </td>
-                      </tr>
-                    );
-                  }
-                )}
-              </tbody>
-            </table>
+        {isFinite(highestSpendingTransaction.amount) && (
+          <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
+            <p className="text-lg text-gray-700 font-semibold">
+              Highest Spending Transaction:
+            </p>
+            <p className="text-xl text-gray-900 font-bold">
+              ${highestSpendingTransaction.amount
+                .toFixed(2)
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p className="text-md text-gray-700">
+              {highestSpendingTransaction.description} on{" "}
+              {new Date(highestSpendingTransaction.date).toLocaleDateString()}
+            </p>
           </div>
+        )}
+        {isFinite(lowestSpendingTransaction.amount) && (
+          <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
+            <p className="text-lg text-gray-700 font-semibold">
+              Lowest Spending Transaction:
+            </p>
+            <p className="text-xl text-gray-900 font-bold">
+              ${lowestSpendingTransaction.amount
+                .toFixed(2)
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+            <p className="text-md text-gray-700">
+              {lowestSpendingTransaction.description} on{" "}
+              {new Date(lowestSpendingTransaction.date).toLocaleDateString()}
+            </p>
+          </div>
+        )}
+      </div>
+      {filteredByDateFinances.length > 0 && (
+        <div className="mt-6">
+          <h4 className="text-xl font-bold text-gray-800 mb-4">
+            Spending Per Category:
+          </h4>
 
-          {/* Pie Chart Section */}
-          <div className="mt-6 md:mt-0 md:w-1/2 md:ml-6 flex justify-center">
-            <Pie data={pieChartData} options={pieChartOptions} />
+          <div className="flex flex-col md:flex-row justify-center md:items-start">
+            {/* Table Section */}
+            <div className="md:w-1/2 overflow-x-auto shadow-md rounded-md">
+              <table className="min-w-full bg-white">
+                <thead>
+                  <tr>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
+                      Category
+                    </th>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
+                      Amount
+                    </th>
+                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
+                      Percentage
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Object.entries(spendingPerCategory).map(
+                    ([category, amount]) => {
+                      const percentage = (
+                        (amount / totalExpenditure) *
+                        100
+                      ).toFixed(2);
+                      return (
+                        <tr key={category}>
+                          <td className="py-2 px-4 border-b border-gray-200">
+                            {category}
+                          </td>
+                          <td className="py-2 px-4 border-b border-gray-200">
+                            $
+                            {amount
+                              .toFixed(2)
+                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+                          </td>
+                          <td className="py-2 px-4 border-b border-gray-200">
+                            {percentage}%
+                          </td>
+                        </tr>
+                      );
+                    }
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pie Chart Section */}
+            <div className="mt-6 md:mt-0 md:w-1/2 md:ml-6 flex justify-center">
+              <Pie data={pieChartData} options={pieChartOptions} />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
