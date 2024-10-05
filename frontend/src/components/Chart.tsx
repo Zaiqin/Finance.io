@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import ChartSettingsDialog from "./ChartSettingsDialog"; // Import the dialog
 import { FaChevronLeft, FaChevronRight, FaCog } from "react-icons/fa";
@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import zoomPlugin from "chartjs-plugin-zoom"; // Import zoom plugin
 import annotationPlugin from "chartjs-plugin-annotation";
+import trendlinePlugin from "chartjs-plugin-trendline";
 import { ChartFinance } from "../interfaces/interface";
 import SummaryComponent from './SummaryComponent';
 
@@ -24,7 +25,8 @@ ChartJS.register(
   LineElement,
   Tooltip,
   zoomPlugin, // Register zoom plugin
-  annotationPlugin
+  annotationPlugin,
+  trendlinePlugin
 );
 
 interface ChartProps {
@@ -397,6 +399,15 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
           },
         },
       },
+      trendlineLinear: {
+        style: "rgba(255,105,180, .8)",
+        lineStyle: "dotted",
+        width: 2,
+        type: "movingAverage", // Specify the type of trendline
+        movingAverage: {
+          period: 2 // Specify the period for the moving average
+        }
+      }
     },
     onClick: handlePointClick, // Add the onClick handler
   };
@@ -408,6 +419,15 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       ...dataset,
       borderColor: lineColor,
       borderWidth: lineThickness, // Use the line thickness from state
+      trendlineLinear: {
+        style: "rgba(255,105,180, .8)",
+        lineStyle: "dotted",
+        width: 2,
+        type: "movingAverage", // Specify the type of trendline
+        movingAverage: {
+          period: 2 // Specify the period for the moving average
+        }
+      }
     })),
   };
 

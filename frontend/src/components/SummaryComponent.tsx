@@ -26,20 +26,21 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [filterMode, setFilterMode] = useState<"include" | "exclude">("include");
 
-  //console.log(finances);
+  console.log(finances);
 
   // Flatten the finances data
   const allFinances = Object.values(finances).flat();
+
 
   // Filter finances based on filterType
   const filteredByDateFinances = allFinances.filter((finance) => {
     const financeDate = new Date(finance.date);
     if (filterType === "period" && startDatePeriod && endDatePeriod) {
-      return financeDate >= startDatePeriod && financeDate <= endDatePeriod;
+      return financeDate >= startDatePeriod && financeDate <= new Date(endDatePeriod.setHours(23, 59, 59, 999));
     } else if (filterType === "range" && startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-      return financeDate >= start && financeDate <= end;
+      return financeDate >= start && financeDate <= new Date(end.setHours(23, 59, 59, 999));
     }
     return true;
   });
