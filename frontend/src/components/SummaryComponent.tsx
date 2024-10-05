@@ -283,7 +283,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
 
         <div className="flex flex-col md:flex-row justify-center md:items-start">
           {/* Table Section */}
-          <div className="md:w-1/2">
+          <div className="md:w-1/2 overflow-x-auto shadow-md rounded-md">
             <table className="min-w-full bg-white">
               <thead>
                 <tr>
