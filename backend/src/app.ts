@@ -21,7 +21,14 @@ app.use(express.json({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 
 // Use CORS middleware
-app.use(cors());
+app.use(cors({
+  origin: ['https://finance-io-frontend.vercel.app', 'http://localhost:3000'],
+  methods: 'GET,POST,PUT,DELETE',
+  allowedHeaders: 'Content-Type,Authorization,User',
+  credentials: true,
+  maxAge: 3600,
+  optionsSuccessStatus: 204
+}));
 
 // Define Routes
 app.use('/api/finances', require('./routes/finances'));
