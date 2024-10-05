@@ -410,7 +410,7 @@ const App: React.FC = () => {
               className="h-8 w-8 mr-2"
             />
           )}
-          <h1 className="text-xl sm:text-2xl pb-0.5 font-bold text-gray-800">
+          <h1 className="text-xl sm:text-2xl pb-0 sm:pb-0.5 font-bold text-gray-800">
             Finance.io
           </h1>
         </div>
