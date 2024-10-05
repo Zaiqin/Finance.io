@@ -6,6 +6,7 @@ import { Request, Response, NextFunction } from 'express';
 
 // Allowed origins
 const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
+const x_token = process.env.X_TOKEN;
 
 const app = express();
 
@@ -27,10 +28,14 @@ app.use(express.urlencoded({ extended: true }));
 // Custom middleware to restrict access
 app.use((req: Request, res: Response, next: NextFunction) => {
   const origin = req.headers.origin || req.headers.referer;
+  const token = req.headers['x-token'];
+
   if (origin && allowedOrigins.includes(origin)) {
     next();
+  } else if (token === x_token) {
+    next();
   } else {
-    res.status(403).json({ message: 'Access forbidden: Origin not allowed' });
+    res.status(403).json({ message: 'Access Forbidden' });
   }
 });
 
@@ -38,7 +43,7 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 app.use(cors({
   origin: allowedOrigins,
   methods: 'GET,POST,PUT,DELETE',
-  allowedHeaders: 'Content-Type,Authorization,User',
+  allowedHeaders: 'Content-Type,Authorization,User,x-token',
   credentials: true,
   maxAge: 3600,
   optionsSuccessStatus: 204
