@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { ChartFinance, Tag } from "../interfaces/interface";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { FaExchangeAlt } from "react-icons/fa";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -23,6 +24,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   endDatePeriod,
 }) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [filterMode, setFilterMode] = useState<"include" | "exclude">("include");
 
   console.log(finances);
 
@@ -42,16 +44,16 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
     return true;
   });
 
-  // Filter finances based on selected tags
+  // Filter finances based on selected tags and filter mode
   const filteredFinances =
     selectedTags.length > 0
-      ? filteredByDateFinances.filter(
-          (finance) =>
-            finance.tags &&
-            finance.tags.some((tag) =>
-              selectedTags.some((selectedTag) => tag._id === selectedTag._id)
-            )
-        )
+      ? filteredByDateFinances.filter((finance) => {
+          if (!finance.tags) return false;
+          const hasSelectedTag = finance.tags.some((tag) =>
+            selectedTags.some((selectedTag) => tag._id === selectedTag._id)
+          );
+          return filterMode === "include" ? hasSelectedTag : !hasSelectedTag;
+        })
       : filteredByDateFinances;
 
   // Calculate total expenditure and number of transactions
@@ -108,6 +110,10 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
 
   const removeTag = (tagId: string) => {
     setSelectedTags(selectedTags.filter((tag) => tag._id !== tagId));
+  };
+
+  const toggleFilterMode = () => {
+    setFilterMode((prevMode) => (prevMode === "include" ? "exclude" : "include"));
   };
 
   // Prepare data for the pie chart
@@ -179,7 +185,12 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
         Summary
       </h3>
       <div className="mb-6">
-        <label className="text-gray-700 font-medium">Filter by Tag(s):</label>
+        <label className="text-gray-700 font-medium">
+          Filter by Tag(s):
+          {filterMode === "include"
+            ? " Showing transactions with selected tags"
+            : " Hiding transactions with the following tags"}
+        </label>
         <div
           className={`flex flex-wrap ${selectedTags.length > 0 ? "mt-2" : ""}`}
         >
@@ -231,7 +242,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
               ) : null
             )}
           </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 pt-4 text-gray-700">
             <svg
               className="fill-current h-4 w-4"
               xmlns="http://www.w3.org/2000/svg"
@@ -241,6 +252,12 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
             </svg>
           </div>
         </div>
+        <button
+          className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
+          onClick={toggleFilterMode}
+        >
+          <FaExchangeAlt className="mr-2" /> <span>{filterMode === "include" ? "Exclude" : "Include"} Mode</span>
+        </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
