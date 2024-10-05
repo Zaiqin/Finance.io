@@ -63,8 +63,7 @@ const FinanceList: React.FC<{
   };
 
   const handleUpdate = (updatedFinance: Finance) => {
-    console.log("asdf");
-    console.log(updatedFinance);
+    //console.log(updatedFinance);
     if (currentFinance) {
       if (currentFinance._id) {
         updateFinance(currentFinance._id, updatedFinance);
@@ -98,7 +97,7 @@ const FinanceList: React.FC<{
     acc[date] = groupedFinances[date].sort((a, b) => a.category.localeCompare(b.category));
     return acc;
   }, {} as { [key: string]: Finance[] });
-  console.log(tableFinances);
+  //console.log(tableFinances);
 
   const chartData = {
     labels: Object.keys(groupedFinances),
@@ -121,10 +120,6 @@ const FinanceList: React.FC<{
   // Calculate the data for the current page
   const dates = Object.keys(groupedFinances);
   const totalPages = Math.ceil(dates.length / itemsPerPage);
-  const currentDates = dates.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
 
   // Reverse currentDates to show the latest date first
   const tableDates = dates.reverse().slice(

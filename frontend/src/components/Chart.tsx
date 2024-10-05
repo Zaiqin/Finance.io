@@ -284,16 +284,16 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
       const label = filteredData.labels[index];
       const value = filteredData.datasets[datasetIndex].data[index];
       const finances = groupedFinances[label] || [];
-      console.log(
-        `Clicked on point: ${label} - $${value}\nDetails:\n${finances
-          .map(
-            (finance) =>
-              `${finance.category}: $${finance.amount.toFixed(2)} (${
-                finance.description
-              })`
-          )
-          .join("\n")}`
-      );
+      // console.log(
+      //   `Clicked on point: ${label} - $${value}\nDetails:\n${finances
+      //     .map(
+      //       (finance) =>
+      //         `${finance.category}: $${finance.amount.toFixed(2)} (${
+      //           finance.description
+      //         })`
+      //     )
+      //     .join("\n")}`
+      // );
     }
   };
 

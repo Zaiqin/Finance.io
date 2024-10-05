@@ -26,7 +26,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [filterMode, setFilterMode] = useState<"include" | "exclude">("include");
 
-  console.log(finances);
+  //console.log(finances);
 
   // Flatten the finances data
   const allFinances = Object.values(finances).flat();
@@ -89,12 +89,17 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   );
 
   // Calculate highest and lowest spending transactions
-  const highestSpendingTransaction = filteredFinances.reduce((prev, current) =>
-    prev.amount > current.amount ? prev : current
-  );
-  const lowestSpendingTransaction = filteredFinances.reduce((prev, current) =>
-    prev.amount < current.amount ? prev : current
-  );
+  const highestSpendingTransaction = filteredFinances.length > 0
+    ? filteredFinances.reduce((prev, current) =>
+        prev.amount > current.amount ? prev : current
+      )
+    : { amount: 0, description: "", date: "" };
+
+  const lowestSpendingTransaction = filteredFinances.length > 0
+    ? filteredFinances.reduce((prev, current) =>
+        prev.amount < current.amount ? prev : current
+      )
+    : { amount: 0, description: "", date: "" };
 
   const handleTagChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedTag = uniqueTags.find(
@@ -268,18 +273,18 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
             ${totalExpenditure.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </p>
         </div>
-        <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
+        {filteredByDateFinances.length > 0 && (<div className="p-4 bg-gray-50 rounded-lg shadow-inner">
           <p className="text-lg text-gray-700 font-semibold">
             Average Spending:
           </p>
           <p className="text-xl text-gray-900 font-bold">
             ${averageSpending.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </p>
-        </div>
-        {isFinite(highestSpendingTransaction.amount) && (
+        </div>)}
+        {filteredByDateFinances.length > 0 && (
           <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
             <p className="text-lg text-gray-700 font-semibold">
-              Highest Spending Transaction:
+              Largest Transaction:
             </p>
             <p className="text-xl text-gray-900 font-bold">
               ${highestSpendingTransaction.amount
@@ -292,10 +297,10 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
             </p>
           </div>
         )}
-        {isFinite(lowestSpendingTransaction.amount) && (
+        {filteredByDateFinances.length > 0 && (
           <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
             <p className="text-lg text-gray-700 font-semibold">
-              Lowest Spending Transaction:
+              Smallest Transaction:
             </p>
             <p className="text-xl text-gray-900 font-bold">
               ${lowestSpendingTransaction.amount

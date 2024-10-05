@@ -122,8 +122,8 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit }) => {
 
     const handleSubmit = async () => {
         // Handle form submission logic here
-        console.log(fare)
-        console.log({ ...formData, fare });
+        //console.log(fare)
+        //console.log({ ...formData, fare });
         onClose();
         if (fare !== null) {
             onSubmit(fare, createDescription());

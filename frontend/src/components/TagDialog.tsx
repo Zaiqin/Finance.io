@@ -64,7 +64,7 @@ const TagDialog: React.FC<TagDialogProps> = ({
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
-    if (error != "") return;
+    if (error !== "") return;
     if (selectedTag) {
       onSubmit({ ...selectedTag, name, color });
       updateTag(selectedTag._id!, { ...selectedTag, name, color });

@@ -37,7 +37,7 @@ const App: React.FC = () => {
 
     const fetchFinances = async () => {
       try {
-        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        //console.log(`${process.env.REACT_APP_SERVER_URL}`);
         const response = await fetch(
           `${process.env.REACT_APP_SERVER_URL}/api/finances`, {
             headers: {
@@ -49,7 +49,7 @@ const App: React.FC = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data);
+        //console.log(data);
         setFinances(data);
         setLoadedParts((prev) => ({ ...prev, finances: true }));
       } catch (error) {
@@ -64,7 +64,7 @@ const App: React.FC = () => {
 
     const fetchPresets = async () => {
       try {
-        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        //console.log(`${process.env.REACT_APP_SERVER_URL}`);
         const response = await fetch(
           `${process.env.REACT_APP_SERVER_URL}/api/presets`, {
             headers: {
@@ -80,7 +80,7 @@ const App: React.FC = () => {
           ...preset,
           amount: parseFloat(preset.amount).toFixed(2),
         }));
-        console.log(formattedData);
+        //console.log(formattedData);
         setPresets(formattedData);
         setLoadedParts((prev) => ({ ...prev, presets: true }));
       } catch (error) {
@@ -95,7 +95,7 @@ const App: React.FC = () => {
 
     const fetchCategories = async () => {
       try {
-        console.log(`${process.env.REACT_APP_SERVER_URL}`);
+        //console.log(`${process.env.REACT_APP_SERVER_URL}`);
         const response = await fetch(
           `${process.env.REACT_APP_SERVER_URL}/api/categories`, {
             headers: {
@@ -107,7 +107,7 @@ const App: React.FC = () => {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         const data = await response.json();
-        console.log(data);
+        //console.log(data);
         setCategories(data);
         setLoadedParts((prev) => ({ ...prev, categories: true }));
       } catch (error) {
@@ -221,7 +221,7 @@ const App: React.FC = () => {
       );
       const newCategory = await response.json();
       setCategories([...categories, newCategory]);
-      console.log("Category added successfully");
+      //console.log("Category added successfully");
     } catch (error) {
       console.error("Error adding category:", error);
     }
@@ -239,7 +239,7 @@ const App: React.FC = () => {
         }
       );
       setCategories(categories.filter((cat) => cat._id !== categoryId));
-      console.log("Category deleted successfully");
+      //console.log("Category deleted successfully");
     } catch (error) {
       console.error("Error deleting category:", error);
     }
@@ -262,7 +262,7 @@ const App: React.FC = () => {
       );
       const newPreset = await response.json();
       setPresets([...presets, newPreset]);
-      console.log("Preset added successfully");
+      //console.log("Preset added successfully");
     } catch (error) {
       console.error("Error adding preset:", error);
     }
@@ -323,8 +323,8 @@ const App: React.FC = () => {
     try {
       if (credentialResponse?.credential) {
         const decoded: any = jwtDecode(credentialResponse.credential);
-        console.log("Raw JWT:", credentialResponse.credential);
-        console.log("Decoded JWT:", decoded);
+        //console.log("Raw JWT:", credentialResponse.credential);
+        //console.log("Decoded JWT:", decoded);
         if (!decoded.email) {
           console.error("Email not found in the JWT");
           return;
@@ -450,7 +450,7 @@ const App: React.FC = () => {
           <GoogleLogin
             onSuccess={handleLoginSuccess}
             onError={() => {
-              console.log("Login Failed");
+              alert("Login Failed");
             }}
             useOneTap
             auto_select

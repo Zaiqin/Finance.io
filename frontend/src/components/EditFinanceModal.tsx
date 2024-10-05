@@ -18,7 +18,7 @@ const EditFinanceModal: React.FC<{
   const [selectedTags, setSelectedTags] = useState<Tag[]>(finance.tags?.filter((tag): tag is Tag => tag._id !== undefined) || []);
 
   const handleSubmit = (event: React.FormEvent) => {
-    console.log("submit");
+    //console.log("submit");
     event.preventDefault();
     const updatedFinance = {
       ...finance,

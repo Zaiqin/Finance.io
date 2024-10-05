@@ -104,8 +104,8 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   };
 
   const updateSelectedTags = () => {
-    console.log(selectedTags);
-    console.log(tags);
+    //console.log(selectedTags);
+    //console.log(tags);
     const updatedTags = selectedTags
       .map((selectedTag) => {
         const updatedTag = tags.find((tag) => tag._id === selectedTag._id);
@@ -140,14 +140,14 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   const handlePresetChange = (p: string) => {
     const selectedPreset = presets.find((f) => f.description === p);
     if (selectedPreset) {
-      console.log(selectedPreset);
+      //console.log(selectedPreset);
       setPreset(selectedPreset);
       setRawAmount(selectedPreset.amount.toString());
       setDescription(selectedPreset.description);
       setCategory(selectedPreset.category);
       setSelectedTags(selectedPreset.tags || []);
     } else {
-      console.log("Preset not found!");
+      //console.log("Preset not found!");
     }
   };
 
