@@ -285,6 +285,30 @@ const App: React.FC = () => {
     }
   };
 
+  const handleEditPreset = async (presetId: string, updatedPreset: Preset) => {
+    if (!isLoggedIn) return;
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/presets/${presetId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            'user': user!,
+          },
+          body: JSON.stringify(updatedPreset),
+        }
+      );
+      const data = await response.json();
+      setPresets((prev) =>
+        prev.map((preset) => (preset._id === presetId ? data : preset))
+      );
+    } catch (error) {
+      console.error("Error updating preset:", error);
+    }
+  }
+
   const handleOpenFinanceForm = () => {
     if (!isLoggedIn) return;
     setIsFinanceFormOpen(true);
@@ -504,6 +528,7 @@ const App: React.FC = () => {
               onClose={handleClosePresets}
               onAddPreset={handleAddPreset}
               onDeletePreset={handleDeletePreset}
+              onEditPreset={handleEditPreset}
               tags={tags}
             />
           )}

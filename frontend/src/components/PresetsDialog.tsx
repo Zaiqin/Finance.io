@@ -10,6 +10,7 @@ interface PresetsDialogProps {
   onClose: () => void;
   onAddPreset: (preset: Preset) => void;
   onDeletePreset: (presetId: string) => void;
+  onEditPreset: (presetId: string, updatedPreset: Preset) => void;
 }
 
 const getContrastYIQ = (hexcolor: string) => {
@@ -28,26 +29,52 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
   onClose,
   onAddPreset,
   onDeletePreset,
+  onEditPreset,
 }) => {
   const [newAmount, setNewAmount] = useState<string>("");
   const [newDescription, setNewDescription] = useState<string>("");
   const [newCategory, setNewCategory] = useState<string>("");
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
+  const [editingPreset, setEditingPreset] = useState<Preset | null>(null);
+
+  const handleEditPreset = (preset: Preset) => {
+    setEditingPreset(preset);
+    setNewAmount(preset.amount.toString());
+    setNewDescription(preset.description);
+    setNewCategory(preset.category ?? "");
+    setSelectedTags(preset.tags ?? []);
+  };
 
   const handleAddPreset = () => {
-    if (!presets.some((preset) => preset.description === newDescription)) {
-      onAddPreset({
-        _id: undefined,
+    if (editingPreset) {
+      const updatedPreset = {
+        ...editingPreset,
         amount: parseFloat(newAmount),
         description: newDescription,
         category: newCategory,
         tags: selectedTags,
-      });
-      setNewAmount("");
-      setNewDescription("");
-      setNewCategory("");
-      setSelectedTags([]);
+      };
+      // Call the edit function instead of add
+      if (editingPreset._id) {
+        onEditPreset(editingPreset._id, updatedPreset);
+      }
+      setEditingPreset(null);
+    } else {
+      if (!presets.some((preset) => preset.description === newDescription)) {
+        onAddPreset({
+          _id: undefined,
+          amount: parseFloat(newAmount),
+          description: newDescription,
+          category: newCategory,
+          tags: selectedTags,
+        });
+      }
     }
+    // Reset form
+    setNewAmount("");
+    setNewDescription("");
+    setNewCategory("");
+    setSelectedTags([]);
   };
 
   const [isLTADialogOpen, setIsLTADialogOpen] = useState(false);
@@ -186,7 +213,11 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                   </svg>
                 </div>
               </div>
-              <div className={`flex flex-wrap gap-2 ${selectedTags.length > 0 ? "mb-3 mt-3" : "" }`}>
+              <div
+                className={`flex flex-wrap gap-2 ${
+                  selectedTags.length > 0 ? "mb-3 mt-3" : ""
+                }`}
+              >
                 <div className="flex justify-left">
                   {selectedTags.map((tag, index) => {
                     const textColor = getContrastYIQ(tag.color);
@@ -205,7 +236,9 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                           type="button"
                           className="ml-2 pb-1 text-white"
                           onClick={() =>
-                            setSelectedTags(selectedTags.filter((t) => t._id !== tag._id))
+                            setSelectedTags(
+                              selectedTags.filter((t) => t._id !== tag._id)
+                            )
                           }
                         >
                           &times;
@@ -228,28 +261,57 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                 type="submit"
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
               >
-                Add
+                {editingPreset ? "Update" : "Add"}
               </button>
+              {editingPreset && (
+                <button
+                  type="button"
+                  className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-3"
+                  onClick={() => {
+                    setEditingPreset(null);
+                    setNewAmount("");
+                    setNewDescription("");
+                    setNewCategory("");
+                    setSelectedTags([]);
+                  }}
+                >
+                  Cancel
+                </button>
+              )}
             </div>
           </form>
           <div className="mb-4">
             <h3 className="text-xl font-semibold text-gray-800 mb-2">
               Existing Presets
             </h3>
-            <ul className="overflow-y-auto max-h-[30vh]">
+            <ul className="overflow-y-auto overflow-x-auto max-h-[30vh] mr-2 pt-2 pb-2">
               {presets.map((preset, index) => (
                 <li
                   key={index}
-                  className="flex justify-between items-center mb-2 mr-4"
+                  className="flex justify-between items-center mb-2"
                 >
-                  <span className="mr-2">{preset.description}</span>
-                  <button
-                    type="button"
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                    onClick={() => preset._id && onDeletePreset(preset._id)}
+                  <span
+                    className="mr-2 flex-shrink-0"
+                    style={{ width: "65%", wordWrap: "break-word" }}
                   >
-                    Delete
-                  </button>
+                    {preset.description}
+                  </span>
+                  <div className="flex flex-row space-x-2">
+                    <button
+                      type="button"
+                      className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                      onClick={() => handleEditPreset(preset)}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      type="button"
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                      onClick={() => preset._id && onDeletePreset(preset._id)}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </li>
               ))}
             </ul>
