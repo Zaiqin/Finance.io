@@ -2,6 +2,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 require('dotenv').config();
+import { Request, Response, NextFunction } from 'express';
+
+// Allowed origins
+const allowedOrigins = process.env.ALLOWED_ORIGINS?.split(',') || [];
 
 const app = express();
 
@@ -20,9 +24,19 @@ mongoose.connect(process.env.ATLAS_URI, {
 app.use(express.json({ extended: false }));
 app.use(express.urlencoded({ extended: true }));
 
+// Custom middleware to restrict access
+app.use((req: Request, res: Response, next: NextFunction) => {
+  const origin = req.headers.origin || req.headers.referer;
+  if (origin && allowedOrigins.includes(origin)) {
+    next();
+  } else {
+    res.status(403).json({ message: 'Access forbidden: Origin not allowed' });
+  }
+});
+
 // Use CORS middleware
 app.use(cors({
-  origin: ['https://finance-io-frontend.vercel.app', 'http://localhost:3000'],
+  origin: allowedOrigins,
   methods: 'GET,POST,PUT,DELETE',
   allowedHeaders: 'Content-Type,Authorization,User',
   credentials: true,
