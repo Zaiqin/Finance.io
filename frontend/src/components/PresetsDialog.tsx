@@ -111,7 +111,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
               className="block text-gray-700 text-m font-bold mb-2"
               htmlFor="newPreset"
             >
-              Add New Preset
+              {editingPreset ? 'Editing Preset' : 'Add New Preset'}
             </label>
             <div className="mb-3">
               <div className="relative">
@@ -249,35 +249,39 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                 </div>
               </div>
             </div>
-            <div className="flex justify-left items-left mt-3">
-              <button
-                className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 mr-3 rounded focus:outline-none focus:shadow-outline flex items-center"
-                type="button"
-                onClick={handleLTAOpenDialog}
-              >
-                <FaPlus className="mr-2" /> <span>Public Transport</span>
-              </button>
-              <button
-                type="submit"
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              >
-                {editingPreset ? "Update" : "Add"}
-              </button>
-              {editingPreset && (
+            <div className="flex flex-col justify-left items-left mt-3">
+              <div className="flex space-x-2 flex items-left justify-left">
                 <button
+                  className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 mr-3 rounded focus:outline-none focus:shadow-outline flex items-center"
                   type="button"
-                  className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-3"
-                  onClick={() => {
-                    setEditingPreset(null);
-                    setNewAmount("");
-                    setNewDescription("");
-                    setNewCategory("");
-                    setSelectedTags([]);
-                  }}
+                  onClick={handleLTAOpenDialog}
                 >
-                  Cancel
+                  <FaPlus className="mr-2" /> <span>Public Transport</span>
                 </button>
-              )}
+              </div>
+              <div className="mb-3 flex space-x-2 mt-3 flex items-left justify-left">
+                <button
+                  type="submit"
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                >
+                  {editingPreset ? "Update" : "Add"}
+                </button>
+                {editingPreset && (
+                  <button
+                    type="button"
+                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ml-3"
+                    onClick={() => {
+                      setEditingPreset(null);
+                      setNewAmount("");
+                      setNewDescription("");
+                      setNewCategory("");
+                      setSelectedTags([]);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                )}
+              </div>
             </div>
           </form>
           <div className="mb-4">

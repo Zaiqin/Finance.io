@@ -113,7 +113,7 @@ const TagDialog: React.FC<TagDialogProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-md w-full sm:w-1/3 min-w-[400px] m-6">
+      <div className="bg-white p-6 rounded shadow-md w-full sm:w-1/3 min-w-[350px] m-6">
         <h2 className="text-xl font-bold mb-4">
           {selectedTag ? "Edit Tag" : "Add Tag"}
         </h2>
@@ -132,9 +132,9 @@ const TagDialog: React.FC<TagDialogProps> = ({
               value={name}
               required
               placeholder="Tag Name"
-              maxLength={20}
+              maxLength={15}
               onChange={(e) => {
-                if (e.target.value.length <= 20) {
+                if (e.target.value.length <= 15) {
                   setName(e.target.value);
                   checkExistingTag(e.target.value);
                 }
