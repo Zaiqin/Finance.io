@@ -338,6 +338,7 @@ const FinanceList: React.FC<{
       {/* Confirmation dialog for deleting finance */}
       <ConfirmationDialog
         isOpen={isConfirmOpen}
+        text={currentFinance?.description}
         message={`Are you sure you want to delete this item?`}
         onConfirm={() => {
           if (currentFinance) {

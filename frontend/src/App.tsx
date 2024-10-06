@@ -245,6 +245,31 @@ const App: React.FC = () => {
     }
   };
 
+  const handleUpdateCategory = async (categoryId: string, updatedCategory: string) => {
+    if (!isLoggedIn) return;
+
+    try {
+      const response = await fetch(
+        `${process.env.REACT_APP_SERVER_URL}/api/categories/${categoryId}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            'user': user!,
+          },
+          body: JSON.stringify({ description: updatedCategory }),
+        }
+      );
+      const data = await response.json();
+      setCategories((prev) =>
+        prev.map((category) => (category._id === categoryId ? data : category))
+      );
+      //console.log("Category updated successfully");
+    } catch (error) {
+      console.error("Error updating category:", error);
+    }
+  };
+
   const handleAddPreset = async (preset: Preset) => {
     if (!isLoggedIn) return;
 
@@ -518,6 +543,7 @@ const App: React.FC = () => {
               onClose={handleCloseSettings}
               onAddCategory={handleAddCategory}
               onDeleteCategory={handleDeleteCategory}
+              onUpdateCategory={handleUpdateCategory}
             />
           )}
 

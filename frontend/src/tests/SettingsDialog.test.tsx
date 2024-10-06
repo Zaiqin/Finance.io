@@ -12,6 +12,8 @@ const mockCategories: Category[] = [
 const mockOnClose = jest.fn();
 const mockOnAddCategory = jest.fn();
 const mockOnDeleteCategory = jest.fn();
+const mockOnUpdateCategory = jest.fn();
+
 
 const renderComponent = () =>
   render(
@@ -20,6 +22,7 @@ const renderComponent = () =>
       onClose={mockOnClose}
       onAddCategory={mockOnAddCategory}
       onDeleteCategory={mockOnDeleteCategory}
+      onUpdateCategory={mockOnUpdateCategory}
     />
   );
 

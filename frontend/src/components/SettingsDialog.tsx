@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Category } from "../interfaces/interface";
 
 interface SettingsDialogProps {
@@ -6,6 +6,7 @@ interface SettingsDialogProps {
   onClose: () => void;
   onAddCategory: (category: string) => void;
   onDeleteCategory: (category: string) => void;
+  onUpdateCategory: (id: string, updatedCategory: string) => void;
 }
 
 const SettingsDialog: React.FC<SettingsDialogProps> = ({
@@ -13,14 +14,42 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
   onClose,
   onAddCategory,
   onDeleteCategory,
+  onUpdateCategory,
 }) => {
   const [newCategory, setNewCategory] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState<Category | null>(null);
+  const [error, setError] = useState("");
 
-  const handleAddCategory = () => {
-    if (newCategory && !categories.some(category => category.description === newCategory)) {
-      onAddCategory(newCategory);
+  useEffect(() => {
+    if (selectedCategory) {
+      setNewCategory(selectedCategory.description);
+    } else {
       setNewCategory("");
     }
+  }, [selectedCategory]);
+
+  const handleAddOrUpdateCategory = () => {
+    if (newCategory && !categories.some(category => category.description === newCategory)) {
+      if (selectedCategory) {
+        onUpdateCategory(selectedCategory._id!, newCategory);
+      } else {
+        onAddCategory(newCategory);
+      }
+      setNewCategory("");
+      setSelectedCategory(null);
+    } else {
+      setError("Category already exists or is empty.");
+    }
+  };
+
+  const handleEdit = (category: Category) => {
+    setSelectedCategory(category);
+  };
+
+  const handleCancelEdit = () => {
+    setSelectedCategory(null);
+    setNewCategory("");
+    setError("");
   };
 
   return (
@@ -33,16 +62,16 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
           className="mb-4"
           onSubmit={(e) => {
             e.preventDefault();
-            handleAddCategory();
+            handleAddOrUpdateCategory();
           }}
         >
-            <label
+          <label
             className="block text-gray-700 text-m font-bold mb-2"
             htmlFor="newCategory"
-            >
-            Add New Category
-            </label>
-            <input
+          >
+            {selectedCategory ? "Edit Category" : "Add New Category"}
+          </label>
+          <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="newCategory"
             type="text"
@@ -53,13 +82,27 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
             onChange={(e) => {
               if (e.target.value.length <= 30) setNewCategory(e.target.value);
             }}
-            />
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline mt-3"
-          >
-            Add
-          </button>
+          />
+          {error && (
+            <p className="text-red-500 text-sm italic mt-1">{error}</p>
+          )}
+          <div className="flex space-x-2 mt-3">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+            >
+              {selectedCategory ? "Update" : "Add"}
+            </button>
+            {selectedCategory && (
+              <button
+                type="button"
+                className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                onClick={handleCancelEdit}
+              >
+                Cancel
+              </button>
+            )}
+          </div>
         </form>
         <div className="mb-4">
           <h3 className="text-xl font-semibold text-gray-800 mb-2 mr-2">
@@ -72,13 +115,22 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
                 className="flex justify-between items-center mb-2"
               >
                 <span>{category.description}</span>
-                <button
-                  type="button"
-                  className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                  onClick={() => onDeleteCategory(category._id!)}
-                >
-                  Delete
-                </button>
+                <div className="flex space-x-2">
+                  <button
+                    type="button"
+                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                    onClick={() => handleEdit(category)}
+                  >
+                    Edit
+                  </button>
+                  <button
+                    type="button"
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                    onClick={() => onDeleteCategory(category._id!)}
+                  >
+                    Delete
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
