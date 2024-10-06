@@ -24,23 +24,30 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   endDatePeriod,
 }) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
-  const [filterMode, setFilterMode] = useState<"include" | "exclude">("include");
+  const [filterMode, setFilterMode] = useState<"include" | "exclude">(
+    "include"
+  );
 
   console.log(finances);
 
   // Flatten the finances data
   const allFinances = Object.values(finances).flat();
 
-
   // Filter finances based on filterType
   const filteredByDateFinances = allFinances.filter((finance) => {
     const financeDate = new Date(finance.date);
     if (filterType === "period" && startDatePeriod && endDatePeriod) {
-      return financeDate >= startDatePeriod && financeDate <= new Date(endDatePeriod.setHours(23, 59, 59, 999));
+      return (
+        financeDate >= startDatePeriod &&
+        financeDate <= new Date(endDatePeriod.setHours(23, 59, 59, 999))
+      );
     } else if (filterType === "range" && startDate && endDate) {
       const start = new Date(startDate);
       const end = new Date(endDate);
-      return financeDate >= start && financeDate <= new Date(end.setHours(23, 59, 59, 999));
+      return (
+        financeDate >= start &&
+        financeDate <= new Date(end.setHours(23, 59, 59, 999))
+      );
     }
     return true;
   });
@@ -90,17 +97,19 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   );
 
   // Calculate highest and lowest spending transactions
-  const highestSpendingTransaction = filteredFinances.length > 0
-    ? filteredFinances.reduce((prev, current) =>
-        prev.amount > current.amount ? prev : current
-      )
-    : { amount: 0, description: "", date: "" };
+  const highestSpendingTransaction =
+    filteredFinances.length > 0
+      ? filteredFinances.reduce((prev, current) =>
+          prev.amount > current.amount ? prev : current
+        )
+      : { amount: 0, description: "", date: "" };
 
-  const lowestSpendingTransaction = filteredFinances.length > 0
-    ? filteredFinances.reduce((prev, current) =>
-        prev.amount < current.amount ? prev : current
-      )
-    : { amount: 0, description: "", date: "" };
+  const lowestSpendingTransaction =
+    filteredFinances.length > 0
+      ? filteredFinances.reduce((prev, current) =>
+          prev.amount < current.amount ? prev : current
+        )
+      : { amount: 0, description: "", date: "" };
 
   const handleTagChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedTag = uniqueTags.find(
@@ -119,7 +128,9 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   };
 
   const toggleFilterMode = () => {
-    setFilterMode((prevMode) => (prevMode === "include" ? "exclude" : "include"));
+    setFilterMode((prevMode) =>
+      prevMode === "include" ? "exclude" : "include"
+    );
   };
 
   // Prepare data for the pie chart
@@ -261,7 +272,8 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
           className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded flex items-center"
           onClick={toggleFilterMode}
         >
-          <FaExchangeAlt className="mr-2" /> <span>{filterMode === "include" ? "Exclude" : "Include"} Mode</span>
+          <FaExchangeAlt className="mr-2" />{" "}
+          <span>{filterMode === "include" ? "Exclude" : "Include"} Mode</span>
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -273,21 +285,25 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
             ${totalExpenditure.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </p>
         </div>
-        {filteredByDateFinances.length > 0 && (<div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-          <p className="text-lg text-gray-700 font-semibold">
-            Average Spending:
-          </p>
-          <p className="text-xl text-gray-900 font-bold">
-            ${averageSpending.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-          </p>
-        </div>)}
+        {filteredByDateFinances.length > 0 && (
+          <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
+            <p className="text-lg text-gray-700 font-semibold">
+              Average Spending:
+            </p>
+            <p className="text-xl text-gray-900 font-bold">
+              $
+              {averageSpending.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </p>
+          </div>
+        )}
         {filteredByDateFinances.length > 0 && (
           <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
             <p className="text-lg text-gray-700 font-semibold">
               Largest Transaction:
             </p>
             <p className="text-xl text-gray-900 font-bold">
-              ${highestSpendingTransaction.amount
+              $
+              {highestSpendingTransaction.amount
                 .toFixed(2)
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
             </p>
@@ -303,7 +319,8 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
               Smallest Transaction:
             </p>
             <p className="text-xl text-gray-900 font-bold">
-              ${lowestSpendingTransaction.amount
+              $
+              {lowestSpendingTransaction.amount
                 .toFixed(2)
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
             </p>
@@ -338,8 +355,9 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
                   </tr>
                 </thead>
                 <tbody>
-                  {Object.entries(spendingPerCategory).map(
-                    ([category, amount]) => {
+                  {Object.entries(spendingPerCategory)
+                    .sort(([, a], [, b]) => b - a)
+                    .map(([category, amount]) => {
                       const percentage = (
                         (amount / totalExpenditure) *
                         100
@@ -360,8 +378,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
                           </td>
                         </tr>
                       );
-                    }
-                  )}
+                    })}
                 </tbody>
               </table>
             </div>

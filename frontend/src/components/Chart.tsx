@@ -281,22 +281,6 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
   ]);
 
   const handlePointClick = (event: any, elements: any[]) => {
-    if (elements.length > 0) {
-      const { datasetIndex, index } = elements[0];
-      const label = filteredData.labels[index];
-      const value = filteredData.datasets[datasetIndex].data[index];
-      const finances = groupedFinances[label] || [];
-      // console.log(
-      //   `Clicked on point: ${label} - $${value}\nDetails:\n${finances
-      //     .map(
-      //       (finance) =>
-      //         `${finance.category}: $${finance.amount.toFixed(2)} (${
-      //           finance.description
-      //         })`
-      //     )
-      //     .join("\n")}`
-      // );
-    }
   };
 
   const resetToDefault = () => {
