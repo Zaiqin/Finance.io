@@ -432,159 +432,165 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
   };
 
   return (
-    <div className="p-4 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl mb-3 font-semibold text-gray-800 text-center">
-        Expenditure Chart
-      </h2>
-      <div className="mb-2 flex items-center justify-between">
-        {filterType === "period" && (
-          <button
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
-            type="button"
-            onClick={handlePrevious} // Call previous handler
-          >
-            <FaChevronLeft />
-          </button>
-        )}
-        {filterType === "period" ? (
-          <>
-            {startDatePeriod && endDatePeriod && (
-              <>
-                <h2 className="items-center text-center">
-                  {new Date(startDatePeriod).toLocaleDateString(undefined, {
-                    day: "numeric",
+<div className="p-4 bg-white rounded-lg shadow-md">
+  <div className="flex flex-col md:flex-row">
+    {/* Left Div: Expenditure Chart */}
+    <div className="left-div md:w-1/2 md:pr-4">
+        <h2 className="text-2xl mb-3 font-semibold text-gray-800 text-center">
+          Expenditure Chart
+        </h2>
+        <div className="mb-2 flex items-center justify-between">
+          {filterType === "period" && (
+            <button
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+              type="button"
+              onClick={handlePrevious} // Call previous handler
+            >
+              <FaChevronLeft />
+            </button>
+          )}
+          {filterType === "period" ? (
+            <>
+              {startDatePeriod && endDatePeriod && (
+                <>
+                  <h2 className="items-center text-center">
+                    {new Date(startDatePeriod).toLocaleDateString(undefined, {
+                      day: "numeric",
+                      month: "short",
+                      year: "2-digit",
+                    })}{" "}
+                    -{" "}
+                    {new Date(endDatePeriod).toLocaleDateString(undefined, {
+                      day: "numeric",
+                      month: "short",
+                      year: "2-digit",
+                    })}
+                    <br />
+                    {dateType === "months"
+                      ? `(${startDatePeriod.toLocaleString("default", {
+                          month: "short",
+                        })} - ${endDatePeriod.toLocaleString("default", {
+                          month: "short",
+                        })})`
+                      : `(${startDatePeriod.toLocaleString("default", {
+                          month: "short",
+                        })} W${getWeekOfMonth(
+                          startDatePeriod
+                        )} - ${endDatePeriod.toLocaleString("default", {
+                          month: "short",
+                        })} W${getWeekOfMonth(endDatePeriod)})`}
+                  </h2>
+                </>
+              )}
+            </>
+          ) : (
+            <h2>
+              Date Range:{" "}
+              {startDate
+                ? `${new Date(startDate).toLocaleDateString(undefined, {
+                    day: "2-digit",
                     month: "short",
                     year: "2-digit",
-                  })}{" "}
-                  -{" "}
-                  {new Date(endDatePeriod).toLocaleDateString(undefined, {
-                    day: "numeric",
+                  })} - `
+                : ""}
+              {endDate
+                ? `${new Date(endDate).toLocaleDateString(undefined, {
+                    day: "2-digit",
                     month: "short",
                     year: "2-digit",
-                  })}
-                  <br />
-                  {dateType === "months"
-                    ? `(${startDatePeriod.toLocaleString("default", {
-                        month: "short",
-                      })} - ${endDatePeriod.toLocaleString("default", {
-                        month: "short",
-                      })})`
-                    : `(${startDatePeriod.toLocaleString("default", {
-                        month: "short",
-                      })} W${getWeekOfMonth(
-                        startDatePeriod
-                      )} - ${endDatePeriod.toLocaleString("default", {
-                        month: "short",
-                      })} W${getWeekOfMonth(endDatePeriod)})`}
-                </h2>
-              </>
-            )}
-          </>
-        ) : (
-          <h2>
-            Date Range:{" "}
-            {startDate
-              ? `${new Date(startDate).toLocaleDateString(undefined, {
-                  day: "2-digit",
-                  month: "short",
-                  year: "2-digit",
-                })} - `
-              : ""}
-            {endDate
-              ? `${new Date(endDate).toLocaleDateString(undefined, {
-                  day: "2-digit",
-                  month: "short",
-                  year: "2-digit",
-                })}`
-              : ""}
-          </h2>
-        )}
-        {filterType === "period" && (
-          <button
-            className={`${
-              !includeFuture &&
-              dateEnd?.toDateString() === new Date().toDateString()
-                ? "bg-gray-300 opacity-50"
-                : "bg-gray-500 hover:bg-gray-700"
-            } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center`}
-            type="button"
-            onClick={handleNext} // Call next handler
-            disabled={
-              !includeFuture &&
-              dateEnd?.toDateString() === new Date().toDateString()
-            }
-          >
-            <FaChevronRight />
-          </button>
-        )}
-      </div>
-      <Line
-        data={updatedData}
-        options={options}
-        style={{ maxHeight: "40vh", overflowY: "auto" }}
-      />
-
-      {/* Chart Settings Dialog */}
-      <ChartSettingsDialog
-        open={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
-        onChangeComplete={handleColorChange}
-        selectedColor={lineColor}
-        lineThickness={lineThickness}
-        startDate={startDate}
-        endDate={endDate}
-        onDateStartChange={setStartDate}
-        onDateEndChange={setEndDate}
-        numPeriods={numPeriods}
-        dateType={dateType}
-        onNumPeriodsChange={setNumPeriods}
-        onDateTypeChange={setDateType}
-        onResetToDefault={resetToDefault}
-        includeFuture={includeFuture} // Pass includeFuture to the dialog
-        onIncludeFutureChange={setIncludeFuture} // Pass the setter function to the dialog
-        filterType={filterType}
-        onFilterTypeChange={setFilterType} // Add the filter type handler
-      />
-      <br />
-      <div className="mb-2 flex items-center justify-between">
-        {/* Left-aligned Chart Settings */}
-        <div className="flex">
-          <button
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
-            type="button"
-            onClick={() => setIsDialogOpen(true)}
-          >
-            <FaCog className="mr-2" /> <span>Settings</span>
-          </button>
+                  })}`
+                : ""}
+            </h2>
+          )}
+          {filterType === "period" && (
+            <button
+              className={`${
+                !includeFuture &&
+                dateEnd?.toDateString() === new Date().toDateString()
+                  ? "bg-gray-300 opacity-50"
+                  : "bg-gray-500 hover:bg-gray-700"
+              } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center`}
+              type="button"
+              onClick={handleNext} // Call next handler
+              disabled={
+                !includeFuture &&
+                dateEnd?.toDateString() === new Date().toDateString()
+              }
+            >
+              <FaChevronRight />
+            </button>
+          )}
         </div>
+        <Line
+          data={updatedData}
+          options={options}
+          height={200}
+        />
 
-        {/* Right-aligned group (Today and Reset) */}
-        <div className="flex space-x-2">
-          <button
-            type="button"
-            className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
-            onClick={resetToDefault}
-          >
-            Reset View
-          </button>
-          <button
-            type="button"
-            className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            onClick={handleTodayClick}
-          >
-            Today
-          </button>
+        {/* Chart Settings Dialog */}
+        <ChartSettingsDialog
+          open={isDialogOpen}
+          onClose={() => setIsDialogOpen(false)}
+          onChangeComplete={handleColorChange}
+          selectedColor={lineColor}
+          lineThickness={lineThickness}
+          startDate={startDate}
+          endDate={endDate}
+          onDateStartChange={setStartDate}
+          onDateEndChange={setEndDate}
+          numPeriods={numPeriods}
+          dateType={dateType}
+          onNumPeriodsChange={setNumPeriods}
+          onDateTypeChange={setDateType}
+          onResetToDefault={resetToDefault}
+          includeFuture={includeFuture} // Pass includeFuture to the dialog
+          onIncludeFutureChange={setIncludeFuture} // Pass the setter function to the dialog
+          filterType={filterType}
+          onFilterTypeChange={setFilterType} // Add the filter type handler
+        />
+        <br />
+        <div className="mb-2 flex items-center justify-between">
+          {/* Left-aligned Chart Settings */}
+          <div className="flex">
+            <button
+              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+              type="button"
+              onClick={() => setIsDialogOpen(true)}
+            >
+              <FaCog className="mr-2" /> <span>Settings</span>
+            </button>
+          </div>
+
+          {/* Right-aligned group (Today and Reset) */}
+          <div className="flex space-x-2">
+            <button
+              type="button"
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              onClick={resetToDefault}
+            >
+              Reset View
+            </button>
+            <button
+              type="button"
+              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              onClick={handleTodayClick}
+            >
+              Today
+            </button>
+          </div>
         </div>
       </div>
-      {/* Summary Section */}
-      <SummaryComponent
-        finances={groupedFinances}
-        filterType={filterType}
-        startDate={startDate}
-        endDate={endDate}
-        startDatePeriod={startDatePeriod}
-        endDatePeriod={endDatePeriod}
-      />
+      <div className="right-div md:w-1/2 md:pl-4 mt-4 md:mt-0">
+        <SummaryComponent
+          finances={groupedFinances}
+          filterType={filterType}
+          startDate={startDate}
+          endDate={endDate}
+          startDatePeriod={startDatePeriod}
+          endDatePeriod={endDatePeriod}
+        />
+      </div>
+      </div>
     </div>
   );
 };

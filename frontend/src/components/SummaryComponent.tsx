@@ -185,8 +185,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   };
 
   return (
-    <div className="mt-10 pl-2 pr-2 bg-white">
-      <hr className="mb-4" />
+    <div className="pl-2 pr-2 bg-white">
       <h3 className="text-2xl mb-3 font-semibold text-gray-800 text-center">
         Summary
       </h3>
@@ -316,24 +315,24 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
         )}
       </div>
       {filteredByDateFinances.length > 0 && (
-        <div className="mt-6">
+        <div className="mt-6 mb-5">
           <h4 className="text-xl font-bold text-gray-800 mb-4">
             Spending Per Category:
           </h4>
 
           <div className="flex flex-col md:flex-row justify-center md:items-start">
             {/* Table Section */}
-            <div className="md:w-1/2 overflow-x-auto shadow-md rounded-md">
+            <div className="md:w-3/5 overflow-x-auto rounded-md">
               <table className="min-w-full bg-white">
                 <thead>
                   <tr>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
+                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600">
                       Category
                     </th>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
+                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600">
                       Amount
                     </th>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600 tracking-wider">
+                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600">
                       Percentage
                     </th>
                   </tr>
@@ -368,7 +367,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
             </div>
 
             {/* Pie Chart Section */}
-            <div className="mt-6 md:mt-0 md:w-1/2 md:ml-6 flex justify-center">
+            <div className="mt-6 md:mt-0 md:w-2/5 md:ml-6 flex justify-center">
               <Pie data={pieChartData} options={pieChartOptions} />
             </div>
           </div>
