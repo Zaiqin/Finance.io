@@ -191,10 +191,9 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
           >
             Description
           </label>
-          <input
+          <textarea
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             id="description"
-            type="text"
             value={description}
             placeholder="Description"
             onChange={(e) => setDescription(e.target.value)}

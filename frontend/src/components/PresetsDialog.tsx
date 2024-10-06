@@ -131,10 +131,9 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                 />
               </div>
             </div>
-            <input
+            <textarea
               className="shadow appearance-none border rounded w-full mb-3 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               id="newPreset"
-              type="text"
               value={newDescription}
               placeholder="Description"
               required
@@ -259,7 +258,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                   <FaPlus className="mr-2" /> <span>Public Transport</span>
                 </button>
               </div>
-              <div className="mb-3 flex space-x-2 mt-3 flex items-left justify-left">
+              <div className="flex space-x-2 mt-3 flex items-left justify-left">
                 <button
                   type="submit"
                   className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"

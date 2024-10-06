@@ -132,9 +132,9 @@ const TagDialog: React.FC<TagDialogProps> = ({
               value={name}
               required
               placeholder="Tag Name"
-              maxLength={15}
+              maxLength={30}
               onChange={(e) => {
-                if (e.target.value.length <= 15) {
+                if (e.target.value.length <= 30) {
                   setName(e.target.value);
                   checkExistingTag(e.target.value);
                 }
@@ -189,41 +189,49 @@ const TagDialog: React.FC<TagDialogProps> = ({
         </form>
         <div className="mt-4">
           <h3 className="text-lg font-bold mb-2">Existing Tags</h3>
-          <ul className="flex flex-col gap-2 overflow-y-auto max-h-[30vh] pr-2">
-            {existingTags.map((tag) => {
-              const textColor = getContrastYIQ(tag.color);
-              return (
-                <li key={tag._id} className="flex items-center justify-between">
+          <div className="overflow-x-auto rounded-md flex flex-col gap-2 overflow-y-auto max-h-[30vh] pr-2">
+            <table className="w-full table-auto overflow-y-auto max-h-[30vh] pr-2">
+              <tbody>
+              {existingTags.map((tag) => {
+                const textColor = getContrastYIQ(tag.color);
+                return (
+                <tr key={tag._id}>
+                  <td className="px-2">
                   <span
                     className="inline-block px-2 py-1 text-white shadow-md rounded-md"
                     style={{
-                      backgroundColor: tag.color,
-                      color: textColor,
-                      borderRadius: "0.5rem",
+                    backgroundColor: tag.color,
+                    color: textColor,
+                    borderRadius: "0.5rem",
                     }}
                   >
                     {tag.name}
                   </span>
+                  </td>
+                  <td className="px-2 py-1">
                   <div className="flex space-x-2">
                     <button
-                      type="button"
-                      className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                      onClick={() => handleEdit(tag)}
+                    type="button"
+                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                    onClick={() => handleEdit(tag)}
                     >
-                      Edit
+                    Edit
                     </button>
                     <button
-                      type="button"
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                      onClick={() => handleDelete(tag)}
+                    type="button"
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                    onClick={() => handleDelete(tag)}
                     >
-                      Delete
+                    Delete
                     </button>
                   </div>
-                </li>
-              );
-            })}
-          </ul>
+                  </td>
+                </tr>
+                );
+              })}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
