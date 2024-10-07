@@ -3,6 +3,7 @@ import React from 'react';
 interface ConfirmationDialogProps {
   isOpen: boolean;
   message: string;
+  date: string | undefined;
   text: string | undefined;
   onConfirm: () => void;
   onCancel: () => void;
@@ -14,6 +15,7 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
   onConfirm,
   onCancel,
   text,
+  date,
 }) => {
   if (!isOpen) return null;
 
@@ -22,7 +24,11 @@ const ConfirmationDialog: React.FC<ConfirmationDialogProps> = ({
       <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md m-6">
         <h2 className="text-xl font-semibold text-gray-800 mb-4">Confirmation</h2>
         <p className="text-gray-700 mb-2">{message}</p>
-        {text && <p className="text-gray-700 font-bold mb-4">{text}</p>}
+        {text && <p className="text-gray-700 font-bold mb-4">{text} {date? ' - ' + new Date(date).toLocaleString(undefined, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+  }): ''}</p>}
         <div className="flex justify-between">
           <button
             type="button"

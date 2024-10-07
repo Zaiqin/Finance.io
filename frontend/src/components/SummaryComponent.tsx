@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChartFinance, Tag } from "../interfaces/interface";
+import { Category, ChartFinance, Tag } from "../interfaces/interface";
 import { Pie } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { FaExchangeAlt } from "react-icons/fa";
@@ -13,6 +13,7 @@ interface SummaryComponentProps {
   endDate?: string;
   startDatePeriod?: Date;
   endDatePeriod?: Date;
+  categories: Category[];
 }
 
 const SummaryComponent: React.FC<SummaryComponentProps> = ({
@@ -22,6 +23,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   endDate,
   startDatePeriod,
   endDatePeriod,
+  categories
 }) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [filterMode, setFilterMode] = useState<"include" | "exclude">(
@@ -74,7 +76,9 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   // Calculate spending per category
   const spendingPerCategory = filteredFinances.reduce(
     (acc: { [key: string]: number }, finance: ChartFinance) => {
-      acc[finance.category] = (acc[finance.category] || 0) + finance.amount;
+      const category = categories.find(c => c._id === finance.category);
+      const categoryDescription = category ? category.description : '-';
+      acc[categoryDescription] = (acc[categoryDescription] || 0) + finance.amount;
       return acc;
     },
     {}

@@ -6,13 +6,13 @@ import EditFinanceModal from "./EditFinanceModal"; // Import the new modal compo
 import { FaTrash, FaChartLine } from "react-icons/fa";
 import { MdEdit, MdPostAdd } from "react-icons/md";
 import { BsTable } from "react-icons/bs";
-import { Finance, Tag } from "../interfaces/interface";
+import { Finance, Tag, Category } from "../interfaces/interface";
 
 const FinanceList: React.FC<{
   finances: Finance[];
   updateFinance: (id: string, finance: any) => void;
   deleteFinance: (id: string) => void;
-  categories: string[];
+  categories: Category[];
   handleOpenFinanceForm: () => void; // Add a new prop for opening the finance form
   tags: Tag[];
 }> = ({
@@ -177,7 +177,11 @@ const FinanceList: React.FC<{
       {/* Chart or Table View */}
       {showChart ? (
         <div className="mb-3">
-          <ChartComponent data={chartData} groupedFinances={groupedFinances} />
+          <ChartComponent 
+            data={chartData} 
+            groupedFinances={groupedFinances}
+            categories={categories}
+          />
         </div>
       ) : (
         <>
@@ -214,7 +218,7 @@ const FinanceList: React.FC<{
                       {tableFinances[date].map((finance, index) => (
                         <tr key={index} className="border-b">
                           <td className="py-2 px-4 text-gray-700">
-                            {finance.category}
+                            {categories.find((c) => c._id === finance.category)?.description || '-'}
                           </td>
                           <td className="py-2 px-4 text-gray-700">
                             $
@@ -339,6 +343,7 @@ const FinanceList: React.FC<{
       <ConfirmationDialog
         isOpen={isConfirmOpen}
         text={currentFinance?.description}
+        date={currentFinance?.date}
         message={`Are you sure you want to delete this item?`}
         onConfirm={() => {
           if (currentFinance) {

@@ -14,7 +14,7 @@ import {
 import zoomPlugin from "chartjs-plugin-zoom"; // Import zoom plugin
 import annotationPlugin from "chartjs-plugin-annotation";
 import trendlinePlugin from "chartjs-plugin-trendline";
-import { ChartFinance } from "../interfaces/interface";
+import { Category, ChartFinance } from "../interfaces/interface";
 import SummaryComponent from './SummaryComponent';
 
 // Register the necessary elements and scales
@@ -41,6 +41,7 @@ interface ChartProps {
     }[];
   };
   groupedFinances: { [key: string]: ChartFinance[] }; // Pass grouped finances
+  categories: Category[];
 }
 
 const formatLabel = (dateString: string) => {
@@ -67,7 +68,7 @@ const getWeekOfMonth = (date: Date) => {
   return Math.ceil(adjustedDate / 7);
 };
 
-const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
+const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categories }) => {
   const [lineColor, setLineColor] = useState<string>("#3b82f6");
   const [lineThickness, setLineThickness] = useState<number>(3); // Added state for line thickness
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -356,7 +357,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
               
               // Push the formatted finance details
               labels.push(
-                `• ${finance.category}: $${finance.amount
+                `• ${categories.find((c) => c._id === finance.category)?.description || '-'}: $${finance.amount
                   .toFixed(2)
                   .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}${description}${tags}`
               );
@@ -572,6 +573,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances }) => {
           endDate={endDate}
           startDatePeriod={startDatePeriod}
           endDatePeriod={endDatePeriod}
+          categories={categories}
         />
       </div>
       </div>

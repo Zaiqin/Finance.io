@@ -506,7 +506,7 @@ const App: React.FC = () => {
                 finances={finances}
                 updateFinance={updateFinance}
                 deleteFinance={deleteFinance}
-                categories={categories.map((category) => category.description)}
+                categories={categories}
                 handleOpenFinanceForm={handleOpenFinanceForm}
                 tags={tags}
               />
@@ -523,7 +523,7 @@ const App: React.FC = () => {
               <div className="bg-white p-6 rounded shadow-lg w-full sm:w-1/3 min-w-[350px] z-10">
                 <FinanceForm
                   addFinance={addFinance}
-                  categories={categories.map((category) => category.description)}
+                  categories={categories}
                   onOpenSettings={handleOpenSettings}
                   onOpenPresets={handleOpenPresets}
                   onClose={handleCloseFinanceForm}
@@ -550,7 +550,7 @@ const App: React.FC = () => {
           {isPresetsOpen && (
             <PresetsDialog
               presets={presets}
-              categories={categories.map((category) => category.description)}
+              categories={categories}
               onClose={handleClosePresets}
               onAddPreset={handleAddPreset}
               onDeletePreset={handleDeletePreset}

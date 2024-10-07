@@ -2,13 +2,13 @@ import React, { useState } from "react";
 import { format } from "date-fns";
 import { FaPlus } from "react-icons/fa";
 import LTADialog from "./LTADialog";
-import { Finance, Tag } from "../interfaces/interface";
+import { Finance, Tag, Category } from "../interfaces/interface";
 
 const EditFinanceModal: React.FC<{
   finance: Finance;
   onUpdate: (updatedFinance: Finance) => void;
   onClose: () => void;
-  categories: string[];
+  categories: Category[];
   tags: Tag[];
 }> = ({ finance, onUpdate, onClose, categories, tags }) => {
   const [localAmount, setLocalAmount] = useState<string>(finance.amount.toFixed(2));
@@ -74,9 +74,9 @@ const EditFinanceModal: React.FC<{
                   required
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 >
-                  {categories.map((category: any) => (
-                    <option key={category} value={category}>
-                      {category}
+                  {categories.map((category, index) => (
+                    <option key={index} value={category._id}>
+                      {category.description}
                     </option>
                   ))}
                 </select>

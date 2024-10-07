@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 import LTADialog from "./LTADialog";
-import { Preset, Tag } from "../interfaces/interface";
+import { Preset, Tag, Category } from "../interfaces/interface";
 
 interface PresetsDialogProps {
   presets: Preset[];
-  categories: string[];
+  categories: Category[];
   tags: Tag[];
   onClose: () => void;
   onAddPreset: (preset: Preset) => void;
@@ -152,9 +152,9 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
                 <option value="" disabled>
                   -- Select a Category --
                 </option>
-                {categories.map((cat, index) => (
-                  <option key={index} value={cat}>
-                    {cat}
+                {categories.map((category, index) => (
+                  <option key={index} value={category._id}>
+                    {category.description}
                   </option>
                 ))}
               </select>

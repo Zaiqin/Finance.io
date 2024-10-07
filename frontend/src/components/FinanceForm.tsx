@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FaCog, FaPlus } from "react-icons/fa"; // Import the FontAwesome icon
 import LTADialog from "./LTADialog";
 import { Preset, Tag } from "../interfaces/interface"; // Import the Preset interface
-import { Finance } from "../interfaces/interface"; // Import the Finance interface
+import { Finance, Category } from "../interfaces/interface"; // Import the Finance interface
 import TagDialog from "./TagDialog";
 
 // Function to calculate contrast color
@@ -17,7 +17,7 @@ const getContrastYIQ = (hexcolor: string) => {
 
 interface FinanceFormProps {
   addFinance: (finance: Finance) => void;
-  categories: string[];
+  categories: Category[];
   onOpenSettings: () => void;
   onOpenPresets: () => void;
   onClose: () => void;
@@ -229,6 +229,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
               value={category || ""}
               required
               onChange={(e) => {
+                console.log(e)
                 setCategory(e.target.value);
               }}
             >
@@ -236,8 +237,8 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
                 -- Select a Category --
               </option>
               {categories.map((category, index) => (
-                <option key={index} value={category}>
-                  {category}
+                <option key={index} value={category._id}>
+                  {category.description}
                 </option>
               ))}
             </select>
