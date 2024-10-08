@@ -484,6 +484,7 @@ const App: React.FC = () => {
             }}
             useOneTap
             auto_select
+            type="icon"
             theme={nightMode ? 'filled_blue' : 'outline'}
           />
         )}
