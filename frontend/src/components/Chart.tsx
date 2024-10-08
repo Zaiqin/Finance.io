@@ -42,6 +42,7 @@ interface ChartProps {
   };
   groupedFinances: { [key: string]: ChartFinance[] }; // Pass grouped finances
   categories: Category[];
+  nightMode: boolean;
 }
 
 const formatLabel = (dateString: string) => {
@@ -68,7 +69,7 @@ const getWeekOfMonth = (date: Date) => {
   return Math.ceil(adjustedDate / 7);
 };
 
-const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categories }) => {
+const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categories, nightMode }) => {
   const [lineColor, setLineColor] = useState<string>("#3b82f6");
   const [lineThickness, setLineThickness] = useState<number>(3); // Added state for line thickness
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -302,10 +303,12 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
         grid: {
           drawBorder: true,
           borderWidth: 2 as const,
+          color: nightMode ? "#4B5563" : "#E5E7EB", // Adjust grid line color based on night mode
         } as Partial<GridLineOptions>,
         ticks: {
           autoSkip: true,
           maxRotation: 0,
+          color: nightMode ? "#D1D5DB" : "#374151", // Adjust tick color based on night mode
           callback: (value: string | number) => {
             const date = formatLabelShort(filteredData.labels[+value]); // Format label using the filtered date
             return date;
@@ -317,10 +320,12 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
         grid: {
           drawBorder: true,
           borderWidth: 2 as const,
+          color: nightMode ? "#4B5563" : "#E5E7EB", // Adjust grid line color based on night mode
         } as Partial<GridLineOptions>,
         ticks: {
           autoSkip: true,
           maxRotation: 0,
+          color: nightMode ? "#D1D5DB" : "#374151", // Adjust tick color based on night mode
           callback: (value: string | number) => {
             return `$${(+value).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}`; // Format value as 2dp currency
           },
@@ -392,7 +397,12 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
         movingAverage: {
           period: 2 // Specify the period for the moving average
         }
-      }
+      },
+      legend: {
+        labels: {
+          color: nightMode ? "#D1D5DB" : "#374151", // Adjust legend label color based on night mode
+        },
+      },
     },
     onClick: handlePointClick, // Add the onClick handler
   };
@@ -417,17 +427,19 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
   };
 
   return (
-<div className="p-4 bg-white rounded-lg shadow-md">
+<div className={`p-4 ${nightMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} rounded-lg shadow-md`}>
   <div className="flex flex-col md:flex-row">
     {/* Left Div: Expenditure Chart */}
     <div className="left-div md:w-1/2 md:pr-4">
-        <h2 className="text-2xl mb-3 font-semibold text-gray-800 text-center">
+        <h2 className="text-2xl mb-3 font-semibold text-center">
           Expenditure Chart
         </h2>
         <div className="mb-2 flex items-center justify-between">
           {filterType === "period" && (
             <button
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+              className={`${
+                nightMode ? 'bg-gray-600 hover:bg-gray-700' : 'bg-gray-500 hover:bg-gray-700'
+              } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center`}
               type="button"
               onClick={handlePrevious} // Call previous handler
             >
@@ -493,6 +505,8 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
                 !includeFuture &&
                 dateEnd?.toDateString() === new Date().toDateString()
                   ? "bg-gray-300 opacity-50"
+                  : nightMode
+                  ? "bg-gray-600 hover:bg-gray-700"
                   : "bg-gray-500 hover:bg-gray-700"
               } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center`}
               type="button"
@@ -538,7 +552,9 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
           {/* Left-aligned Chart Settings */}
           <div className="flex">
             <button
-              className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
+              className={`${
+                nightMode ? 'bg-gray-600 hover:bg-gray-700' : 'bg-gray-500 hover:bg-gray-700'
+              } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center`}
               type="button"
               onClick={() => setIsDialogOpen(true)}
             >
@@ -550,14 +566,18 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
           <div className="flex space-x-2">
             <button
               type="button"
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+              className={`${
+                nightMode ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-700'
+              } text-white font-bold py-2 px-4 rounded`}
               onClick={resetToDefault}
             >
               Reset View
             </button>
             <button
               type="button"
-              className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              className={`${
+                nightMode ? 'bg-green-600 hover:bg-green-700' : 'bg-green-500 hover:bg-green-700'
+              } text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline`}
               onClick={handleTodayClick}
             >
               Today
@@ -574,6 +594,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
           startDatePeriod={startDatePeriod}
           endDatePeriod={endDatePeriod}
           categories={categories}
+          nightMode={nightMode}
         />
       </div>
       </div>

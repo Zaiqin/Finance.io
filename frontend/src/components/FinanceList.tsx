@@ -15,6 +15,7 @@ const FinanceList: React.FC<{
   categories: Category[];
   handleOpenFinanceForm: () => void; // Add a new prop for opening the finance form
   tags: Tag[];
+  nightMode: boolean;
 }> = ({
   finances,
   updateFinance,
@@ -22,6 +23,7 @@ const FinanceList: React.FC<{
   categories,
   handleOpenFinanceForm,
   tags,
+  nightMode
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false); // State for confirmation dialog
@@ -141,7 +143,7 @@ const FinanceList: React.FC<{
     <div>
       {/* Chart and table toggle */}
       <div className="mb-6 flex justify-between items-center">
-        <h2 className="text-2xl font-semibold text-gray-800 flex-grow">
+        <h2 className={`text-2xl font-semibold ${nightMode ? 'text-white' : 'text-gray-800'} flex-grow`}>
           Dashboard
         </h2>
         <div className="flex space-x-2">
@@ -181,6 +183,7 @@ const FinanceList: React.FC<{
             data={chartData} 
             groupedFinances={groupedFinances}
             categories={categories}
+            nightMode={nightMode}
           />
         </div>
       ) : (
@@ -190,106 +193,106 @@ const FinanceList: React.FC<{
             {/* Limit the height and enable scrolling */}
             {tableDates.map((date) => (
               <div key={date} className="mb-6">
-                <h3 className="text-xl font-semibold text-gray-800 mb-2">
-                  {format(new Date(date), "d MMM yyyy")}
-                </h3>
-                <div className="overflow-x-auto shadow-md rounded-md">
-                  <table className="min-w-full bg-white rounded-lg sm:w-1/2 w-[130%]">
-                    <thead className="text-left">
-                      <tr>
-                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tl-lg">
-                          Category
-                        </th>
-                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
-                          Amount
-                        </th>
-                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
-                          Description
-                        </th>
-                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m">
-                          Tags
-                        </th>
-                        <th className="py-2 px-4 bg-gray-200 text-gray-600 font-bold text-m rounded-tr-lg text-center">
-                          Actions
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tableFinances[date].map((finance, index) => (
-                        <tr key={index} className="border-b">
-                          <td className="py-2 px-4 text-gray-700">
-                            {categories.find((c) => c._id === finance.category)?.description || '-'}
-                          </td>
-                          <td className="py-2 px-4 text-gray-700">
-                            $
-                            {finance.amount
-                              .toFixed(2)
-                              .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                          </td>
-                          <td className="py-2 px-4 text-gray-700">
-                            {finance.description}
-                          </td>
-                          <td className="py-2 px-4 border-b">
-                            <div className="flex justify-left">
-                              {finance.tags?.map((tag, index) => {
-                                const textColor = getContrastYIQ(tag.color);
-                                return (
-                                  <span
-                                    key={index}
-                                    className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
-                                    style={{
-                                      backgroundColor: tag.color,
-                                      color: textColor,
-                                      borderRadius: "0.5rem", // Less rounded corners
-                                    }}
-                                  >
-                                    {tag.name}
-                                  </span>
-                                );
-                              })}
-                            </div>
-                          </td>
-                          <td className="py-2 px-4 text-gray-700 text-center">
-                            <div className="flex justify-center">
-                              <button
-                                type="button"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
-                                onClick={() =>
-                                  finance._id && openModal(finance._id)
-                                }
-                              >
-                                <MdEdit />
-                              </button>
-                              <button
-                                type="button"
-                                className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
-                                onClick={() => {
-                                  setCurrentFinance(finance);
-                                  setIsConfirmOpen(true); // Open the confirmation dialog
-                                }}
-                              >
-                                <FaTrash />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))}
-                      <tr className="border-t bg-gray-100">
-                        <td className="py-2 px-4 text-gray-700 font-bold">
-                          Total
-                        </td>
-                        <td className="py-2 px-4 text-gray-700 font-bold">
-                          $
-                          {groupedFinances[date]
-                            .reduce((sum, finance) => sum + finance.amount, 0)
-                            .toFixed(2)
-                            .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
-                        </td>
-                        <td colSpan={3}></td>
-                      </tr>
-                    </tbody>
-                  </table>
+          <h3 className={`text-xl font-semibold mb-2 ${nightMode ? 'text-white' : 'text-gray-800'}`}>
+            {format(new Date(date), "d MMM yyyy")}
+          </h3>
+          <div className="overflow-x-auto shadow-md rounded-md">
+            <table className={`min-w-full rounded-lg sm:w-1/2 w-[130%] ${nightMode ? 'bg-gray-800' : 'bg-white'}`}>
+              <thead className="text-left">
+                <tr>
+            <th className={`py-2 px-4 ${nightMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'} font-bold text-m rounded-tl-lg`}>
+              Category
+            </th>
+            <th className={`py-2 px-4 ${nightMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'} font-bold text-m`}>
+              Amount
+            </th>
+            <th className={`py-2 px-4 ${nightMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'} font-bold text-m`}>
+              Description
+            </th>
+            <th className={`py-2 px-4 ${nightMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'} font-bold text-m`}>
+              Tags
+            </th>
+            <th className={`py-2 px-4 ${nightMode ? 'bg-gray-700 text-gray-300' : 'bg-gray-200 text-gray-600'} font-bold text-m rounded-tr-lg text-center`}>
+              Actions
+            </th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableFinances[date].map((finance, index) => (
+            <tr key={index} className={`border-b ${nightMode ? 'border-gray-700' : ''}`}>
+              <td className={`py-2 px-4 ${nightMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {categories.find((c) => c._id === finance.category)?.description || '-'}
+              </td>
+              <td className={`py-2 px-4 ${nightMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                $
+                {finance.amount
+                  .toFixed(2)
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+              </td>
+              <td className={`py-2 px-4 ${nightMode ? 'text-gray-300' : 'text-gray-700'}`}>
+                {finance.description}
+              </td>
+              <td className="py-2 px-4">
+                <div className="flex justify-left">
+                  {finance.tags?.map((tag, index) => {
+              const textColor = getContrastYIQ(tag.color);
+              return (
+                <span
+                  key={index}
+                  className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
+                  style={{
+                    backgroundColor: tag.color,
+                    color: textColor,
+                    borderRadius: "0.5rem", // Less rounded corners
+                  }}
+                >
+                  {tag.name}
+                </span>
+              );
+                  })}
                 </div>
+              </td>
+              <td className={`py-2 px-4 ${nightMode ? 'text-gray-300' : 'text-gray-700'} text-center`}>
+                <div className="flex justify-center">
+                  <button
+              type="button"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-3 ml-1 rounded focus:outline-none focus:shadow-outline shadow-md rounded-md"
+              onClick={() =>
+                finance._id && openModal(finance._id)
+              }
+                  >
+              <MdEdit />
+                  </button>
+                  <button
+              type="button"
+              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-3 rounded focus:outline-none focus:shadow-outline ml-2 shadow-md rounded-md"
+              onClick={() => {
+                setCurrentFinance(finance);
+                setIsConfirmOpen(true); // Open the confirmation dialog
+              }}
+                  >
+              <FaTrash />
+                  </button>
+                </div>
+              </td>
+            </tr>
+                ))}
+                <tr className={`border-t ${nightMode ? 'bg-gray-700' : 'bg-gray-100'}`}>
+            <td className={`py-2 px-4 ${nightMode ? 'text-gray-300' : 'text-gray-700'} font-bold`}>
+              Total
+            </td>
+            <td className={`py-2 px-4 ${nightMode ? 'text-gray-300' : 'text-gray-700'} font-bold`}>
+              $
+              {groupedFinances[date]
+                .reduce((sum, finance) => sum + finance.amount, 0)
+                .toFixed(2)
+                .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
+            </td>
+            <td colSpan={3}></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
               </div>
             ))}
           </div>
@@ -298,27 +301,27 @@ const FinanceList: React.FC<{
             <button
               type="button"
               className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-                currentPage === 1
-                  ? "bg-gray-300 text-white"
-                  : "bg-gray-500 hover:bg-gray-700 text-white"
+          currentPage === 1
+            ? "bg-gray-300 opacity-50 text-white"
+            : "bg-gray-500 hover:bg-gray-700 text-white"
               }`}
               onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
               disabled={currentPage === 1}
             >
               Previous
             </button>
-            <span className="text-gray-700 font-bold">
+            <span className={`font-bold ${nightMode ? 'text-gray-300' : 'text-gray-700'}`}>
               Page {currentPage} of {totalPages}
             </span>
             <button
               type="button"
               className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
-                currentPage === totalPages
-                  ? "bg-gray-300 text-white"
-                  : "bg-gray-500 hover:bg-gray-700 text-white"
+          currentPage === totalPages
+            ? "bg-gray-300 text-white"
+            : "bg-gray-500 hover:bg-gray-700 text-white"
               }`}
               onClick={() =>
-                setCurrentPage(Math.min(currentPage + 1, totalPages))
+          setCurrentPage(Math.min(currentPage + 1, totalPages))
               }
               disabled={currentPage === totalPages}
             >

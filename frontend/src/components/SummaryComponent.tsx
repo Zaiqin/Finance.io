@@ -14,6 +14,7 @@ interface SummaryComponentProps {
   startDatePeriod?: Date;
   endDatePeriod?: Date;
   categories: Category[];
+  nightMode: boolean;
 }
 
 const SummaryComponent: React.FC<SummaryComponentProps> = ({
@@ -23,7 +24,8 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   endDate,
   startDatePeriod,
   endDatePeriod,
-  categories
+  categories,
+  nightMode
 }) => {
   const [selectedTags, setSelectedTags] = useState<Tag[]>([]);
   const [filterMode, setFilterMode] = useState<"include" | "exclude">(
@@ -188,6 +190,8 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
         },
       },
     },
+    // Add support for night mode text colors
+    color: nightMode ? '#FFFFFF' : '#000000',
   };
 
   const getContrastYIQ = (hexcolor: string) => {
@@ -200,12 +204,12 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
   };
 
   return (
-    <div className="pl-2 pr-2 bg-white">
-      <h3 className="text-2xl mb-3 font-semibold text-gray-800 text-center">
+    <div className={`pl-2 pr-2 ${nightMode ? 'bg-gray-800 text-gray-200' : 'bg-white text-gray-800'}`}>
+      <h3 className="text-2xl mb-3 font-semibold text-center">
         Summary
       </h3>
       <div className="mb-6">
-        <label className="text-gray-700 font-medium">
+        <label className="font-medium">
           Filter by Tag(s):
           {filterMode === "include"
             ? " Showing transactions with selected tags"
@@ -240,7 +244,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
         </div>
         <div className="relative">
           <select
-            className="mt-4 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className={`mt-4 shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-700'}`}
             value=""
             onChange={handleTagChange}
           >
@@ -262,9 +266,9 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
               ) : null
             )}
           </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 pt-4 text-gray-700">
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 pt-4">
             <svg
-              className="fill-current h-4 w-4"
+              className={`fill-current h-4 w-4 ${nightMode ? 'text-gray-200' : 'text-gray-700'}`}
               xmlns="http://www.w3.org/2000/svg"
               viewBox="0 0 20 20"
             >
@@ -281,79 +285,79 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
         </button>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-          <p className="text-lg text-gray-700 font-semibold">
+        <div className={`p-4 rounded-lg shadow-inner ${nightMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+          <p className="text-lg font-semibold">
             Total Expenditure:
           </p>
-          <p className="text-xl text-gray-900 font-bold">
+          <p className="text-xl font-bold">
             ${totalExpenditure.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
           </p>
         </div>
-        {filteredByDateFinances.length > 0 && (
-          <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-            <p className="text-lg text-gray-700 font-semibold">
+        {/* {filteredByDateFinances.length > 0 && (
+          <div className={`p-4 rounded-lg shadow-inner ${nightMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+            <p className="text-lg font-semibold">
               Average Spending:
             </p>
-            <p className="text-xl text-gray-900 font-bold">
+            <p className="text-xl font-bold">
               $
               {averageSpending.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
             </p>
           </div>
-        )}
+        )} */}
         {filteredByDateFinances.length > 0 && (
-          <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-            <p className="text-lg text-gray-700 font-semibold">
+          <div className={`p-4 rounded-lg shadow-inner ${nightMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+            <p className="text-lg font-semibold">
               Largest Transaction:
             </p>
-            <p className="text-xl text-gray-900 font-bold">
+            <p className="text-xl font-bold">
               $
               {highestSpendingTransaction.amount
                 .toFixed(2)
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
             </p>
-            <p className="text-md text-gray-700">
+            <p className="text-md">
               {highestSpendingTransaction.description} on{" "}
               {new Date(highestSpendingTransaction.date).toLocaleDateString()}
             </p>
           </div>
         )}
-        {filteredByDateFinances.length > 0 && (
-          <div className="p-4 bg-gray-50 rounded-lg shadow-inner">
-            <p className="text-lg text-gray-700 font-semibold">
+        {/* {filteredByDateFinances.length > 0 && (
+          <div className={`p-4 rounded-lg shadow-inner ${nightMode ? 'bg-gray-700' : 'bg-gray-50'}`}>
+            <p className="text-lg font-semibold">
               Smallest Transaction:
             </p>
-            <p className="text-xl text-gray-900 font-bold">
+            <p className="text-xl font-bold">
               $
               {lowestSpendingTransaction.amount
                 .toFixed(2)
                 .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
             </p>
-            <p className="text-md text-gray-700">
+            <p className="text-md">
               {lowestSpendingTransaction.description} on{" "}
               {new Date(lowestSpendingTransaction.date).toLocaleDateString()}
             </p>
           </div>
-        )}
+        )} */}
       </div>
       {filteredByDateFinances.length > 0 && (
         <div className="mt-6 mb-5">
-          <h4 className="text-xl font-bold text-gray-800 mb-4">
+          <h4 className="text-xl font-bold mb-4">
             Spending Per Category:
           </h4>
 
           <div className="flex flex-col md:flex-row justify-center md:items-start">
             {/* Table Section */}
             <div className="md:w-3/5 overflow-x-auto rounded-md">
-              <table className="min-w-full bg-white">
+              <table className={`min-w-full ${nightMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'}`}>
                 <thead>
                   <tr>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600">
+                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-900' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
                       Category
                     </th>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600">
+                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-900' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
                       Amount
                     </th>
-                    <th className="py-2 px-4 border-b-2 border-gray-200 bg-gray-100 text-left text-md font-semibold text-gray-600">
+                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-900' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
                       Percentage
                     </th>
                   </tr>
@@ -368,16 +372,16 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
                       ).toFixed(2);
                       return (
                         <tr key={category}>
-                          <td className="py-2 px-4 border-b border-gray-200">
+                          <td className={`py-2 px-4 border-b ${nightMode ? 'border-gray-600' : 'border-gray-200'}`}>
                             {category}
                           </td>
-                          <td className="py-2 px-4 border-b border-gray-200">
+                          <td className={`py-2 px-4 border-b ${nightMode ? 'border-gray-600' : 'border-gray-200'}`}>
                             $
                             {amount
                               .toFixed(2)
                               .replace(/\B(?=(\d{3})+(?!\d))/g, ",")}
                           </td>
-                          <td className="py-2 px-4 border-b border-gray-200">
+                          <td className={`py-2 px-4 border-b ${nightMode ? 'border-gray-600' : 'border-gray-200'}`}>
                             {percentage}%
                           </td>
                         </tr>

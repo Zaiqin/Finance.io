@@ -7,6 +7,7 @@ import { GoogleLogin, googleLogout } from "@react-oauth/google";
 import { jwtDecode } from "jwt-decode";
 import { Category, Preset, Tag } from "./interfaces/interface";
 import logo from "./logo192.png";
+import { MdDarkMode, MdLightMode } from "react-icons/md";
 
 const App: React.FC = () => {
   const [finances, setFinances] = useState<any[]>([]);
@@ -31,6 +32,7 @@ const App: React.FC = () => {
     presets: false,
     tags: false,
   });
+  const [nightMode, setNightMode] = useState(false);
 
   useEffect(() => {
     if (!isLoggedIn) return;
@@ -449,8 +451,8 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-4 sm:p-6">
-      <div className="flex justify-between items-center bg-white shadow-md p-4 mb-6">
+    <div className={`min-h-screen p-4 sm:p-6 ${nightMode ? 'bg-[#0a101d]' : 'bg-gray-100'}`}>
+      <div className={`flex justify-between items-center ${nightMode ? 'bg-gray-800' : 'bg-white'} rounded-lg shadow-md p-4 mb-6`}>
         <div className="flex items-center">
           {isLoggedIn && (
             <img
@@ -459,18 +461,21 @@ const App: React.FC = () => {
               className="h-8 w-8 mr-2"
             />
           )}
-          <h1 className="text-xl sm:text-2xl pb-0 sm:pb-0.5 font-bold text-gray-800">
+          <h1 className={`text-xl sm:text-2xl pb-0 sm:pb-0.5 font-bold ${nightMode ? 'text-white' : 'text-gray-800'} `}>
             Finance.io
           </h1>
         </div>
+        <div className="flex items-end space-x-2">
         {isLoggedIn ? (
-          <button
-            type="submit"
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            onClick={handleLogout}
-          >
-            Logout
-          </button>
+          <div className="flex items-center space-x-2">
+            <button
+              type="submit"
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-24 h-10"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </div>
         ) : (
           <GoogleLogin
             onSuccess={handleLoginSuccess}
@@ -479,22 +484,30 @@ const App: React.FC = () => {
             }}
             useOneTap
             auto_select
+            theme={nightMode ? 'filled_blue' : 'outline'}
           />
         )}
+        <button
+          type="submit"
+          className={`${nightMode ? 'bg-yellow-500 hover:bg-yellow-700 text-gray-700' : 'bg-purple-500 hover:bg-purple-700 text-white'} font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline h-10 flex items-center justify-center`}
+          onClick={() => setNightMode(!nightMode)}
+        >
+          {nightMode ? <MdLightMode /> : <MdDarkMode />}
+        </button></div>
       </div>
 
       {!isLoggedIn || !(loadedParts.finances && loadedParts.categories && loadedParts.presets && loadedParts.tags) ? (
         <div className="flex flex-col items-center justify-center pt-[10vh]">
-          <h2 className="text-xl sm:text-2xl font-semibold text-gray-700 mb-4">
+          <h2 className={`text-xl sm:text-2xl font-semibold mb-4 ${nightMode ? 'text-white' : 'text-gray-700'}`}>
             Welcome to Finance.io
           </h2>
-            <p className="text-lg text-gray-600 mb-6 text-center max-w-md w-2/3">
+          <p className={`text-lg mb-6 text-center max-w-md w-2/3 ${nightMode ? 'text-gray-300' : 'text-gray-600'}`}>
             Finance.io is your personal finance manager. Easily track your income and expenses, categorize transactions, and gain insights into your financial health. Start managing your finances efficiently with Finance.io.
-            </p>
+          </p>
           {isLoading && (
             <div className="flex items-center justify-center flex-col">
               <div className="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 border-t-blue-500 h-10 w-10 mb-2 animate-spin"></div>
-              <p>Fetching data...</p>
+              <p className={`${nightMode ? 'text-gray-300' : 'text-gray-700'}`}>Fetching data...</p>
             </div>
           )}
         </div>
@@ -509,6 +522,7 @@ const App: React.FC = () => {
                 categories={categories}
                 handleOpenFinanceForm={handleOpenFinanceForm}
                 tags={tags}
+                nightMode={nightMode}
               />
             </div>
           </div>
