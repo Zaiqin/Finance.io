@@ -504,7 +504,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
               className={`${
                 !includeFuture &&
                 dateEnd?.toDateString() === new Date().toDateString()
-                  ? "bg-gray-300 opacity-50"
+                  ? "bg-gray-300 opacity-20"
                   : nightMode
                   ? "bg-gray-600 hover:bg-gray-700"
                   : "bg-gray-500 hover:bg-gray-700"

@@ -302,7 +302,7 @@ const FinanceList: React.FC<{
               type="button"
               className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
           currentPage === 1
-            ? "bg-gray-300 opacity-50 text-white"
+            ? "bg-gray-300 opacity-20 text-white"
             : "bg-gray-500 hover:bg-gray-700 text-white"
               }`}
               onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
@@ -317,7 +317,7 @@ const FinanceList: React.FC<{
               type="button"
               className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
           currentPage === totalPages
-            ? "bg-gray-300 text-white"
+            ? "bg-gray-300 opacity-20 text-white"
             : "bg-gray-500 hover:bg-gray-700 text-white"
               }`}
               onClick={() =>

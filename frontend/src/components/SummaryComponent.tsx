@@ -208,7 +208,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
       <h3 className="text-2xl mb-3 font-semibold text-center">
         Summary
       </h3>
-      <div className="mb-6">
+      <div className="mb-4">
         <label className="font-medium">
           Filter by Tag(s):
           {filterMode === "include"
@@ -340,7 +340,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
         )} */}
       </div>
       {filteredByDateFinances.length > 0 && (
-        <div className="mt-6 mb-5">
+        <div className="mt-4 mb-4">
           <h4 className="text-xl font-bold mb-4">
             Spending Per Category:
           </h4>
@@ -351,13 +351,13 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
               <table className={`min-w-full ${nightMode ? 'bg-gray-700 text-gray-200' : 'bg-white text-gray-800'}`}>
                 <thead>
                   <tr>
-                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-900' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
+                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-600' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
                       Category
                     </th>
-                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-900' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
+                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-600' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
                       Amount
                     </th>
-                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-900' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
+                    <th className={`py-2 px-4 border-b-2 ${nightMode ? 'border-gray-600 bg-gray-600' : 'border-gray-200 bg-gray-100'} text-left text-md font-semibold`}>
                       Percentage
                     </th>
                   </tr>
