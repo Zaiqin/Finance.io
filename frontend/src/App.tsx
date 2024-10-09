@@ -35,6 +35,23 @@ const App: React.FC = () => {
   const [nightMode, setNightMode] = useState(false);
 
   useEffect(() => {
+    // Detect dark mode preference
+    const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    setNightMode(darkModeMediaQuery.matches ? true : false);
+
+    // Add event listener to detect changes in dark mode preference
+    const handleChange = (e: MediaQueryListEvent) => {
+      setNightMode(e.matches ? true : false);
+    };
+    darkModeMediaQuery.addEventListener("change", handleChange);
+
+    // Cleanup event listener on component unmount
+    return () => {
+      darkModeMediaQuery.removeEventListener("change", handleChange);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!isLoggedIn) return;
 
     const fetchFinances = async () => {
@@ -484,7 +501,7 @@ const App: React.FC = () => {
             }}
             useOneTap
             auto_select
-            type="icon"
+            type={window.innerWidth < 500 ? "icon" : "standard"}
             theme={nightMode ? 'filled_blue' : 'outline'}
           />
         )}
@@ -535,19 +552,20 @@ const App: React.FC = () => {
           {isFinanceFormOpen && (
             <div className="fixed inset-0 flex items-center justify-center z-10 m-6">
               <div className="fixed inset-0 bg-black opacity-50"></div>
-              <div className="bg-white p-6 rounded shadow-lg w-full sm:w-1/3 min-w-[350px] z-10">
-                <FinanceForm
-                  addFinance={addFinance}
-                  categories={categories}
-                  onOpenSettings={handleOpenSettings}
-                  onOpenPresets={handleOpenPresets}
-                  onClose={handleCloseFinanceForm}
-                  presets={presets}
-                  addTag={addTag}
-                  deleteTag={deleteTag}
-                  updateTag={updateTag}
-                  tags={tags}
-                />
+              <div className={`p-6 rounded shadow-lg w-full sm:w-1/3 min-w-[350px] z-10 ${nightMode ? 'bg-gray-800 text-white' : 'bg-white text-black'}`}>
+              <FinanceForm
+                addFinance={addFinance}
+                categories={categories}
+                onOpenSettings={handleOpenSettings}
+                onOpenPresets={handleOpenPresets}
+                onClose={handleCloseFinanceForm}
+                presets={presets}
+                addTag={addTag}
+                deleteTag={deleteTag}
+                updateTag={updateTag}
+                tags={tags}
+                nightMode={nightMode}
+              />
               </div>
             </div>
           )}
@@ -559,6 +577,7 @@ const App: React.FC = () => {
               onAddCategory={handleAddCategory}
               onDeleteCategory={handleDeleteCategory}
               onUpdateCategory={handleUpdateCategory}
+              nightMode={nightMode}
             />
           )}
 
@@ -571,6 +590,7 @@ const App: React.FC = () => {
               onDeletePreset={handleDeletePreset}
               onEditPreset={handleEditPreset}
               tags={tags}
+              nightMode={nightMode}
             />
           )}
         </>

@@ -23,6 +23,7 @@ const renderComponent = () =>
       onAddCategory={mockOnAddCategory}
       onDeleteCategory={mockOnDeleteCategory}
       onUpdateCategory={mockOnUpdateCategory}
+      nightMode={true}
     />
   );
 

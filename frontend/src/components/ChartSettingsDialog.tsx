@@ -20,6 +20,7 @@ interface ChartSettingsDialogProps {
   onIncludeFutureChange: (include: boolean) => void;
   filterType: "period" | "range"; // Add filterType prop
   onFilterTypeChange: (type: "period" | "range") => void; // Add handler for filterType
+  nightMode: boolean;
 }
 
 const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
@@ -41,6 +42,7 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
   onIncludeFutureChange,
   filterType,
   onFilterTypeChange,
+  nightMode,
 }) => {
   if (!open) return null;
 
@@ -74,32 +76,88 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
-      <div className="bg-white p-6 rounded-lg shadow-md max-w-lg w-full m-6">
+    <div
+      className={`fixed inset-0 flex items-center justify-center ${
+        nightMode ? "bg-gray-900" : "bg-black"
+      } bg-opacity-50 z-10`}
+    >
+      <div
+        className={`${
+          nightMode ? "bg-gray-800 text-white" : "bg-white text-black"
+        } p-6 rounded-lg shadow-md max-w-lg w-full m-6`}
+      >
         <h2 className="text-2xl font-bold mb-4">Chart Settings</h2>
 
         {/* Scrollable Content Wrapper */}
-        <div className="max-h-[60vh] overflow-y-auto pr-5 mb-5 scrollbar-thin scrollbar-thumb-gray-500 scrollbar-track-gray-200 rounded">
+        <div
+          className={`max-h-[60vh] overflow-y-auto pr-5 mb-5 scrollbar-thin ${
+            nightMode
+              ? "scrollbar-thumb-gray-700 scrollbar-track-gray-600"
+              : "scrollbar-thumb-gray-500 scrollbar-track-gray-200"
+          } rounded`}
+        >
           {/* Color Picker */}
           <div className="mb-4">
-            <label className="block text-m font-semibold text-gray-700 mb-2">
+            <label className="block text-m font-semibold mb-2">
               Select Line Color:
             </label>
-            <SketchPicker
-              color={selectedColor}
-              onChangeComplete={handleColorChange}
-              width="95%"
-            />
+            <div
+              className={`p-2 rounded ${
+                nightMode ? "bg-gray-700" : "bg-white"
+              }`}
+            >
+              {nightMode ? (
+                <SketchPicker
+                color={selectedColor}
+                onChangeComplete={handleColorChange}
+                width="95%"
+                styles={{
+                  default: {
+                    picker: {
+                      background: nightMode ? "#2d3748" : "#fff",
+                      color: "#000",
+                    },
+                    controls: {
+                      background: nightMode ? "#2d3748" : "#fff",
+                      color: "#000",
+                    }
+                  },
+                }}
+              />
+              ):( 
+                <SketchPicker
+                color={selectedColor}
+                onChangeComplete={handleColorChange}
+                width="95%"
+                styles={{
+                  default: {
+                    picker: {
+                      background: nightMode ? "#2d3748" : "#fff",
+                      color: "#000",
+                    },
+                    controls: {
+                      background: nightMode ? "#2d3748" : "#fff",
+                      color: "#000",
+                    }
+                  },
+                }}
+              />
+              )}
+            </div>
           </div>
 
           {/* Line Thickness */}
           <div className="mb-4">
-            <label className="block text-m font-semibold text-gray-700 mb-2">
+            <label className="block text-m font-semibold mb-2">
               Line Thickness:
             </label>
             <input
               type="number"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                nightMode
+                  ? "bg-gray-700 text-white border-gray-600"
+                  : "text-gray-700"
+              }`}
               value={lineThickness}
               onChange={handleThicknessChange}
               min={1}
@@ -110,13 +168,17 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
           <div className="mb-4">
             <label
               htmlFor="filterType"
-              className="block text-m font-semibold text-gray-700 mb-2"
+              className="block text-m font-semibold mb-2"
             >
               Filter By:
             </label>
             <div className="relative">
               <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                  nightMode
+                    ? "bg-gray-700 text-white border-gray-600"
+                    : "text-gray-700"
+                }`}
                 id="filterType"
                 value={filterType}
                 onChange={handleFilterTypeChange}
@@ -124,9 +186,11 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
                 <option value="period">Period</option>
                 <option value="range">Date Range</option>
               </select>
-              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
                 <svg
-                  className="fill-current h-4 w-4"
+                  className={`fill-current h-4 w-4 ${
+                    nightMode ? "text-white" : "text-gray-700"
+                  }`}
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 20 20"
                 >
@@ -141,12 +205,16 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
               {/* Period Selector */}
               <div className="mb-4 flex space-x-4">
                 <div className="w-1/2">
-                  <label className="block text-m font-semibold text-gray-700 mb-2">
+                  <label className="block text-m font-semibold mb-2">
                     Period:
                   </label>
                   <input
                     type="number"
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                      nightMode
+                        ? "bg-gray-700 text-white border-gray-600"
+                        : "text-gray-700"
+                    }`}
                     value={numPeriods}
                     onChange={handleNumPeriodsChange}
                     min={1}
@@ -154,21 +222,27 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
                   />
                 </div>
                 <div className="w-1/2">
-                  <label className="block text-m font-semibold text-gray-700 mb-2">
+                  <label className="block text-m font-semibold mb-2">
                     Period Type:
                   </label>
                   <div className="relative">
                     <select
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline bg-white"
+                      className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                        nightMode
+                          ? "bg-gray-700 text-white border-gray-600"
+                          : "text-gray-700"
+                      }`}
                       value={dateType}
                       onChange={handleDateTypeChange}
                     >
                       <option value="months">Months</option>
                       <option value="weeks">Weeks</option>
                     </select>
-                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                    <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
                       <svg
-                        className="fill-current h-4 w-4"
+                        className={`fill-current h-4 w-4 ${
+                          nightMode ? "text-white" : "text-gray-700"
+                        }`}
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                       >
@@ -182,23 +256,31 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
           ) : (
             <div className="mb-4 flex space-x-4">
               <div className="w-1/2">
-                <label className="block text-m font-semibold text-gray-700 mb-2">
+                <label className="block text-m font-semibold mb-2">
                   Start Date:
                 </label>
                 <input
                   type="date"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                    nightMode
+                      ? "bg-gray-700 text-white border-gray-600"
+                      : "text-gray-700"
+                  }`}
                   value={startDate || ""}
                   onChange={handleStartDateChange}
                 />
               </div>
               <div className="w-1/2">
-                <label className="block text-m font-semibold text-gray-700 mb-2">
+                <label className="block text-m font-semibold mb-2">
                   End Date:
                 </label>
                 <input
                   type="date"
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                    nightMode
+                      ? "bg-gray-700 text-white border-gray-600"
+                      : "text-gray-700"
+                  }`}
                   value={endDate || ""}
                   onChange={handleEndDateChange}
                 />
@@ -208,12 +290,14 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
 
           {/* Include Future */}
           <div className="mb-4 flex items-center">
-            <label className="text-m font-semibold text-gray-700 mr-2">
+            <label className="text-m font-semibold mr-2">
               Include Future Items:
             </label>
             <input
               type="checkbox"
-              className="shadow form-checkbox h-5 w-5 text-gray-600 border rounded focus:ring-blue-500 focus:ring-opacity-50"
+              className={`shadow form-checkbox h-5 w-5 ${
+                nightMode ? "text-gray-400 border-gray-600" : "text-gray-600"
+              } rounded focus:ring-blue-500 focus:ring-opacity-50`}
               checked={includeFuture}
               onChange={(e) => onIncludeFutureChange(e.target.checked)}
             />

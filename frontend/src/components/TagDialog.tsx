@@ -113,20 +113,20 @@ const TagDialog: React.FC<TagDialogProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-6 rounded shadow-md w-full sm:w-1/3 min-w-[350px] m-6">
-        <h2 className="text-xl font-bold mb-4">
+      <div className="bg-white dark:bg-gray-800 p-6 rounded shadow-md w-full sm:w-1/3 min-w-[350px] m-6">
+        <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-gray-100">
           {selectedTag ? "Edit Tag" : "Add Tag"}
         </h2>
         <form onSubmit={handleSave}>
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
               htmlFor="name"
             >
               Tag Name
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline bg-gray-100 dark:bg-gray-700"
               id="name"
               type="text"
               value={name}
@@ -146,13 +146,13 @@ const TagDialog: React.FC<TagDialogProps> = ({
           </div>
           <div className="mb-4">
             <label
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 dark:text-gray-300 text-sm font-bold mb-2"
               htmlFor="color"
             >
               Tag Color
             </label>
             <input
-              className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 leading-tight focus:outline-none focus:shadow-outline h-7"
+              className="shadow appearance-none border rounded w-full py-1 px-2 text-gray-700 dark:text-gray-300 leading-tight focus:outline-none focus:shadow-outline h-7 bg-gray-100 dark:bg-gray-700"
               id="color"
               type="color"
               value={color}
@@ -188,47 +188,49 @@ const TagDialog: React.FC<TagDialogProps> = ({
           </div>
         </form>
         <div className="mt-4">
-          <h3 className="text-lg font-bold mb-2">Existing Tags</h3>
+          <h3 className="text-lg font-bold mb-2 text-gray-900 dark:text-gray-100">
+            Existing Tags
+          </h3>
           <div className="overflow-x-auto rounded-md flex flex-col gap-2 overflow-y-auto max-h-[30vh] pr-2">
             <table className="w-full table-auto overflow-y-auto max-h-[30vh] pr-2">
               <tbody>
-              {existingTags.map((tag) => {
-                const textColor = getContrastYIQ(tag.color);
-                return (
-                <tr key={tag._id}>
-                  <td className="px-2">
-                  <span
-                    className="inline-block px-2 py-1 text-white shadow-md rounded-md"
-                    style={{
-                    backgroundColor: tag.color,
-                    color: textColor,
-                    borderRadius: "0.5rem",
-                    }}
-                  >
-                    {tag.name}
-                  </span>
-                  </td>
-                  <td className="px-2 py-1">
-                  <div className="flex space-x-2">
-                    <button
-                    type="button"
-                    className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                    onClick={() => handleEdit(tag)}
-                    >
-                    Edit
-                    </button>
-                    <button
-                    type="button"
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
-                    onClick={() => handleDelete(tag)}
-                    >
-                    Delete
-                    </button>
-                  </div>
-                  </td>
-                </tr>
-                );
-              })}
+                {existingTags.map((tag) => {
+                  const textColor = getContrastYIQ(tag.color);
+                  return (
+                    <tr key={tag._id}>
+                      <td className="px-2">
+                        <span
+                          className="inline-block px-2 py-1 text-white shadow-md rounded-md"
+                          style={{
+                            backgroundColor: tag.color,
+                            color: textColor,
+                            borderRadius: "0.5rem",
+                          }}
+                        >
+                          {tag.name}
+                        </span>
+                      </td>
+                      <td className="px-2 py-1">
+                        <div className="flex justify-end space-x-2">
+                          <button
+                            type="button"
+                            className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                            onClick={() => handleEdit(tag)}
+                          >
+                            Edit
+                          </button>
+                          <button
+                            type="button"
+                            className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded focus:outline-none focus:shadow-outline"
+                            onClick={() => handleDelete(tag)}
+                          >
+                            Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

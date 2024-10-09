@@ -546,6 +546,7 @@ const ChartComponent: React.FC<ChartProps> = ({ data, groupedFinances, categorie
           onIncludeFutureChange={setIncludeFuture} // Pass the setter function to the dialog
           filterType={filterType}
           onFilterTypeChange={setFilterType} // Add the filter type handler
+          nightMode={nightMode}
         />
         <br />
         <div className="mb-2 flex items-center justify-between">

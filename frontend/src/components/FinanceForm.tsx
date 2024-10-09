@@ -26,6 +26,7 @@ interface FinanceFormProps {
   deleteTag: (id: string) => void;
   updateTag: (id: string, updatedTag: Tag) => void;
   tags: Tag[];
+  nightMode: boolean;
 }
 
 // Add the resetTime function
@@ -52,6 +53,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   deleteTag,
   updateTag,
   tags,
+  nightMode
 }) => {
   const [rawAmount, setRawAmount] = useState<string>(""); // Store raw input value
   const [description, setDescription] = useState<string>("");
@@ -155,282 +157,374 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     <>
       <form
         onSubmit={handleSubmit}
-        className="w-full max-w-2xl bg-white rounded-lg"
+        className={`w-full max-w-2xl rounded-lg ${
+          nightMode ? "bg-gray-800" : "bg-white"
+        }`}
       >
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        <h2
+          className={`text-2xl font-semibold mb-4 ${
+        nightMode ? "text-white" : "text-gray-800"
+          }`}
+        >
           Add Finance Item
         </h2>
 
         <div className="overflow-y-auto max-h-[40vh] pr-6">
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="amount"
+          <div className="mb-4">
+        <label
+          className={`block text-sm font-bold mb-2 ${
+            nightMode ? "text-white" : "text-gray-700"
+          }`}
+          htmlFor="amount"
+        >
+          Amount
+        </label>
+        <div className="relative">
+          <span
+            className={`absolute inset-y-0 left-0 pl-3 flex items-center ${
+          nightMode ? "text-gray-300" : "text-gray-500"
+            }`}
           >
-            Amount
-          </label>
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-gray-500">
-              $
-            </span>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 pl-8 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              type="number"
-              id="amount"
-              value={rawAmount}
-              placeholder="Amount"
-              required
-              onChange={handleAmountChange}
-            />
-          </div>
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="description"
-          >
-            Description
-          </label>
-          <textarea
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="description"
-            value={description}
-            placeholder="Description"
-            onChange={(e) => setDescription(e.target.value)}
-          />
-        </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="date"
-          >
-            Date
-          </label>
+            $
+          </span>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="date"
-            type="date"
-            value={date}
+            className={`shadow appearance-none border rounded w-full py-2 px-3 pl-8 leading-tight focus:outline-none focus:shadow-outline ${
+          nightMode
+            ? "bg-gray-700 text-white border-gray-600"
+            : "text-gray-700"
+            }`}
+            type="number"
+            id="amount"
+            value={rawAmount}
+            placeholder="Amount"
             required
-            onChange={(e) => setDate(e.target.value)}
+            onChange={handleAmountChange}
           />
         </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="category"
+          </div>
+          <div className="mb-4">
+        <label
+          className={`block text-sm font-bold mb-2 ${
+            nightMode ? "text-white" : "text-gray-700"
+          }`}
+          htmlFor="description"
+        >
+          Description
+        </label>
+        <textarea
+          className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+            nightMode
+          ? "bg-gray-700 text-white border-gray-600"
+          : "text-gray-700"
+          }`}
+          id="description"
+          value={description}
+          placeholder="Description"
+          onChange={(e) => setDescription(e.target.value)}
+        />
+          </div>
+          <div className="mb-4">
+        <label
+          className={`block text-sm font-bold mb-2 ${
+            nightMode ? "text-white" : "text-gray-700"
+          }`}
+          htmlFor="date"
+        >
+          Date
+        </label>
+        <input
+          className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+            nightMode
+          ? "bg-gray-700 text-white border-gray-600"
+          : "text-gray-700"
+          }`}
+          id="date"
+          type="date"
+          value={date}
+          required
+          onChange={(e) => setDate(e.target.value)}
+        />
+          </div>
+          <div className="mb-4">
+        <label
+          className={`block text-sm font-bold mb-2 ${
+            nightMode ? "text-white" : "text-gray-700"
+          }`}
+          htmlFor="category"
+        >
+          Category
+        </label>
+        <div className="relative">
+          <select
+            className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+          nightMode
+            ? "bg-gray-700 text-white border-gray-600"
+            : "text-gray-700"
+            }`}
+            id="category"
+            value={category || ""}
+            required
+            onChange={(e) => {
+          console.log(e);
+          setCategory(e.target.value);
+            }}
           >
-            Category
-          </label>
-          <div className="relative">
-            <select
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="category"
-              value={category || ""}
-              required
-              onChange={(e) => {
-                console.log(e)
-                setCategory(e.target.value);
-              }}
+            <option value="" disabled>
+          -- Select a Category --
+            </option>
+            {categories.map((category, index) => (
+          <option key={index} value={category._id}>
+            {category.description}
+          </option>
+            ))}
+          </select>
+          <div
+            className={`pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 ${
+          nightMode ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
+            <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
             >
-              <option value="" disabled>
-                -- Select a Category --
-              </option>
-              {categories.map((category, index) => (
-                <option key={index} value={category._id}>
-                  {category.description}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
-            </div>
+          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+            </svg>
           </div>
         </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="tags"
-          >
-            Tags
-          </label>
-            <div className={`flex flex-wrap gap-2 ${selectedTags.length > 0 ? "mb-3" : ""}`}>
-            <div className="flex justify-left">
-              {selectedTags.map((tag, index) => {
-                const textColor = getContrastYIQ(tag.color);
-                return (
-                  <span
-                    key={index}
-                    className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
-                    style={{
-                      backgroundColor: tag.color,
-                      color: textColor,
-                      borderRadius: "0.5rem", // Less rounded corners
-                    }}
-                  >
-                    {tag.name}
-                    <button
-                      type="button"
-                      className="ml-2 text-white"
-                      onClick={() =>
-                        setSelectedTags(selectedTags.filter((t) => t._id !== tag._id))
-                      }
-                    >
-                      &times;
-                    </button>
-                  </span>
-                );
-              })}
-            </div>
           </div>
-          <div className="relative">
-            <select
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="tags"
-              value=""
-              onChange={(e) => {
-                const selectedTag = tags.find(
-                  (tag) => tag._id === e.target.value
-                );
-                if (
-                  selectedTag &&
-                  !selectedTags.some((tag) => tag._id === selectedTag._id)
-                ) {
-                  setSelectedTags([...selectedTags, selectedTag]);
-                }
+          <div className="mb-4">
+        <label
+          className={`block text-sm font-bold mb-2 ${
+            nightMode ? "text-white" : "text-gray-700"
+          }`}
+          htmlFor="tags"
+        >
+          Tags
+        </label>
+        <div
+          className={`flex flex-wrap gap-2 ${
+            selectedTags.length > 0 ? "mb-3" : ""
+          }`}
+        >
+          <div className="flex justify-left">
+            {selectedTags.map((tag, index) => {
+          const textColor = getContrastYIQ(tag.color);
+          return (
+            <span
+              key={index}
+              className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
+              style={{
+            backgroundColor: tag.color,
+            color: textColor,
+            borderRadius: "0.5rem", // Less rounded corners
               }}
             >
-              <option value="" disabled>
-                -- Select tag(s) --
-              </option>
-              {tags.map((tag) => (
-                <option
-                  key={tag._id}
-                  value={tag._id}
-                  style={{
-                    backgroundColor: tag.color,
-                    color: getContrastYIQ(tag.color),
-                  }}
-                >
-                  {tag.name}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
+              {tag.name}
+              <button
+            type="button"
+            className="ml-2 text-white"
+            onClick={() =>
+              setSelectedTags(
+                selectedTags.filter((t) => t._id !== tag._id)
+              )
+            }
               >
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
-            </div>
+            &times;
+              </button>
+            </span>
+          );
+            })}
           </div>
         </div>
-        <div className="mb-4">
-          <label
-            className="block text-gray-700 text-sm font-bold mb-2"
-            htmlFor="category"
+        <div className="relative">
+          <select
+            className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+          nightMode
+            ? "bg-gray-700 text-white border-gray-600"
+            : "text-gray-700"
+            }`}
+            id="tags"
+            value=""
+            onChange={(e) => {
+          const selectedTag = tags.find(
+            (tag) => tag._id === e.target.value
+          );
+          if (
+            selectedTag &&
+            !selectedTags.some((tag) => tag._id === selectedTag._id)
+          ) {
+            setSelectedTags([...selectedTags, selectedTag]);
+          }
+            }}
           >
-            Presets
-          </label>
-          <div className="relative">
-            <select
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="category"
-              value={preset?.description || ""}
-              onChange={(e) => {
-                handlePresetChange(e.target.value);
-              }}
+            <option value="" disabled>
+          -- Select tag(s) --
+            </option>
+            {tags.map((tag) => (
+          <option
+            key={tag._id}
+            value={tag._id}
+            style={{
+              backgroundColor: tag.color,
+              color: getContrastYIQ(tag.color),
+            }}
+          >
+            {tag.name}
+          </option>
+            ))}
+          </select>
+          <div
+            className={`pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 ${
+          nightMode ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
+            <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
             >
-              <option value="" disabled>
-                -- Select a preset --
-              </option>
-              {presets.map((preset, index) => (
-                <option key={index} value={preset.description}>
-                  {preset.description}
-                </option>
-              ))}
-            </select>
-            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-              <svg
-                className="fill-current h-4 w-4"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 20 20"
-              >
-                <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-              </svg>
-            </div>
+          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+            </svg>
           </div>
         </div>
+          </div>
+          <div className="mb-4">
+        <label
+          className={`block text-sm font-bold mb-2 ${
+            nightMode ? "text-white" : "text-gray-700"
+          }`}
+          htmlFor="category"
+        >
+          Presets
+        </label>
+        <div className="relative">
+          <select
+            className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+          nightMode
+            ? "bg-gray-700 text-white border-gray-600"
+            : "text-gray-700"
+            }`}
+            id="category"
+            value={preset?.description || ""}
+            onChange={(e) => {
+          handlePresetChange(e.target.value);
+            }}
+          >
+            <option value="" disabled>
+          -- Select a preset --
+            </option>
+            {presets.map((preset, index) => (
+          <option key={index} value={preset.description}>
+            {preset.description}
+          </option>
+            ))}
+          </select>
+          <div
+            className={`pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 ${
+          nightMode ? "text-gray-300" : "text-gray-700"
+            }`}
+          >
+            <svg
+          className="fill-current h-4 w-4"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 20 20"
+            >
+          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+            </svg>
+          </div>
+        </div>
+          </div>
         </div>
         <div className="mb-3 flex space-x-2 mt-3 flex items-left justify-left">
           <button
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
-            type="button"
-            onClick={onOpenSettings}
+        className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center ${
+          nightMode
+            ? "bg-gray-600 hover:bg-gray-700 text-white"
+            : "bg-gray-500 hover:bg-gray-700 text-white"
+        }`}
+        type="button"
+        onClick={onOpenSettings}
           >
-            <FaCog className="mr-2" /> <span>Categories</span>
+        <FaCog className="mr-2" /> <span>Categories</span>
           </button>
           <button
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
-            type="button"
-            onClick={onOpenPresets}
+        className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center ${
+          nightMode
+            ? "bg-gray-600 hover:bg-gray-700 text-white"
+            : "bg-gray-500 hover:bg-gray-700 text-white"
+        }`}
+        type="button"
+        onClick={onOpenPresets}
           >
-            <FaCog className="mr-2" /> <span>Presets</span>
+        <FaCog className="mr-2" /> <span>Presets</span>
           </button>
         </div>
         <div className="mb-3 flex space-x-2 items-center justify-left">
           <button
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
-            type="button"
-            onClick={handleLTAOpenDialog}
+        className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center ${
+          nightMode
+            ? "bg-gray-600 hover:bg-gray-700 text-white"
+            : "bg-gray-500 hover:bg-gray-700 text-white"
+        }`}
+        type="button"
+        onClick={handleLTAOpenDialog}
           >
-            <FaPlus className="mr-2" /> <span>Public Transport</span>
+        <FaPlus className="mr-2" /> <span>Public Transport</span>
           </button>
           <button
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center"
-            type="button"
-            onClick={handleTagDialogOpen}
+        className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline flex items-center ${
+          nightMode
+            ? "bg-gray-600 hover:bg-gray-700 text-white"
+            : "bg-gray-500 hover:bg-gray-700 text-white"
+        }`}
+        type="button"
+        onClick={handleTagDialogOpen}
           >
-            <FaCog className="mr-2" /> <span>Tags</span>
+        <FaCog className="mr-2" /> <span>Tags</span>
           </button>
         </div>
         <div className="flex items-center justify-between">
           <button
-            className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            type="button"
-            onClick={() => {
-              setRawAmount("");
-              setDescription("");
-              setDate(formatDate(resetTime(new Date()))); // Reset to current date
-              setCategory(undefined);
-              setPreset(undefined);
-              setSelectedTags([]);
-            }}
+        className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+          nightMode
+            ? "bg-gray-600 hover:bg-gray-700 text-white"
+            : "bg-gray-500 hover:bg-gray-700 text-white"
+        }`}
+        type="button"
+        onClick={() => {
+          setRawAmount("");
+          setDescription("");
+          setDate(formatDate(resetTime(new Date()))); // Reset to current date
+          setCategory(undefined);
+          setPreset(undefined);
+          setSelectedTags([]);
+        }}
           >
-            Clear
+        Clear
           </button>
           <div className="flex space-x-2">
-            <button
-              type="button"
-              onClick={onClose}
-              className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-            >
-              Close
-            </button>
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-              type="submit"
-            >
-              Add
-            </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+            nightMode
+          ? "bg-red-600 hover:bg-red-700 text-white"
+          : "bg-red-500 hover:bg-red-700 text-white"
+          }`}
+        >
+          Close
+        </button>
+        <button
+          className={`font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${
+            nightMode
+          ? "bg-blue-600 hover:bg-blue-700 text-white"
+          : "bg-blue-500 hover:bg-blue-700 text-white"
+          }`}
+          type="submit"
+        >
+          Add
+        </button>
           </div>
         </div>
       </form>
@@ -438,6 +532,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
         open={isLTADialogOpen}
         onClose={handleLTACloseDialog}
         onSubmit={handleLTASubmitDialog}
+        nightMode={nightMode}
       />
       <TagDialog
         open={isTagDialogOpen}

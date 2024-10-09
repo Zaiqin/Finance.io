@@ -339,6 +339,7 @@ const FinanceList: React.FC<{
           onClose={closeModal}
           categories={categories}
           tags={tags}
+          nightMode={nightMode}
         />
       )}
 
@@ -356,6 +357,7 @@ const FinanceList: React.FC<{
           }
         }}
         onCancel={() => setIsConfirmOpen(false)}
+        nightMode={nightMode}
       />
     </div>
   );
