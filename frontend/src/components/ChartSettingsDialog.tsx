@@ -102,8 +102,8 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
               Select Line Color:
             </label>
             <div
-              className={`p-2 rounded ${
-                nightMode ? "bg-gray-700" : "bg-white"
+              className={`rounded chart-settings-dialog ${
+                nightMode ? "bg-gray-800" : "bg-white"
               }`}
             >
               {nightMode ? (
@@ -143,6 +143,11 @@ const ChartSettingsDialog: React.FC<ChartSettingsDialogProps> = ({
                 }}
               />
               )}
+            <style>{`
+              .chart-settings-dialog label {
+              color: ${nightMode ? "#fff" : "#000"} !important;
+              }
+            `}</style>
             </div>
           </div>
 

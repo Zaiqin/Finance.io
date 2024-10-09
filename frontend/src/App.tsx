@@ -482,7 +482,7 @@ const App: React.FC = () => {
             Finance.io
           </h1>
         </div>
-        <div className="flex items-end space-x-2">
+        <div className="flex items-center space-x-2">
         {isLoggedIn ? (
           <div className="flex items-center space-x-2">
             <button
@@ -507,11 +507,12 @@ const App: React.FC = () => {
         )}
         <button
           type="submit"
-          className={`${nightMode ? 'bg-yellow-500 hover:bg-yellow-700 text-gray-700' : 'bg-purple-500 hover:bg-purple-700 text-white'} font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline h-10 flex items-center justify-center`}
+          className={`${nightMode ? 'bg-yellow-500 hover:bg-yellow-700 text-gray-700' : 'bg-purple-500 hover:bg-purple-700 text-white'} font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline ${window.innerWidth < 500 ? "h-9" : "h-10"} flex items-center justify-center`}
           onClick={() => setNightMode(!nightMode)}
         >
           {nightMode ? <MdLightMode /> : <MdDarkMode />}
-        </button></div>
+        </button>
+        </div>
       </div>
 
       {!isLoggedIn || !(loadedParts.finances && loadedParts.categories && loadedParts.presets && loadedParts.tags) ? (
