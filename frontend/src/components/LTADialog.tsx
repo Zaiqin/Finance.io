@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Bus, Station } from '../interfaces/interface';
 import { FaTrash } from "react-icons/fa";
+import StationIcon from './StationIcon';
 
 interface LTADialogProps {
     open: boolean;
@@ -219,6 +220,25 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
         setTrips(updatedTrips);
     };
 
+    const getCode = (stationCode: string) => {
+        const stationName = stations?.find(station => station.code === stationCode)?.name;
+        if (stationName) {
+            const match = stationName.match(/\(([^)]+)\)/);
+            if (match) {
+                return match[1];
+            }
+        }
+        return "";
+    };
+
+    const getName = (stationCode: string) => {
+        const stationName = stations?.find(station => station.code === stationCode)?.name;
+        if (stationName) {
+            return stationName.split(' (')[0];
+        }
+        return "";
+    }
+
     const selectedBus = buses?.find(bus => bus.id === formData.busNumber);
     const selectedRoute = selectedBus?.routes[parseInt(formData.busRoute.split('-')[1])];
 
@@ -271,7 +291,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         {formData.transportType === 'MRT' && (
                             <>
                                 <label className={`block ${nightMode ? 'text-gray-300' : 'text-gray-700'} text-m font-bold mb-2`} htmlFor="startStation">
-                                    Boarding at
+                                    Boarding at <span className="text-white">{getName(formData.startStation)}</span> {formData.startStation != '' && (<StationIcon stationCode={getCode(formData.startStation)} />)}
                                 </label>
                                 <select
                                     className={`shadow appearance-none border rounded w-full py-2 px-3 ${nightMode ? 'bg-gray-700 text-gray-300' : 'text-gray-700'} leading-tight focus:outline-none focus:shadow-outline mb-3 relative z-10`}
@@ -289,7 +309,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                                 </select>
 
                                 <label className={`block ${nightMode ? 'text-gray-300' : 'text-gray-700'} text-m font-bold mb-2`} htmlFor="endStation">
-                                    Alighting at
+                                    Alighting at <span className="text-white">{getName(formData.endStation)}</span> {formData.endStation != '' && (<StationIcon stationCode={getCode(formData.endStation)} />)}
                                 </label>
                                 <select
                                     className={`shadow appearance-none border rounded w-full py-2 px-3 ${nightMode ? 'bg-gray-700 text-gray-300' : 'text-gray-700'} leading-tight focus:outline-none focus:shadow-outline mb-3 relative z-10`}
@@ -301,7 +321,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                                     style={{ position: "relative", zIndex: 1 }}
                                 >
                                     <option value="" disabled>Select MRT/LRT Station</option>
-                                    {stations?.map(station => (
+                                    {stations?.filter(station => station.code !== formData.startStation).map(station => (
                                         <option key={station.code} value={station.code}>{station.name}</option>
                                     ))}
                                 </select>
@@ -382,8 +402,8 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                             </>
                         )}
 
-                        <h2 className={`text-xl font-bold ${nightMode ? 'text-gray-200' : 'text-gray-800'} mb-2`}>Fare: ${(fare ?? 0).toFixed(2)}</h2>
-                        {trips.length > 0 && (<h2 className={`text-xl font-bold mb-2 ${nightMode ? 'text-gray-200' : 'text-gray-800'}`}>Total Fare: ${(totalFare ?? 0).toFixed(2)}</h2>)}
+                        {trips.length > 0 ? (<h2 className={`text-xl font-bold mb-2 ${nightMode ? 'text-gray-200' : 'text-gray-800'}`}>Total Fare: ${(totalFare ?? 0).toFixed(2)}</h2>) :
+                            <h2 className={`text-xl font-bold ${nightMode ? 'text-gray-200' : 'text-gray-800'} mb-2`}>Fare: ${(fare ?? 0).toFixed(2)}</h2>}
 
                         <button
                             type="button"
