@@ -32,7 +32,7 @@ const SummaryComponent: React.FC<SummaryComponentProps> = ({
     "include"
   );
 
-  console.log(finances);
+  // console.log(finances);
 
   // Flatten the finances data
   const allFinances = Object.values(finances).flat();

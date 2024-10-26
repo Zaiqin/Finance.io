@@ -162,7 +162,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                     onChange={handleChange}
                     required
                 >
-                    <option value="">Select Transport Type</option>
+                    <option value="" disabled>Select Transport Type</option>
                     <option value="MRT">MRT</option>
                     <option value="Bus">Bus</option>
                 </select>
@@ -181,7 +181,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         required
                         style={{ position: "relative", zIndex: 1 }}
                     >
-                        <option value="">Select Starting Station</option>
+                        <option value="" disabled>Select Starting Station</option>
                         {stations?.map(station => (
                         <option key={station.code} value={station.code}>{station.name}</option>
                         ))}
@@ -199,7 +199,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         required
                         style={{ position: "relative", zIndex: 1 }}
                     >
-                        <option value="">Select Ending Station</option>
+                        <option value="" disabled>Select Ending Station</option>
                         {stations?.map(station => (
                         <option key={station.code} value={station.code}>{station.name}</option>
                         ))}
@@ -220,7 +220,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         onChange={handleChange}
                         required
                     >
-                        <option value="">Select Bus Number</option>
+                        <option value="" disabled>Select Bus Number</option>
                         {buses?.map(bus => (
                         <option key={bus.id} value={bus.id}>{bus.id}</option>
                         ))}
@@ -237,7 +237,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         onChange={handleChange}
                         required
                     >
-                        <option value="">Select Bus Route</option>
+                        <option value="" disabled>Select Bus Route</option>
                         {selectedBus?.routes.map((route, index) => (
                         <option key={`${formData.busNumber}-${index}`} value={`${formData.busNumber}-${index}`}>{route.description}</option>
                         ))}
@@ -254,7 +254,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         onChange={handleChange}
                         required
                     >
-                        <option value="">Select Starting Bus Stop</option>
+                        <option value="" disabled>Select Starting Bus Stop</option>
                         {selectedRoute?.busStops.map(busStop => (
                         <option key={busStop.id} value={busStop.id}>{busStop.name}</option>
                         ))}
@@ -271,10 +271,12 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         onChange={handleChange}
                         required
                     >
-                        <option value="">Select Ending Bus Stop</option>
-                        {selectedRoute?.busStops.map(busStop => (
-                        <option key={busStop.id} value={busStop.id}>{busStop.name}</option>
-                        ))}
+                        <option value="" disabled>Select Ending Bus Stop</option>
+                        {selectedRoute?.busStops
+                            .slice(selectedRoute.busStops.findIndex(busStop => busStop.id === formData.startBusStop) + 1)
+                            .map(busStop => (
+                                <option key={busStop.id} value={busStop.id}>{busStop.name}</option>
+                            ))}
                     </select>
                     </>
                 )}
@@ -287,7 +289,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                     <button
                     type="button"
                     className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                    onClick={onClose}
+                    onClick={() => {resetForm(); onClose();}}
                     >
                     Cancel
                     </button>

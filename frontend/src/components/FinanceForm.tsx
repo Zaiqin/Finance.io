@@ -133,7 +133,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
     // Reset form after submission
     setRawAmount("");
     setDescription("");
-    setDate(formatDate(resetTime(new Date()))); // Reset to current date
+    // setDate(formatDate(resetTime(new Date()))); // Reset to current date
     setCategory(undefined);
     setSelectedTags([]);
     setPreset(undefined);
