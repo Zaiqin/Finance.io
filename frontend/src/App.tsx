@@ -487,7 +487,7 @@ const App: React.FC = () => {
           <div className="flex items-center space-x-2">
             <button
               type="submit"
-              className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-24 h-10"
+              className={`bg-blue-500 hover:bg-blue-700 text-white font-bold rounded focus:outline-none focus:shadow-outline w-24 ${window.innerWidth < 500 ? "h-9 py-1" : "h-10 py-2"}`}
               onClick={handleLogout}
             >
               Logout

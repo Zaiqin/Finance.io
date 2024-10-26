@@ -74,6 +74,7 @@ const FinanceForm: React.FC<FinanceFormProps> = ({
   };
 
   const handleLTASubmitDialog = (fare: number, description: string) => {
+    console.log(fare, description);
     setIsLTADialogOpen(false);
     setRawAmount(fare.toFixed(2));
     setDescription(description);
