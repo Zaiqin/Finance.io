@@ -101,7 +101,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
         };
 
         calculateFare();
-    }, [formData.startStation, formData.endStation, formData.startBusStop, formData.endBusStop, formData.busNumber, formData.transportType]);
+    }, [formData.startStation, formData.endStation, formData.startBusStop, formData.endBusStop, formData.busNumber, formData.transportType, trips]);
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -110,6 +110,33 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
             [name]: value
         });
     };
+
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        console.log(formData, trips[trips.length - 1])
+        if (formData.transportType === 'MRT') {
+            const lastTrip = trips[trips.length - 1];
+            if (lastTrip && formData.startStation !== "" && lastTrip.formData.endStation === formData.startStation && lastTrip.formData.transportType === formData.transportType) {
+                setError('*Exit and immediate re-entry at same train station is charged as a new trip. Select another station, or start a new query.');
+            } else {
+                setError(null);
+            }
+        } else if (formData.transportType === 'Bus') {
+            const lastTrip = trips[trips.length - 1];
+            const isSameBusNumber = lastTrip && formData.busNumber !== "" && lastTrip.formData.busNumber === formData.busNumber;
+            const isRelatedBusNumber = lastTrip && (
+                lastTrip.formData.busNumber.replace(/\D/g, '') === formData.busNumber.replace(/\D/g, '')
+            );
+            const isSameMode = lastTrip.formData.transportType === formData.transportType
+
+            if (isSameMode && (isSameBusNumber || isRelatedBusNumber)) {
+                setError('*Bus service selected has same number as preceding bus service and will be charged as a new trip. Select another bus service, or start a new query.');
+            } else {
+                setError(null);
+            }
+        }
+    }, [formData.startStation, formData.transportType, formData.busNumber, trips]);
 
     const calculateFareForTrip = async (formData: typeof initialFormData, addTripInfo: string, tripInfo: string) => {
         if (formData.transportType === 'MRT') {
@@ -198,6 +225,9 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
     };
 
     const handleSubmit = () => {
+        if (error) {
+            return;
+        }
         let currentTrips = trips;
         if (trips.length === 0 && fare !== null) {
             const newTrip = { fare, description: createDescription(), formData };
@@ -269,6 +299,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         onSubmit={(e) => {
                             e.preventDefault();
                             handleSubmit();
+                            setError(null);
                             resetForm();
                         }}
                     >
@@ -302,11 +333,12 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                                     required={trips.length === 0}
                                     style={{ position: "relative", zIndex: 1 }}
                                 >
-                                    <option value="" disabled>Select MRT/LRT Station</option>
-                                    {stations?.map(station => (
+                                    <option value="">Select MRT/LRT Station</option>
+                                    {stations?.filter(station => station.code !== formData.endStation).map(station => (
                                         <option key={station.code} value={station.code}>{station.name}</option>
                                     ))}
                                 </select>
+                                {error && <p className="text-red-500 text-sm italic mb-2">{error}</p>}
 
                                 <label className={`block ${nightMode ? 'text-gray-300' : 'text-gray-700'} text-m font-bold mb-2`} htmlFor="endStation">
                                     Alighting at <span className="text-white">{getName(formData.endStation)}</span> {formData.endStation != '' && (<StationIcon stationCode={getCode(formData.endStation)} />)}
@@ -320,7 +352,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                                     required={trips.length === 0}
                                     style={{ position: "relative", zIndex: 1 }}
                                 >
-                                    <option value="" disabled>Select MRT/LRT Station</option>
+                                    <option value="">Select MRT/LRT Station</option>
                                     {stations?.filter(station => station.code !== formData.startStation).map(station => (
                                         <option key={station.code} value={station.code}>{station.name}</option>
                                     ))}
@@ -346,6 +378,7 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                                         <option key={bus.id} value={bus.id}>{bus.id}</option>
                                     ))}
                                 </select>
+                                {error && <p className="text-red-500 text-sm italic mb-2">{error}</p>}
 
                                 <label className={`block ${nightMode ? 'text-gray-300' : 'text-gray-700'} text-m font-bold mb-2`} htmlFor="busRoute">
                                     Direction
@@ -408,7 +441,8 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         <button
                             type="button"
                             onClick={handleAddTrip}
-                            className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold mt-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            className={`bg-yellow-500 hover:bg-yellow-700 text-white font-bold mt-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${error ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
+                            disabled={error !== null}
                         >
                             {trips.length == 0 ? 'Add More Trips' : 'Add to Journey'}
                         </button>
@@ -416,13 +450,14 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                             <button
                                 type="button"
                                 className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                                onClick={() => { resetForm(); setTrips([]); onClose(); }}
+                                onClick={() => { resetForm(); setTrips([]); setError(null); onClose(); }}
                             >
                                 Cancel
                             </button>
                             <button
                                 type="submit"
-                                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                                disabled={error !== null}
+                                className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${error ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
                             >
                                 Submit
                             </button>
