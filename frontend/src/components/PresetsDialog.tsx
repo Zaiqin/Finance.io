@@ -115,141 +115,145 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
         >
           {editingPreset ? 'Editing Preset' : 'Add New Preset'}
         </label>
-        <div className="mb-3">
-          <div className="relative">
-            <span className="absolute inset-y-0 left-0 pl-3 flex items-center">
-          $
-            </span>
-            <input
-          className={`shadow appearance-none border rounded w-full py-2 px-3 pl-8 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'}`}
-          type="number"
-          id="amount"
-          value={newAmount}
-          placeholder="Amount"
-          required
-          onChange={(e) => {
-            setNewAmount(e.target.value);
-          }}
-            />
-          </div>
-        </div>
-        <textarea
-          className={`shadow appearance-none border rounded w-full mb-3 py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'}`}
-          id="newPreset"
-          value={newDescription}
-          placeholder="Description"
-          required
-          onChange={(e) => setNewDescription(e.target.value)}
-        />
-        <div className="relative mb-3">
-          <select
-            className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'}`}
-            id="category"
-            value={newCategory || ""}
+
+        <div className="overflow-y-auto max-h-[20vh] pr-4">
+          <div className="mb-3">
+            <div className="relative">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center">
+            $
+              </span>
+              <input
+            className={`shadow appearance-none border rounded w-full py-2 px-3 pl-8 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'}`}
+            type="number"
+            id="amount"
+            value={newAmount}
+            placeholder="Amount"
             required
             onChange={(e) => {
-          setNewCategory(e.target.value);
+              setNewAmount(e.target.value);
             }}
-          >
-            <option value="" disabled>
-          -- Select a Category --
-            </option>
-            {categories.map((category, index) => (
-          <option key={index} value={category._id}>
-            {category.description}
-          </option>
-            ))}
-          </select>
-          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-            <svg
-          className="fill-current h-4 w-4"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-            >
-          <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-            </svg>
+              />
+            </div>
           </div>
-        </div>
-        <div className="mb-4">
-          <div className="relative">
+          <textarea
+            className={`shadow appearance-none border rounded w-full mb-3 py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'}`}
+            id="newPreset"
+            value={newDescription}
+            placeholder="Description"
+            required
+            onChange={(e) => setNewDescription(e.target.value)}
+          />
+          <div className="relative mb-3">
             <select
-          className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'}`}
-          id="tags"
-          value=""
-          onChange={(e) => {
-            const selectedTag = tags.find(
-              (tag) => tag._id === e.target.value
-            );
-            if (
-              selectedTag &&
-              !selectedTags.some((tag) => tag._id === selectedTag._id)
-            ) {
-              setSelectedTags([...selectedTags, selectedTag]);
-            }
-          }}
-            >
-          <option value="" disabled>
-            -- Select tag(s) --
-          </option>
-          {tags.map((tag) => (
-            <option
-              key={tag._id}
-              value={tag._id}
-              style={{
-            backgroundColor: tag.color,
-            color: getContrastYIQ(tag.color),
+              className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'}`}
+              id="category"
+              value={newCategory || ""}
+              required
+              onChange={(e) => {
+            setNewCategory(e.target.value);
               }}
             >
-              {tag.name}
+              <option value="" disabled>
+            -- Select a Category --
+              </option>
+              {categories.map((category, index) => (
+            <option key={index} value={category._id}>
+              {category.description}
             </option>
-          ))}
+              ))}
             </select>
             <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
-          <svg
+              <svg
             className="fill-current h-4 w-4"
             xmlns="http://www.w3.org/2000/svg"
             viewBox="0 0 20 20"
-          >
+              >
             <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
-          </svg>
+              </svg>
             </div>
           </div>
-          <div
-            className={`flex flex-wrap gap-2 ${
-          selectedTags.length > 0 ? "mb-3 mt-3" : ""
-            }`}
-          >
-            <div className="flex justify-left">
-          {selectedTags.map((tag, index) => {
-            const textColor = getContrastYIQ(tag.color);
-            return (
-              <span
-            key={index}
-            className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
-            style={{
-              backgroundColor: tag.color,
-              color: textColor,
-              borderRadius: "0.5rem",
+          <div className="mb-4">
+            <div className="relative">
+              <select
+            className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700 border-gray-300'}`}
+            id="tags"
+            value=""
+            onChange={(e) => {
+              const selectedTag = tags.find(
+                (tag) => tag._id === e.target.value
+              );
+              if (
+                selectedTag &&
+                !selectedTags.some((tag) => tag._id === selectedTag._id)
+              ) {
+                setSelectedTags([...selectedTags, selectedTag]);
+              }
             }}
               >
-            {tag.name}
-            <button
-              type="button"
-              className="ml-2 pb-1 text-white"
-              onClick={() =>
-                setSelectedTags(
-              selectedTags.filter((t) => t._id !== tag._id)
-                )
-              }
+            <option value="" disabled>
+              -- Select tag(s) --
+            </option>
+            {tags.map((tag) => (
+              <option
+                key={tag._id}
+                value={tag._id}
+                style={{
+              backgroundColor: tag.color,
+              color: getContrastYIQ(tag.color),
+                }}
+              >
+                {tag.name}
+              </option>
+            ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2">
+            <svg
+              className="fill-current h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
             >
-              &times;
-            </button>
-              </span>
-            );
-          })}
+              <path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 011.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" />
+            </svg>
+              </div>
+            </div>
+            <div
+              className={`flex flex-wrap gap-2 ${
+            selectedTags.length > 0 ? "mb-3 mt-3" : ""
+              }`}
+            >
+              <div className="flex justify-left">
+            {selectedTags.map((tag, index) => {
+              const textColor = getContrastYIQ(tag.color);
+              return (
+                <span
+              key={index}
+              className="inline-block px-2 py-1 text-white mr-2 shadow-md rounded-md"
+              style={{
+                backgroundColor: tag.color,
+                color: textColor,
+                borderRadius: "0.5rem",
+              }}
+                >
+              {tag.name}
+              <button
+                type="button"
+                className="ml-2 pb-1 text-white"
+                onClick={() =>
+                  setSelectedTags(
+                selectedTags.filter((t) => t._id !== tag._id)
+                  )
+                }
+              >
+                &times;
+              </button>
+                </span>
+              );
+            })}
+              </div>
             </div>
           </div>
         </div>
+
         <div className="flex flex-col justify-left items-left mt-3">
           <div className="flex space-x-2 flex items-left justify-left">
             <button
@@ -289,7 +293,7 @@ const PresetsDialog: React.FC<PresetsDialogProps> = ({
         <h3 className="text-xl font-semibold mb-2">
           Existing Presets
         </h3>
-        <ul className="overflow-y-auto overflow-x-auto max-h-[30vh] mr-2 pt-2 pb-2 pr-2">
+        <ul className="overflow-y-auto overflow-x-auto max-h-[20vh] mr-2 pt-2 pb-2 pr-2">
           {presets.map((preset, index) => (
             <li
           key={index}
