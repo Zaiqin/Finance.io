@@ -58,7 +58,7 @@ const OneCodeButton: React.FC<OneCodeButtonProps> = ({ stationCode }) => {
 
     return (
         <button 
-            className={`pointer-events-none font-bold ml-1 text-sm`} 
+            className={`pointer-events-none font-bold m-1 text-sm`} 
             style={{ 
                 backgroundColor: bg, 
                 color: text, 
@@ -140,7 +140,7 @@ const ManyCodeButton: React.FC<ManyCodeButtonProps> = ({ stationCode }) => {
     const segments = stationCode.split("/");
 
     return (
-        <div className="inline-flex rounded-full shadow-sm mb-1 ml-1" role="group">
+        <div className="inline-flex rounded-full shadow-sm m-1" role="group">
             {segments.map((segment, index) => (
             <button
                 key={index}
