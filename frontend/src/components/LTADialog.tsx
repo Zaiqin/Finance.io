@@ -431,13 +431,12 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                         </form>
                     </div>
                     {trips.length > 0 ? (<h2 className={`text-xl font-bold mb-2 ${nightMode ? 'text-gray-200' : 'text-gray-800'} mt-2`}>Total Fare: ${(totalFare ?? 0).toFixed(2)}</h2>) :
-                                <h2 className={`text-xl font-bold ${nightMode ? 'text-gray-200' : 'text-gray-800'} mb-2 mt-2`}>Fare: ${(fare ?? 0).toFixed(2)}</h2>}
-
+                                <h2 className={`text-xl font-bold ${nightMode ? 'text-gray-200' : 'text-gray-800'} mb-2 mt-2`}>Fare: ${(fare ? fare.toFixed(2) : ' - ')}</h2>}
                             <button
                                 type="button"
                                 onClick={handleAddTrip}
-                                className={`bg-yellow-500 hover:bg-yellow-700 text-white font-bold mt-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${error ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
-                                disabled={error !== null}
+                                className={`bg-yellow-500 hover:bg-yellow-700 text-white font-bold mt-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${(error || fare == 0) ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
+                                disabled={error !== null || fare == 0}
                             >
                                 {trips.length == 0 ? 'Add More Trips' : 'Add to Journey'}
                             </button>
@@ -451,8 +450,8 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                                 </button>
                                 <button
                                     type="button"
-                                    disabled={error !== null}
-                                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${error ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
+                                    disabled={error !== null || ((trips.length == 0 && fare == 0) || (trips.length > 0 && totalFare == 0))}
+                                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${(error || ((trips.length == 0 && fare == 0) || (trips.length > 0 && totalFare == 0))) ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
                                     onClick={() => {handleSubmit();setError(null);resetForm();}}
                                 >
                                     Submit

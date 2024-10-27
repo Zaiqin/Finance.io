@@ -194,7 +194,7 @@ const FinanceList: React.FC<{
             {tableDates.map((date) => (
               <div key={date} className="mb-6">
           <h3 className={`text-xl font-semibold mb-2 ${nightMode ? 'text-white' : 'text-gray-800'}`}>
-            {format(new Date(date), "d MMM yyyy")}
+            {format(new Date(date), "EE d MMM yyyy")}
           </h3>
           <div className="overflow-x-auto shadow-md rounded-md">
             <table className={`min-w-full rounded-lg sm:w-1/2 w-[130%] ${nightMode ? 'bg-gray-800' : 'bg-white'}`}>
