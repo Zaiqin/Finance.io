@@ -438,8 +438,8 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                             <button
                                 type="button"
                                 onClick={handleAddTrip}
-                                className={`bg-yellow-500 hover:bg-yellow-700 text-white font-bold mt-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${(error || isFetching) ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
-                                disabled={error !== null || isFetching}
+                                className={`bg-yellow-500 hover:bg-yellow-700 text-white font-bold mt-2 py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${(error || isFetching || formData.transportType === '' || !fare) ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
+                                disabled={error !== null || isFetching || formData.transportType === '' || !fare}
                             >
                                 {trips.length == 0 ? 'Add More Trips' : 'Add to Journey'}
                             </button>
@@ -453,8 +453,8 @@ const LTADialog: React.FC<LTADialogProps> = ({ open, onClose, onSubmit, nightMod
                                 </button>
                                 <button
                                     type="button"
-                                    disabled={error !== null || ((trips.length == 0 && isFetching) || (trips.length > 0 && totalFare == 0))}
-                                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${(error || ((trips.length == 0 && isFetching) || (trips.length > 0 && totalFare == 0))) ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
+                                    disabled={error !== null || formData.transportType === '' || ((trips.length == 0 && isFetching) || (trips.length > 0 && totalFare == 0))}
+                                    className={`bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition-opacity duration-300 ${(error || formData.transportType === '' ||((trips.length == 0 && isFetching) || (trips.length > 0 && totalFare == 0))) ? 'opacity-50 cursor-not-allowed' : 'opacity-100'}`}
                                     onClick={() => {handleSubmit();setError(null);resetForm();}}
                                 >
                                     Submit
