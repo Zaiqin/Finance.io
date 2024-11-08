@@ -62,6 +62,7 @@ const EditFinanceModal: React.FC<{
         <div className={`${nightMode ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'} p-6 rounded-lg shadow-lg w-full max-w-md relative`}>
           <h2 className="text-2xl font-semibold mb-4">Edit Item</h2>
           <form onSubmit={handleSubmit}>
+          <div className="overflow-y-auto max-h-[40vh] pr-6">
             <div className="mb-4">
               <label className="block text-sm font-bold mb-2" htmlFor="category">
                 Category
@@ -72,7 +73,7 @@ const EditFinanceModal: React.FC<{
                   value={localCategory}
                   onChange={(e) => setLocalCategory(e.target.value)}
                   required
-                  className={`${nightMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'} shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
+                  className={`${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700'} shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                 >
                   {categories.map((category, index) => (
                     <option key={index} value={category._id}>
@@ -105,7 +106,7 @@ const EditFinanceModal: React.FC<{
                   value={localAmount}
                   onChange={(e) => setLocalAmount(e.target.value)}
                   required
-                  className={`${nightMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'} shadow appearance-none border rounded w-full py-2 pl-8 pr-3 leading-tight focus:outline-none focus:shadow-outline`}
+                  className={`${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700'} shadow appearance-none border rounded w-full py-2 pl-8 pr-3 leading-tight focus:outline-none focus:shadow-outline`}
                 />
               </div>
             </div>
@@ -113,13 +114,16 @@ const EditFinanceModal: React.FC<{
               <label className="block text-sm font-bold mb-2" htmlFor="description">
                 Description
               </label>
-              <input
-                type="text"
+              <textarea
                 id="description"
                 value={localDescription}
                 placeholder="Description"
                 onChange={(e) => setLocalDescription(e.target.value)}
-                className={`${nightMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'} border p-2 rounded w-full`}
+                className={`shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline ${
+                  nightMode
+                ? "bg-gray-700 text-white border-gray-600"
+                : "text-gray-700"
+                }`}
               />
             </div>
             <div className="mb-4">
@@ -132,7 +136,7 @@ const EditFinanceModal: React.FC<{
                 value={localDate}
                 onChange={(e) => setLocalDate(e.target.value)}
                 required
-                className={`${nightMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'} border p-2 rounded w-full`}
+                className={`${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700'} border p-2 rounded w-full`}
               />
             </div>
             <div className="mb-4">
@@ -170,7 +174,7 @@ const EditFinanceModal: React.FC<{
               </div>
               <div className="relative">
                 <select
-                  className={`${nightMode ? 'bg-gray-700 text-white' : 'bg-white text-gray-700'} shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
+                  className={`${nightMode ? 'bg-gray-700 text-white border-gray-600' : 'bg-white text-gray-700'} shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow-outline`}
                   id="tags"
                   value=""
                   onChange={(e) => {
@@ -211,6 +215,7 @@ const EditFinanceModal: React.FC<{
                   </svg>
                 </div>
               </div>
+            </div>
             </div>
             <button
               className={`${nightMode ? 'bg-gray-700 hover:bg-gray-600' : 'bg-gray-500 hover:bg-gray-700'} text-white font-bold py-2 px-4 mr-3 mb-3 rounded focus:outline-none focus:shadow-outline flex items-center`}
